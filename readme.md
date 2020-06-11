@@ -5,4 +5,4 @@ NetONEJ是用于连接NetONE安全网关 SVS PCS TSA模块的工具包，集成n
 2. bin路径下，也提供了netonej jar与依赖包分离的形式：netonej-$version.jar以及所依赖的其他jar，依赖jar放在 bin/dependencies 下，需要同时集成netonej-$version.jar及dependencies下的jar才能使用
 3. test路径下提供了测试代码，可根据示例进行代码编写
 4. doc目录下是netonej javadoc的zip包，可下载查看API文档
-5. src目录包含了源代码
+5. src目录下是项目源代码,相关依赖见bin/dependencies
