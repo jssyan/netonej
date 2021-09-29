@@ -7,9 +7,9 @@
  */
 package com.syan.netonej.http.entity;
 
-import com.syan.netonej.exception.PropertiesHelper;
+import com.syan.netonej.exception.ErrorCode;
 
-/** 
+/**
  * base状态信息类
  * @author liyb
  * @version 2.0.0
@@ -37,7 +37,7 @@ public class NetoneBase {
 	 */
 	public NetoneBase(int statusCode){
 		this.statusCode = statusCode;
-		//this.statusCodeMessage = PropertiesHelper.getStatusMessage(statusCode);
+		this.statusCodeMessage = ErrorCode.getStatusCodeMessage(statusCode);
 	}
 
 	/**

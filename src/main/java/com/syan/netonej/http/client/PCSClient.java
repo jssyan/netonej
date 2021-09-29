@@ -6,23 +6,11 @@
  */
 package com.syan.netonej.http.client;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import com.syan.netonej.common.dict.*;
 import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.exception.NetonejExcepption;
-import com.syan.netonej.http.HttpPostProcesserFactory;
-import com.syan.netonej.http.HttpStatus;
-import com.syan.netonej.http.entity.NetoneBase;
 import com.syan.netonej.http.entity.NetoneCertificate;
 import com.syan.netonej.http.entity.NetoneEnvelope;
 import com.syan.netonej.http.entity.NetoneKeyList;
@@ -31,255 +19,129 @@ import com.syan.netonej.http.entity.NetoneResponse;
 import com.syan.netonej.http.entity.NetoneSignPKCS7;
 
 
-/**
- * NetONE PCS API
- *
- * @author liyb
- * @version 2.0.0
- * @since 1.0.0
- */
 public class PCSClient extends BaseClient {
-    private static final Log log = LogFactory.getLog(PCSClient.class);
-    /**
-     * PCS - Action 列出可用的Key ID
-     */
-    private final static String PCS_ACTION_SL = "sl.svr";
-    /**
-     * PCS - Action 获取与Key ID对应的X.509证书
-     */
-    private final static String PCS_ACTION_SG = "sg.svr";
-    /**
-     * PCS - Action 生成PKCS#1 数字签名
-     */
-    private final static String PCS_ACTION_SMP1 = "smp1.svr";
-    /**
-     * PCS - Action 生成PKCS#7 数字签名
-     */
-    private final static String PCS_ACTION_SMP7 = "smp7.svr";
-    /**
-     * PCS - Action 私钥加密
-     */
-    private final static String PCS_ACTION_SPE = "spe.svr";
-    /**
-     * PCS - Action 私钥解密
-     */
-    private final static String PCS_ACTION_SPD = "spd.svr";
-    /**
-     * PCS - Action 公钥加密
-     */
-    private final static String PCS_ACTION_PPE = "ppe.svr";
-    /**
-     * PCS - Action 公钥解密
-     */
-    private final static String PCS_ACTION_PPD = "ppd.svr";
-    /**
-     * PCS - Action  生成XML数字签名
-     */
-    private final static String PCS_ACTION_SXS = "sxs.svr";
-    /**
-     * PCS - Action 数字信封封包
-     */
-    private final static String PCS_ACTION_ENVSEAL = "envseal.svr";
-    /**
-     * PCS - Action 数字信封解包
-     */
-    private final static String PCS_ACTION_ENVOPEN = "envopen.svr";
 
-    /**
-     * PCS - Action 修改密钥访问口令
-     */
-    private final static String PCS_ACTION_CHPWD = "chpwd.svr";
+    public PCSClient(String host, String port, String application) {
+        super(host, port, application);
+    }
 
-    /**
-     * Parameters - ID类型键值  "idmagic"
-     */
-    private final static String PARAME_IDMAGIC = "idmagic";
-    /**
-     * Parameters - ID键值  "id"
-     */
-    private final static String PARAME_ID = "id";
-
-    /**
-     * Parameters - 加密算法  "cipher"
-     *
-     * @since 3.0.10
-     */
-    private final static String PARAME_CIPHER = "cipher";
-    /**
-     * Parameters - PCS口令键值  "passwd"
-     */
-    private final static String PARAME_PASSWD = "passwd";
-
-    /**
-     * Parameters - 证书键值(数字信封专用)  "peer"
-     */
-    private final static String PARAME_PEER = "peer";
-
-    /**
-     * Parameters - 原文数据值类型  "datatype"
-     */
-    private final static String DATA_TYPE = "datatype";
-
-
-    /**
-     * Parameters - p7签名是否包含整个证书链键值  "fullchain"
-     */
-    private final static String PARAME_FULLCHAIN = "fullchain";
-    /**
-     * 是否包含原文
-     */
-    public final static String PARAME_ATTACH = "attach";
-
-    /**
-     * Parameters - 签名算法键值  "algo"
-     */
-    private final static String PARAME_ALGO = "algo";
-
-    /**
-     * 是否包含证书链
-     */
-    private boolean containsCertChain = false;
-
-    /**
-     * PCS 服务IP
-     */
-    private String _host;
-    /**
-     * PCS 服务PORT
-     */
-    private String _port;
-
-    /**
-     * 根据服务器IP 端口 构造PCSClient
-     *
-     * @param host 服务器IP
-     * @param port 服务端口
-     */
     public PCSClient(String host, String port) {
-        super(HttpPostProcesserFactory.createPostProcesser());
-        this._host = host;
-        this._port = port;
+        super(host, port);
     }
 
-    /**
-     * 设置可选参数
-     *
-     * @return 设置参数的map
-     */
-    private Map<String, String> prepareParameter() {
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put(RESPONSE_FORMAT_KEY, responseformat);
-        //设置是否农行k宝二代应用
-        if (!NetonejUtil.isEmpty(application)) {
-            params.put(PARAME_APPLICATION, PARAME_APPLICATION_VALUE);
-        }
-
-
-        return params;
+    public PCSClient(String host) {
+        super(host,"9178");
     }
 
-    /**
-     * 获取PCS 密钥库中所有密钥id
-     *
-     * @return {@link com.syan.netonej.http.entity.NetoneKeyList} key列表
-     * @throws NetonejExcepption API全局异常类
-     */
+    //========================1.获取PCS 密钥库中所有密钥id========================
+
+    @Deprecated
     public NetoneKeyList getPcsIds() throws NetonejExcepption {
+        return this.getKids();
+    }
 
-        log.debug("-PCS（sl）");
+    public NetoneKeyList getKids() throws NetonejExcepption {
+        return this.getKids(null,null,null);
+    }
 
-        NetoneKeyList keylist = null;
+    public NetoneKeyList getKids(int limit) throws NetonejExcepption {
+        return this.getKids(limit,null,null);
+    }
+
+    public NetoneKeyList getKids(KeyAlgorithm keyAlgorithm) throws NetonejExcepption {
+        return this.getKids(null,keyAlgorithm.getValue(),null);
+    }
+
+    public NetoneKeyList getKids(KeyUseage keyUseage) throws NetonejExcepption {
+        return this.getKids(null,null,keyUseage.getValue());
+    }
+
+    public NetoneKeyList getKids(int limit,KeyAlgorithm keyAlgorithm) throws NetonejExcepption {
+        return this.getKids(limit,keyAlgorithm.getValue(),null);
+    }
+
+    public NetoneKeyList getKids(int limit,KeyUseage keyUseage) throws NetonejExcepption {
+        return this.getKids(limit,null,keyUseage.getValue());
+    }
+
+    public NetoneKeyList getKids(KeyAlgorithm keyAlgorithm,KeyUseage keyUseage) throws NetonejExcepption {
+        return this.getKids(null,keyAlgorithm.getValue(),keyUseage.getValue());
+    }
+
+    public NetoneKeyList getKids(int limit, KeyAlgorithm keyAlgorithm,KeyUseage keyUseage) throws NetonejExcepption {
+        return this.getKids(limit,keyAlgorithm.getValue(),keyUseage.getValue());
+    }
+
+    /**
+     * 获取可用的密钥ID，返回可用的密钥ID列表。如果有多个可用的密钥ID，这些ID之间通过换行符分割
+     * @param limit  <n> 返回前n个符合条件的密钥,<=0返回所有的
+     * @param algo   用于返回特定算法 1代表sm2, 2代表rsa，3代表ecc, 4代表sk，不填返回所有非对称密钥
+     * @param useage 用于返回特定用法的密钥列表（根据证书对应的密钥用法）， 1是签名用法，2是加密用法
+     * @return {@link com.syan.netonej.http.entity.NetoneKeyList}
+     * @throws NetonejExcepption
+     */
+    private NetoneKeyList getKids(Integer limit,Integer algo,Integer useage) throws NetonejExcepption{
         Map<String, String> params = prepareParameter();
-
+        if(limit != null){
+            params.put("limit",String.valueOf(limit));
+        }
+        if(algo != null){
+            params.put("algo",String.valueOf(algo));
+        }
+        if(useage != null){
+            params.put("useage",String.valueOf(useage));
+        }
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SL), params);
-            keylist = new NetoneKeyList(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_SL, params);
+            return new NetoneKeyList(response);
         } catch (Exception e) {
-
-            log.error("-PCS（sl）密钥id获取失败", e);
-
             throw new NetonejExcepption("PCS（sl）密钥id获取失败:" + e, e);
         }
-        return keylist;
     }
 
+
+    //========================2.使用密钥id获取对应的Base64编码公钥证书========================
+
+    @Deprecated
+    public NetoneCertificate getBase64CertificateById(String id, String idMagic) throws NetonejExcepption {
+        return this.getCertById(id,idMagic);
+    }
+
+    public NetoneCertificate getBase64CertificateById(String id) throws NetonejExcepption {
+        return this.getCertById(id,null);
+    }
+
+    public NetoneCertificate getBase64CertificateById(String id, IdMagic idMagic) throws NetonejExcepption {
+        return this.getCertById(id,idMagic.name());
+    }
     /**
      * 使用密钥id获取对应的Base64编码公钥证书
-     *
      * @param id      密钥id
      * @param idMagic id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @return {@link com.syan.netonej.http.entity.NetoneCertificate} 证书信息
      * @throws NetonejExcepption API全局异常类
      */
-    public NetoneCertificate getBase64CertificateById(String id, String idMagic) throws NetonejExcepption {
-
-        log.debug("-PCS（sg）id：" + id + "idMagic：" + idMagic);
-
-        NetoneCertificate netonecert = null;
+    private NetoneCertificate getCertById(String id, String idMagic) throws NetonejExcepption {
         Map<String, String> params = prepareParameter();
-        params.put(PARAME_ID, id);
-
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("id", id);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
-
-
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SG), params);
-            netonecert = new NetoneCertificate(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_SG, params);
+            return new NetoneCertificate(response);
         } catch (Exception e) {
-
-            log.error("-PCS（sg） 获取Base64证书失败", e);
-
             throw new NetonejExcepption("-PCS（sg） 获取Base64证书失败" + e, e);
         }
-
-        return netonecert;
     }
 
-    /**
-     * 使用密钥id生成PKCS#1格式数字签名
-     *
-     * @param plainText 待签名原文数据
-     * @param certDN    证书主题
-     * @param pwd       密钥访问口令
-     * @param algo      摘要算法 请参看{@link com.syan.netonej.common.Algorithm}
-     * @return {@link com.syan.netonej.http.entity.NetonePCS} PKCS#1数字签名结果
-     * @throws NetonejExcepption API全局异常类
-     */
+
+    //========================3.PKCS#1格式数字签名========================
+
+    @Deprecated
     public NetonePCS createPKCS1Signature(byte[] plainText, String certDN, String pwd, String algo) throws NetonejExcepption {
-
-        log.debug("-PCS（smp1）certDN：" + certDN);
-
-        NetonePCS signpkcs1 = null;
-
-        Map<String, String> params = prepareParameter();
-        if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
-        }
-        params.put(PARAME_DATA, NetonejUtil.base64Encode(plainText));
-        params.put(DATA_TYPE, "0");
-        params.put(PARAME_IDMAGIC, "scn");
-        params.put(PARAME_ID, (String) NetonejUtil.getMapFromDN(certDN).get("CN"));
-
-        if (algo != null) {
-            params.put(PARAME_ALGO, algo);
-        }
-        try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SMP1), params);
-            signpkcs1 = new NetonePCS(response);
-        } catch (Exception e) {
-
-            log.error("-PCS（smp1）创建PKCS#1数字签名失败", e);
-
-            throw new NetonejExcepption("-PCS（smp1）创建PKCS#1数字签名失败" + e, e);
-
-        }
-
-        return signpkcs1;
+        return this.createPKCS1Sign(
+                (String) NetonejUtil.getMapFromDN(certDN).get("CN"),pwd,IdMagic.SCN.name(),NetonejUtil.base64Encode(plainText),DataType.PLAIN.ordinal(),algo);
     }
 
     /**
@@ -287,67 +149,112 @@ public class PCSClient extends BaseClient {
      *
      * @param id       密钥id
      * @param pwd      密钥访问口令
-     * @param idMagic  {@link com.syan.netonej.common.NetonejIdMagic} id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic  {@link com.syan.netonej.common.dict.IdMagic} id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param data     待签名原文数据
      * @param datatype 待签名数据的类型. 0表示是原文, 1表示摘要(摘要数据是binary格式)
-     * @param algo     摘要算法 请参看{@link com.syan.netonej.common.Algorithm} 不确定算法可设置null
+     * @param algo     摘要算法 请参看{@link com.syan.netonej.common.dict.DigestAlgorithm} 不确定算法可设置null
      * @return {@link com.syan.netonej.http.entity.NetonePCS} PKCS#1数字签名结果
      * @throws NetonejExcepption API全局异常类
      */
+    @Deprecated
     public NetonePCS createPKCS1Signature(String id, String pwd, String idMagic, byte[] data, String datatype, String algo) throws NetonejExcepption {
-
-        log.debug("-PCS（smp1）id：" + id + " idMagic：" + idMagic + " pwd：" + pwd + " data：" + data + " datatype：" + datatype);
 
         NetonePCS signpkcs1 = createPKCS1Signature(id, pwd, idMagic, NetonejUtil.base64Encode(data), datatype, algo);
 
         return signpkcs1;
     }
 
+    @Deprecated
+    public NetonePCS createPKCS1Signature(String id, String pwd, String idMagic, String data, String datatype, String algo) throws NetonejExcepption {
+        return this.createPKCS1Sign(id,pwd,idMagic,data,Integer.valueOf(datatype),algo);
+    }
+
+    public NetonePCS createPKCS1Signature(String id, String pwd,IdMagic idMagic, String data, DataType datatype, DigestAlgorithm algo) throws NetonejExcepption {
+        return this.createPKCS1Sign(id,pwd,idMagic.name(),data,datatype.ordinal(),algo.getName());
+    }
+    public NetonePCS createPKCS1Signature(String id, String pwd,IdMagic idMagic, String data, DataType datatype) throws NetonejExcepption {
+        return this.createPKCS1Sign(id,pwd,idMagic.name(),data,datatype.ordinal(),null);
+    }
+    public NetonePCS createPKCS1Signature(String id, String pwd, String data, DataType datatype, DigestAlgorithm algo) throws NetonejExcepption {
+        return this.createPKCS1Sign(id,pwd,null,data,datatype.ordinal(),algo.getName());
+    }
+    public NetonePCS createPKCS1Signature(String id, String pwd, String data, DataType datatype) throws NetonejExcepption {
+        return this.createPKCS1Sign(id,pwd,null,data,datatype.ordinal(),null);
+    }
     /**
      * 使用密钥id生成PKCS#1格式数字签名
-     *
      * @param id       密钥id
      * @param pwd      密钥访问口令
-     * @param idMagic  {@link com.syan.netonej.common.NetonejIdMagic} id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic  {@link com.syan.netonej.common.dict.IdMagic} id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param data     待签名原文数据(base64编码)
      * @param datatype 待签名数据的类型. 0表示是原文, 1表示摘要(摘要数据是binary格式), 2表示摘要(摘要数据是hex string格式) hex string格式主要是为了配合SignerX控件使用, 因为SignerX摘要的返回是hex string
-     * @param algo     摘要算法 请参看{@link com.syan.netonej.common.Algorithm}
+     * @param algo     摘要算法 请参看{@link com.syan.netonej.common.dict.DigestAlgorithm}
      * @return {@link com.syan.netonej.http.entity.NetonePCS} PKCS#1数字签名结果
      * @throws NetonejExcepption API全局异常类
      */
-    public NetonePCS createPKCS1Signature(String id, String pwd, String idMagic, String data, String datatype, String algo) throws NetonejExcepption {
-
-        log.debug("-PCS（smp1）id：" + id + " idMagic：" + idMagic + " pwd：" + pwd + " data：" + data + " datatype：" + datatype);
-
-        NetonePCS signpkcs1 = null;
-
+    private NetonePCS createPKCS1Sign(String id, String pwd, String idMagic, String data, int datatype, String algo) throws NetonejExcepption {
         Map<String, String> params = prepareParameter();
-
-        params.put(PARAME_ID, id);
-        if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
+        params.put("id", id);
+        if (!NetonejUtil.isEmpty(pwd)) {
+            params.put("passwd", pwd);
         }
-        params.put(PARAME_DATA, data);
-        params.put(DATA_TYPE, datatype);
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("data", data);
+        params.put("datatype", String.valueOf(datatype));
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
-        if (algo != null) {
-            params.put(PARAME_ALGO, algo);
+        if (!NetonejUtil.isEmpty(algo)) {
+            params.put("algo", algo.trim().toLowerCase());
         }
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SMP1), params);
-            log.debug("netone response=" + response.toString());
-            signpkcs1 = new NetonePCS(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_SMP1, params);
+            return new NetonePCS(response);
         } catch (Exception e) {
-            log.error("-PCS（smp1）创建PKCS#1数字签名失败", e);
-
             throw new NetonejExcepption("-PCS（smp1）创建PKCS#1数字签名失败" + e, e);
         }
+    }
 
-        return signpkcs1;
+
+    //========================4.使用密钥id生成PKCS#7格式数字签名========================
+
+    @Deprecated
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, String idMagic, String data, boolean attach, String algo) throws NetonejExcepption {
+        return createP7Signature(id,pwd,idMagic,data,attach,false,algo);
+    }
+
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data, boolean attach, DigestAlgorithm algo) throws NetonejExcepption {
+        return createP7Signature(id,pwd,idMagic.name(),data,attach,false,algo.getName());
+    }
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data, DigestAlgorithm algo) throws NetonejExcepption {
+        return createP7Signature(id,pwd,idMagic.name(),data,true,false,algo.getName());
+    }
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data,boolean attach) throws NetonejExcepption {
+        return createP7Signature(id,pwd,idMagic.name(),data,attach,false,null);
+    }
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data) throws NetonejExcepption {
+        return createP7Signature(id,pwd,idMagic.name(),data,true,false,null);
+    }
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data) throws NetonejExcepption {
+        return createP7Signature(id,pwd,null,data,true,false,null);
+    }
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data, boolean attach, DigestAlgorithm algo) throws NetonejExcepption {
+        return createP7Signature(id,pwd,null,data,attach,false,algo.getName());
+    }
+
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data, boolean attach) throws NetonejExcepption {
+        return createP7Signature(id,pwd,null,data,attach,false,null);
+    }
+
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data, boolean attach, boolean fullchain,DigestAlgorithm algo) throws NetonejExcepption {
+        return createP7Signature(id,pwd,null,data,attach,fullchain,algo.getName());
+    }
+
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data, boolean attach, boolean fullchain) throws NetonejExcepption {
+        return createP7Signature(id,pwd,null,data,attach,fullchain,null);
+    }
+
+    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data, boolean attach, boolean fullchain,DigestAlgorithm algo) throws NetonejExcepption {
+        return createP7Signature(id,pwd,idMagic.name(),data,attach,fullchain,algo.getName());
     }
 
     /**
@@ -355,203 +262,228 @@ public class PCSClient extends BaseClient {
      *
      * @param id      密钥id
      * @param pwd     密钥访问口令
-     * @param idMagic {@link com.syan.netonej.common.NetonejIdMagic} id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic {@link com.syan.netonej.common.dict.IdMagic} id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param data    待签名原文数据(base64编码)
      * @param attach  是否在签名结果里面包含原文数据 'true' or 'false'
-     * @param algo    摘要算法 请参看{@link com.syan.netonej.common.Algorithm}
+     * @param algo    摘要算法 请参看{@link com.syan.netonej.common.dict.DigestAlgorithm}
      * @return {@link com.syan.netonej.http.entity.NetoneSignPKCS7} PKCS#7数字签名结果
      * @throws NetonejExcepption API全局异常类
      */
 
-    public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, String idMagic, String data, boolean attach, String algo) throws NetonejExcepption {
-
-        log.debug("-PCS（smp7）id：" + id + " idMagic：" + idMagic + " pwd：" + pwd + " data：" + data);
-
-        NetoneSignPKCS7 signpkcs7 = null;
+    private NetoneSignPKCS7 createP7Signature(String id, String pwd, String idMagic, String data, boolean attach, boolean fullchain,String algo) throws NetonejExcepption {
         Map<String, String> params = prepareParameter();
-
-        params.put(PARAME_ID, id);
+        params.put("id", id);
         if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
+            params.put("passwd", pwd);
         }
-
-        params.put(PARAME_DATA, data);
-
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("data", data);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
         if (!attach) {
-            params.put(PARAME_ATTACH, "0");
+            params.put("attach", "0");
         }
-        if (containsCertChain) {
-            params.put(PARAME_FULLCHAIN, "1");
+        if (fullchain) {
+            params.put("fullchain", "1");
         }
-
-        if (algo != null) {
-            params.put(PARAME_ALGO, algo);
+        if (!NetonejUtil.isEmpty(algo)) {
+            params.put("algo", algo.trim().toLowerCase());
         }
-
-        log.debug("-PCS（smp7）params:" + params);
+        params.put("noattr", "1");
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SMP7), params);
-            log.debug("netone response=" + response.toString());
-            signpkcs7 = new NetoneSignPKCS7(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_SMP7, params);
+            return new NetoneSignPKCS7(response);
         } catch (Exception e) {
-            log.error("-PCS（smp7）创建PKCS#7数字签名失败", e);
-
             throw new NetonejExcepption("-PCS（smp7）创建PKCS#7数字签名失败" + e, e);
         }
-
-        return signpkcs7;
     }
 
-    /**
-     * 使用密钥id对应的密钥进行数字信封封包
-     *
-     * @param id                密钥id
-     * @param pwd               密钥访问口令
-     * @param idMagic           {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
-     * @param data              待封包数据，长度不限
-     * @param base64Certificate Base64编码接收方公钥证书
-     * @return {@link com.syan.netonej.http.entity.NetoneEnvelope} 数字信封封包结果
-     * @throws NetonejExcepption API全局异常类
-     */
+    //========================5.使用密钥id对应的密钥进行数字信封封包========================
+
     public NetoneEnvelope envelopePacket(String id, String pwd, String idMagic, String data, String base64Certificate) throws NetonejExcepption {
 
         return this.envelopePacket(id, pwd, idMagic, data, base64Certificate, null);
     }
 
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, String idMagic, String data, String base64Certificate, String cipher) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,idMagic,data,base64Certificate,cipher);
+    }
+
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, IdMagic idMagic, String data, String base64Certificate, CipherAlgorithm cipher) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,idMagic.name(),data,base64Certificate,cipher.getName());
+    }
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, String data, String base64Certificate, CipherAlgorithm cipher) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,null,data,base64Certificate,cipher.getName());
+    }
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, String data, CipherAlgorithm cipher) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,null,data,null,cipher.getName());
+    }
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, IdMagic idMagic,String data, CipherAlgorithm cipher) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,idMagic.name(),data,null,cipher.getName());
+    }
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, String data, String base64Certificate) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,null,data,base64Certificate,null);
+    }
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, IdMagic idMagic,String data, String base64Certificate) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,idMagic.name(),data,base64Certificate,null);
+    }
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, String data) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,null,data,null,null);
+    }
+
+    public NetoneEnvelope envelopePacket(String id, String pwd, IdMagic idMagic,String data) throws NetonejExcepption {
+        return envelopePacketAction(id,pwd,idMagic.name(),data,null,null);
+    }
+
     /**
      * 使用密钥id对应的密钥进行数字信封封包
      *
      * @param id                密钥id
      * @param pwd               密钥访问口令
-     * @param idMagic           {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic           {@link com.syan.netonej.common.dict.IdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param data              待封包数据，长度不限
      * @param base64Certificate Base64编码接收方公钥证书
      * @return {@link com.syan.netonej.http.entity.NetoneEnvelope} 数字信封封包结果
      * @throws NetonejExcepption API全局异常类
      * @since 3.0.10
      */
-    public NetoneEnvelope envelopePacket(String id, String pwd, String idMagic, String data, String base64Certificate, String cipher) throws NetonejExcepption {
+    private NetoneEnvelope envelopePacketAction(String id, String pwd, String idMagic, String data, String base64Certificate, String cipher) throws NetonejExcepption {
 
-        log.debug("-PCS（envseal）id：" + id + " idMagic：" + idMagic + " pwd：" + pwd + " data：" + data + " Base64Certificate：" + base64Certificate);
-
-        NetoneEnvelope envelope = null;
         Map<String, String> params = prepareParameter();
 
-        params.put(PARAME_ID, id);
+        params.put("id", id);
         if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
+            params.put("passwd", pwd);
+        }
+        params.put("data", data);
+
+        if(!NetonejUtil.isEmpty(base64Certificate)){
+            params.put("peer", base64Certificate);
         }
 
-        params.put(PARAME_DATA, NetonejUtil.base64Encode(data.getBytes()));
-        params.put(PARAME_PEER, base64Certificate);
-
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
-
         if (!NetonejUtil.isEmpty(cipher)) {
-            params.put(PARAME_CIPHER, cipher);
+            params.put("cipher", cipher);
         }
-
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_ENVSEAL), params);
-            log.debug("netone response=" + response.toString());
-            envelope = new NetoneEnvelope(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_ENVSEAL, params);
+            return new NetoneEnvelope(response);
         } catch (Exception e) {
-            log.error("-PCS（envseal）数字信封封包失败", e);
-
             throw new NetonejExcepption("-PCS（envseal）数字信封封包失败" + e, e);
         }
-        return envelope;
     }
 
+
+    //========================6.使用密钥id对应的密钥进行数字信封解包========================
     /**
      * 使用密钥id对应的密钥进行数字信封解包
      *
      * @param id       密钥id
      * @param pwd      密钥访问口令
-     * @param idMagic  {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic  {@link com.syan.netonej.common.dict.IdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param envelope 待解包数据（Base64编码）
      * @return {@link com.syan.netonej.http.entity.NetonePCS}  数字信封解包后的数据（原文）
      * @throws NetonejExcepption API全局异常类
      */
     public NetonePCS envelopeUnpack(String id, String pwd, String idMagic, String envelope) throws NetonejExcepption {
+        return envelopeUnpackAction(id,pwd,idMagic,envelope);
+    }
 
-        log.debug("-PCS（envopen）id：" + id + " idMagic：" + idMagic + " pwd：" + pwd + " envelope：" + envelope);
+    public NetonePCS envelopeUnpack(String id, String pwd, IdMagic idMagic, String envelope) throws NetonejExcepption {
+        return envelopeUnpackAction(id,pwd,idMagic.name(),envelope);
+    }
 
-        NetonePCS retobj = null;
+    public NetonePCS envelopeUnpack(String id, String pwd, String envelope) throws NetonejExcepption {
+        return envelopeUnpackAction(id,pwd,null,envelope);
+    }
+
+    private NetonePCS envelopeUnpackAction(String id, String pwd, String idMagic, String envelope) throws NetonejExcepption {
+
         Map<String, String> params = prepareParameter();
 
-        params.put(PARAME_ID, id);
+        params.put("id", id);
         if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
+            params.put("passwd", pwd);
         }
-        params.put(PARAME_DATA, envelope);
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("data", envelope);
+
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
 
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_ENVOPEN), params);
-            log.debug("netone response=" + response.toString());
-            retobj = new NetonePCS(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_ENVOPEN, params);
+            return new NetonePCS(response);
         } catch (Exception e) {
-            log.error("-PCS（envopen）数字信封解包失败", e);
             throw new NetonejExcepption("-PCS（envopen）数字信封解包失败" + e, e);
         }
-
-        return retobj;
     }
 
 
+    //========================7.使用密钥id对应的证书私钥进行加密========================
+
+    public NetonePCS priKeyEncrypt(String id, String pwd, String idMagic, String data) throws NetonejExcepption {
+        return this.privateKeyEncrypt(id,pwd,idMagic,data);
+    }
+
+    public NetonePCS priKeyEncrypt(String id, String pwd, String data) throws NetonejExcepption {
+        return this.privateKeyEncrypt(id,pwd,null,data);
+    }
+
+    public NetonePCS priKeyEncrypt(String id, String pwd,IdMagic idMagic, String data) throws NetonejExcepption {
+        return this.privateKeyEncrypt(id,pwd,idMagic.name(),data);
+    }
+
     /**
      * 使用密钥id对应的证书私钥进行加密 （注意：RSA私钥加密的明文最大长度不能超过私钥长度的2倍，SM2不支持私钥加密）
-     *
      * @param id      密钥id
      * @param pwd     密钥访问口令
-     * @param idMagic {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic {@link com.syan.netonej.common.dict.IdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param data    待加密数据（Base64编码）
      * @return {@link com.syan.netonej.http.entity.NetonePCS} 私钥加密后的数据
      * @throws NetonejExcepption API全局异常类
      */
-    public NetonePCS priKeyEncrypt(String id, String pwd, String idMagic, String data) throws NetonejExcepption {
-
-        log.debug("-PCS（spe）id：" + id + " idMagic：" + idMagic + " pwd：" + pwd + " data：" + data);
-
-        NetonePCS retobj = null;
+    private NetonePCS privateKeyEncrypt(String id, String pwd, String idMagic, String data) throws NetonejExcepption {
         Map<String, String> params = prepareParameter();
-
-        params.put(PARAME_ID, id);
-        if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
+        params.put("id", id);
+        if (!NetonejUtil.isEmpty(pwd)) {
+            params.put("passwd", pwd);
         }
-        params.put(PARAME_DATA, data);
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("data", data);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
-
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SPE), params);
-            log.debug("netone response=" + response.toString());
-            retobj = new NetonePCS(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_SPE, params);
+            return new NetonePCS(response);
         } catch (Exception e) {
-            log.error("-PCS（spe）私钥加密失败", e);
-
             throw new NetonejExcepption("-PCS（spe）私钥加密失败" + e, e);
         }
+    }
 
-        return retobj;
+
+    //========================8.使用密钥id对应的证书私钥进解密========================
+
+    public NetonePCS priKeyDecrypt(String id, String pwd, String idMagic, String encryptData) throws NetonejExcepption {
+        return privateKeyDecrypt(id,pwd,idMagic,encryptData);
+    }
+
+    public NetonePCS priKeyDecrypt(String id, String pwd, IdMagic idMagic, String encryptData) throws NetonejExcepption {
+        return privateKeyDecrypt(id,pwd,idMagic.name(),encryptData);
+    }
+
+    public NetonePCS priKeyDecrypt(String id, String pwd, String encryptData) throws NetonejExcepption {
+        return privateKeyDecrypt(id,pwd,null,encryptData);
     }
 
     /**
@@ -559,118 +491,134 @@ public class PCSClient extends BaseClient {
      *
      * @param id          密钥id
      * @param pwd         密钥访问口令
-     * @param idMagic     {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic     {@link com.syan.netonej.common.dict.IdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param encryptData 待解密数据（Base64编码）
      * @return {@link com.syan.netonej.http.entity.NetonePCS} 私钥解密后的数据
      * @throws NetonejExcepption API全局异常类
      */
-    public NetonePCS priKeyDecrypt(String id, String pwd, String idMagic, String encryptData) throws NetonejExcepption {
+    private NetonePCS privateKeyDecrypt(String id, String pwd, String idMagic, String encryptData) throws NetonejExcepption {
 
-        log.debug("-PCS（spd）id：" + id + " idMagic：" + idMagic + " pwd：" + pwd + " encryptData：" + encryptData);
-
-        NetonePCS retobj = null;
         Map<String, String> params = prepareParameter();
 
-        params.put(PARAME_ID, id);
-        if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
+        params.put("id", id);
+        if (!NetonejUtil.isEmpty(pwd)) {
+            params.put("passwd", pwd);
         }
-        params.put(PARAME_DATA, encryptData);
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("data", encryptData);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
-
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SPD), params);
-            log.debug("netone response=" + response.toString());
-            retobj = new NetonePCS(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_SPD, params);
+            return new NetonePCS(response);
         } catch (Exception e) {
-            log.error("-PCS（spd）私钥解密失败", e);
-
             throw new NetonejExcepption("-PCS（spd）私钥解密失败" + e, e);
         }
-
-        return retobj;
     }
 
+
+    //========================9.使用密钥id对应的证书进行公钥加密========================
+
+    public NetonePCS pubKeyEncrypt(String id, String idMagic, String data) throws NetonejExcepption {
+        return publicKeyEncrypt(id,idMagic,data);
+    }
+
+    public NetonePCS pubKeyEncrypt(String id, IdMagic idMagic, String data) throws NetonejExcepption {
+        return publicKeyEncrypt(id,idMagic.name(),data);
+    }
+
+    public NetonePCS pubKeyEncrypt(String id, String data) throws NetonejExcepption {
+        return publicKeyEncrypt(id,null,data);
+    }
 
     /**
      * 使用密钥id对应的证书进行公钥加密 （注意：RSA公钥加密的明文最大长度不能超过私钥长度的2倍，SM2公钥无此限制）
      *
      * @param id      密钥id
-     * @param idMagic {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic {@link com.syan.netonej.common.dict.IdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param data    Base64编码的待加密数据
      * @return {@link com.syan.netonej.http.entity.NetonePCS} 公钥加密后的数据
      * @throws NetonejExcepption API全局异常类
      */
-    public NetonePCS pubKeyEncrypt(String id, String idMagic, String data) throws NetonejExcepption {
-
-        log.debug("-PCS（ppe） id：" + id + "idMagic：" + idMagic + "data：" + data);
-
-        NetonePCS retobj = null;
+    private NetonePCS publicKeyEncrypt(String id, String idMagic, String data) throws NetonejExcepption {
         Map<String, String> params = prepareParameter();
-
-        params.put(PARAME_ID, id);
-
-        params.put(PARAME_DATA, data);
-
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("id", id);
+        params.put("data", data);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
-
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_PPE), params);
-            log.debug("netone response=" + response.toString());
-            retobj = new NetonePCS(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_PPE, params);
+            return new NetonePCS(response);
         } catch (Exception e) {
-            log.error("-PCS（ppe） 公钥加密失败", e);
-
             throw new NetonejExcepption("-PCS（ppe） 公钥加密失败" + e, e);
         }
-
-        return retobj;
     }
 
+
+    //========================10.使用密钥id对应的证书进行公钥解密========================
+
+    public NetonePCS pubKeyDecrypt(String id, String idMagic, String encryptData) throws NetonejExcepption {
+        return publicKeyDecrypt(id,idMagic,encryptData);
+    }
+
+    public NetonePCS pubKeyDecrypt(String id, IdMagic idMagic, String encryptData) throws NetonejExcepption {
+        return publicKeyDecrypt(id,idMagic.name(),encryptData);
+    }
+
+    public NetonePCS pubKeyDecrypt(String id, String encryptData) throws NetonejExcepption {
+        return publicKeyDecrypt(id,null,encryptData);
+    }
 
     /**
      * 使用密钥id对应的证书进行公钥解密 （注意，RSA公钥解密的明文最大长度不能超过私钥长度的2倍，SM2不支持公钥解密）
      *
      * @param id          密钥id
-     * @param idMagic     {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic     {@link com.syan.netonej.common.dict.IdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param encryptData Base64编码的待解密数据
      * @return {@link com.syan.netonej.http.entity.NetonePCS} 公钥解密后的数据
      * @throws NetonejExcepption API全局异常类
      */
-    public NetonePCS pubKeyDecrypt(String id, String idMagic, String encryptData) throws NetonejExcepption {
-        log.debug("-PCS（ppd）id：" + id + "idMagic：" + idMagic + " encryptData：" + encryptData);
-
-        NetonePCS retobj = null;
+    private NetonePCS publicKeyDecrypt(String id, String idMagic, String encryptData) throws NetonejExcepption {
         Map<String, String> params = prepareParameter();
-
-        params.put(PARAME_ID, id);
-
-        params.put(PARAME_DATA, encryptData);
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("id", id);
+        params.put("data", encryptData);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
-
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_PPD), params);
-            log.debug("netone response=" + response.toString());
-            retobj = new NetonePCS(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_PPD, params);
+            return new NetonePCS(response);
         } catch (Exception e) {
-            log.error("-PCS（ppd）公钥解密失败", e);
-
             throw new NetonejExcepption("-PCS（ppd）公钥解密失败" + e, e);
         }
+    }
 
-        return retobj;
+
+    //========================11.使用密钥id对应的证书创建XML签名========================
+
+    public NetonePCS createXMLSignature(String id, String pwd, String idMagic, String database64) throws NetonejExcepption {
+        return createXMLSign(id,pwd,idMagic,database64,SignMode.enveloped.ordinal());
+    }
+
+    public NetonePCS createXMLSignature(String id, String pwd, String database64) throws NetonejExcepption {
+        return createXMLSign(id,pwd,null,database64,SignMode.enveloped.ordinal());
+    }
+
+    public NetonePCS createXMLSignature(String id, String pwd, String database64,SignMode signMode) throws NetonejExcepption {
+        return createXMLSign(id,pwd,null,database64,signMode.ordinal());
+    }
+
+    public NetonePCS createXMLSignature(String id, String pwd, IdMagic idMagic,String database64) throws NetonejExcepption {
+        return createXMLSign(id,pwd,idMagic.name(),database64,SignMode.enveloped.ordinal());
+    }
+
+    public NetonePCS createXMLSignature(String id, String pwd, IdMagic idMagic,String database64,SignMode signMode) throws NetonejExcepption {
+        return createXMLSign(id,pwd,idMagic.name(),database64,signMode.ordinal());
+    }
+    @Deprecated
+    public NetonePCS createXMLSignature(String id, String pwd, String idMagic, String database64,String sigmode) throws NetonejExcepption {
+        return createXMLSign(id,pwd,idMagic,database64,Integer.parseInt(sigmode));
     }
 
     /**
@@ -678,146 +626,114 @@ public class PCSClient extends BaseClient {
      *
      * @param id         密钥id
      * @param pwd        密钥访问口令
-     * @param idMagic    {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic    {@link com.syan.netonej.common.dict.IdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param database64 BASE64编码的待签名数据，数据长度不限
      * @return {@link com.syan.netonej.http.entity.NetonePCS} xml签名数据
      * @throws NetonejExcepption
      */
-    public NetonePCS createXMLSignature(String id, String pwd, String idMagic, String database64) throws NetonejExcepption {
-
-        log.debug("-PCS（xsx）id：" + id + "idMagic：" + idMagic + " database64：" + database64);
-
-        NetonePCS retobj = null;
+    private NetonePCS createXMLSign(String id, String pwd, String idMagic, String database64,int sigmode) throws NetonejExcepption {
         Map<String, String> params = prepareParameter();
-
-        params.put(PARAME_ID, id);
+        params.put("id", id);
         if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
+            params.put("passwd", pwd);
         }
-        params.put(PARAME_DATA, database64);
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        params.put("data", database64);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
+        params.put("sigmode", String.valueOf(sigmode));
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SXS), params);
-            log.debug("netone response=" + response.toString());
-            retobj = new NetonePCS(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_SXS, params);
+            return new NetonePCS(response);
         } catch (Exception e) {
-            log.error("-PCS（sxs）创建PKCS#7数字签名失败", e);
-
             throw new NetonejExcepption("-PCS（sxs）创建PKCS#7数字签名失败" + e, e);
         }
-
-        return retobj;
     }
 
-
-    public NetonePCS createXMLSignature(String id, String pwd, String idMagic, String database64,String sigmode) throws NetonejExcepption {
-
-        log.debug("-PCS（xsx）id：" + id + "idMagic：" + idMagic + " database64：" + database64);
-
-        NetonePCS retobj = null;
-        Map<String, String> params = prepareParameter();
-
-        params.put(PARAME_ID, id);
-        if (pwd != null && !"".equals(pwd)) {
-            params.put(PARAME_PASSWD, pwd);
-        }
-        params.put(PARAME_DATA, database64);
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
-        }
-        params.put("sigmode", sigmode);
-        try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_SXS), params);
-            log.debug("netone response=" + response.toString());
-            retobj = new NetonePCS(response);
-        } catch (Exception e) {
-            log.error("-PCS（sxs）创建PKCS#7数字签名失败", e);
-
-            throw new NetonejExcepption("-PCS（sxs）创建PKCS#7数字签名失败" + e, e);
-        }
-
-        return retobj;
-    }
-
+    //========================12.修改密钥访问口令========================
     /**
      * 修改密钥访问口令
-     *
      * @param id      密钥id
-     * @param idMagic {@link com.syan.netonej.common.NetonejIdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
+     * @param idMagic {@link com.syan.netonej.common.dict.IdMagic}id类型 - kid=密钥id，scn=证书CN主题项，snhex=十六进制格式证书序列号，sndec=十进制格式证书序列号，tnsha1=SHA1格式证书指纹
      * @param oldpwd  原密码口令
      * @param newpwd  新密码口令
      * @return {@link com.syan.netonej.http.entity.NetonePCS} 修改结果
      * @throws NetonejExcepption API全局异常类
      */
     public NetonePCS changePassword(String id, String idMagic, String oldpwd,String newpwd) throws NetonejExcepption {
+        return changePasswordAction(id,idMagic,oldpwd,newpwd);
+    }
 
-        log.debug("-PCS（chpwd） id：" + id + "idMagic：" + idMagic);
+    public NetonePCS changePassword(String id, IdMagic idMagic, String oldpwd,String newpwd) throws NetonejExcepption {
+        return changePasswordAction(id,idMagic.name(),oldpwd,newpwd);
+    }
 
-        NetonePCS retobj = null;
+    public NetonePCS changePassword(String id, String oldpwd,String newpwd) throws NetonejExcepption {
+        return changePasswordAction(id,null,oldpwd,newpwd);
+    }
+
+    private NetonePCS changePasswordAction(String id, String idMagic, String oldpwd,String newpwd) throws NetonejExcepption {
 
         Map<String, String> params = new HashMap<String, String>();
 
-        params.put(PARAME_ID, id);
+        params.put("id", id);
 
         params.put("oldpwd", oldpwd);
 
         params.put("newpwd", newpwd);
 
-        if (NetonejUtil.isEmpty(idMagic)) {
-            params.put(PARAME_IDMAGIC, "kid");
-        } else {
-            params.put(PARAME_IDMAGIC, idMagic);
+        if (!NetonejUtil.isEmpty(idMagic)) {
+            params.put("idmagic", idMagic.trim().toLowerCase());
         }
-
         try {
-            NetoneResponse response = processer.doPost(getServiceUrl(PCS_ACTION_CHPWD), params);
-            log.debug("netone response=" + response.toString());
-            retobj = new NetonePCS(response);
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_CHPWD, params);
+            return new NetonePCS(response);
         } catch (Exception e) {
-            log.error("-PCS（chpwd） 密钥访问口令失败", e);
-
             throw new NetonejExcepption("-PCS（chpwd） 密钥访问口令失败" + e, e);
         }
-
-        return retobj;
     }
 
+    //========================16.CMAC密钥派生函数========================
 
-    /*
-     * 获取PCS服务IP
-     * @return PCS服务IP
-     */
-    @Override
-    public String getHostIp() {
-        return this._host;
+    public NetonePCS cmacKeyDerivation(String id, String passwd, String factor,CipherAlgorithm cipher,String pubk  ) throws NetonejExcepption{
+        return cmacKeyDerivationFunc(id,passwd,factor,cipher.getName(),pubk);
     }
 
-    /*
-     * 获取PCS服务端口
-     * @return PCS服务端口
-     */
-    @Override
-    public String getPort() {
-        return this._port;
+    public NetonePCS cmacKeyDerivation(String id, String passwd, String factor,CipherAlgorithm cipher) throws NetonejExcepption{
+        return cmacKeyDerivationFunc(id,passwd,factor,cipher.getName(),null);
     }
 
-    public boolean isContainsCertChain() {
-        return containsCertChain;
-    }
-
-    /**
-     * 设置包含证书链
+    /**CMAC密钥派生函数
      *
-     * @param containsCertChain 设置包含证书链
+     * @param id      密钥ID
+     * @param passwd  口令
+     * @param factor  密钥派生因子(BASE64编码）
+     * @param cipher   密钥派生算法（比如： sm4, aes128, aes256)等
+     * @param pubk    如果设置此项，传入base64格式的客户端的公钥/证书，则服务会用此公钥加密返回密钥派生密钥
+     * @return        {@link com.syan.netonej.http.entity.NetonePCS} BASE64编码的密钥派生密钥（当客户端传入公钥/证书时，返回BASE编码的被公钥加密的密钥派生密钥）
+     * @throws NetonejExcepption
      */
-    public void setContainsCertChain(boolean containsCertChain) {
-        this.containsCertChain = containsCertChain;
+    private NetonePCS cmacKeyDerivationFunc(String id, String passwd, String factor,String cipher,String pubk  ) throws NetonejExcepption{
+
+        Map<String, String> params = new HashMap<String, String>();
+
+        params.put("id", id);
+
+        params.put("passwd", passwd);
+
+        params.put("factor", factor);
+
+        params.put("cipher",cipher);
+
+        if (!NetonejUtil.isEmpty(pubk)) {
+            params.put("pubk", pubk);
+        }
+        try {
+            NetoneResponse response = doHttpPost(Action.PCS_ACTION_CMACKDF, params);
+            return new NetonePCS(response);
+        } catch (Exception e) {
+            throw new NetonejExcepption("-PCS（cmac） 密钥派生失败" + e, e);
+        }
     }
 
 }

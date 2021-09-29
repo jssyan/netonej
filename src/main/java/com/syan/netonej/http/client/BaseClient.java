@@ -6,142 +6,83 @@
  */
 package com.syan.netonej.http.client;
 
+import com.syan.netonej.common.NetonejUtil;
+import com.syan.netonej.exception.NetonejExcepption;
+import com.syan.netonej.http.HttpClient;
+import com.syan.netonej.http.entity.NetoneResponse;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.protocol.HTTP;
+public abstract class BaseClient {
 
+	private String host;
 
-import com.syan.netonej.common.NetonejUtil;
-import com.syan.netonej.http.HttpPostProcesser;
-import com.syan.netonej.http.HttpStatus;
-import com.syan.netonej.http.entity.NetoneBase;
-import com.syan.netonej.http.entity.NetoneKeyList;
+	private String port;
 
-/**
-* 所有基于NetONE服务的Client类的基类
-* @author  gejq
-* @version  2.0.0
-* @since  1.0.4
-*/
-abstract class BaseClient {
-
-	private static final Log log = LogFactory.getLog(BaseClient.class);	
-	
-	/**
-	 * SVS交易响应报文格式 - "responseformat" = 基本 0 ,高级 (UTF-8) 1,高级 (base64) 2
-	 */
-	protected final static String RESPONSE_FORMAT_KEY = "responseformat";
-		
-	/**
-	 * Parameters - 证书键值  "cert"
-	 */
-	protected final static String PARAME_CERT = "cert";
-
-	/**
-	 * Parameters - 原文数据键值  "data"
-	 */
-	protected final static String PARAME_DATA = "data";	
-
-	/**
-	 * HTTP HEAD CONTENT TYPE
-	 */
-	protected final static String CONTENT_TYPE = "application/x-www-form-urlencoded; charset=utf-8";	
-	
-
-	/**
-	 * 农行K宝二代应用模式
-	 */
-	protected final static String PARAME_APPLICATION ="application";
-	
-	/**
-	 * 农行K宝二代项目应用模式取值abck2
-	 */
-	protected final static String PARAME_APPLICATION_VALUE = "abck2";
-	
-	/**
-	 * "responseformat" = 基本 0 ,高级 (UTF-8) 1,高级 (base64) 2
-	 */
-	protected static String responseformat = "0";
-	
 	/**
 	 * 应用模式取值abck2用于农行K宝二代项目 默认为标准模式
 	 */
 	protected String application = null;
-	
 
-	/**
-	 * 默认 http
-	 */
-	private boolean isSSL=false;
-	
-	/**
-	 * post 接口
-	 */
-	protected HttpPostProcesser processer;
-	
-	/**
-	 * @param processer
-	 */
-	protected BaseClient(HttpPostProcesser processer){		
-		this.processer = processer;		
-	}	
-	
-	
-	/**
-	 * true  https
-	 * @param isSSL
-	 */
-
-	public void setSSL(boolean isSSL) {
-		this.isSSL = isSSL;
+	public BaseClient(String host, String port) {
+		this.host = host;
+		this.port = port;
 	}
 
-
-
-	/**
-	 * 根据action号选择返回对应的服务URL
-	 * @param action 业务类型号
-	 * @return 完整服务URL
-	 */
-	protected String getServiceUrl(String action){
-		StringBuffer uri = new StringBuffer((isSSL?"https":"http")+"://"+getHostIp()+":"+getPort()+"/"+action);		
-		return uri.toString();
-	}
-	
-	/**
-	 *  Client 关闭释放全部连接
-	 */
-	public void releaseClient() {
-		processer.releaseConnection();
-		log.debug("NetONE服务器连接已断开...");
+	public BaseClient(String host, String port, String application) {
+		this.host = host;
+		this.port = port;
+		this.application = application;
 	}
 
-	/**
-	 * @return 应用模式
-	 */
-	public String getApplication() {
-		return application;
-	}
-
-	/**
-	 * @param application 应用模式
-	 */
 	public void setApplication(String application) {
 		this.application = application;
 	}
 
-	/**
-	 * @return 服务IP
-	 */
-	public abstract String getHostIp();
-	
-	/**
-	 * @return 服务端口
-	 */
-	public abstract String getPort();
-	
+	public void setHost(String host) {
+		this.host = host;
+	}
+
+	public void setPort(String port) {
+		this.port = port;
+	}
+
+
+	protected Map<String, String> prepareParameter(){
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("responseformat", "0");
+		if (!NetonejUtil.isEmpty(application)) {
+			params.put("application", application);
+		}
+		return params;
+	}
+
+	protected NetoneResponse doHttpPost(String action) throws NetonejExcepption {
+		return doHttpPost(action,null,null);
+	}
+
+
+	protected NetoneResponse doHttpPost(String action,Map<String,String> params) throws NetonejExcepption {
+		return doHttpPost(action,params,null);
+	}
+	protected NetoneResponse doHttpPost(String action,Map<String,String> params,Map<String,String> headers) throws NetonejExcepption {
+		String url = getServiceUrl(host,port)+action;
+		return HttpClient.builder().url(url).addParam(params).addHeader(headers).post().syncBytes();
+	}
+
+
+	protected NetoneResponse doHttpPostBytes(String action,byte[] bytes) throws NetonejExcepption {
+		String url = getServiceUrl(host,port)+action;
+		return HttpClient.builder().url(url).postBytes(bytes).syncBytes();
+	}
+
+
+	private String getServiceUrl(String host,String port){
+		if(host.startsWith("http://") || host.startsWith("https://")){
+			return host+":"+port;
+		}else{
+			return  "http://"+host+":"+port+"/";
+		}
+	}
 
 }

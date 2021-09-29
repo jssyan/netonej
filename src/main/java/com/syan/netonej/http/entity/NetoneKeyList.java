@@ -9,7 +9,6 @@ package com.syan.netonej.http.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.syan.netonej.common.NetonejUtil;
 
 /**

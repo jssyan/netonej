@@ -9,24 +9,24 @@ package com.syan.netonej.http.entity;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.security.auth.x500.X500Principal;
 
-import org.apache.commons.codec.binary.Base64;
-import org.spongycastle.asn1.ASN1Integer;
-import org.spongycastle.asn1.ASN1Sequence;
-import org.spongycastle.asn1.ASN1Set;
-import org.spongycastle.asn1.DERTaggedObject;
-import org.spongycastle.asn1.cms.ContentInfo;
-import org.spongycastle.asn1.cms.EncryptedContentInfo;
-import org.spongycastle.asn1.cms.IssuerAndSerialNumber;
-import org.spongycastle.asn1.cms.KeyTransRecipientInfo;
-import org.spongycastle.asn1.cms.RecipientInfo;
-import org.spongycastle.asn1.cms.SignerInfo;
-import org.spongycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.asn1.ASN1Integer;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.DERTaggedObject;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.EncryptedContentInfo;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.KeyTransRecipientInfo;
+import org.bouncycastle.asn1.cms.RecipientInfo;
+import org.bouncycastle.asn1.cms.SignerInfo;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 
 
@@ -114,7 +114,7 @@ public class NetoneEnvelope extends NetonePCS {
 	public NetoneEnvelope(NetoneResponse response) throws CertificateException, IOException   
     {   super(response);
     	
-    	ASN1Sequence seq=ASN1Sequence.getInstance(Base64.decodeBase64(response.getRetString()));
+    	ASN1Sequence seq=ASN1Sequence.getInstance(Base64.getDecoder().decode(response.getRetString()));
 		ContentInfo ci=ContentInfo.getInstance(seq);
 		Enumeration  enumeration=null;		
 		

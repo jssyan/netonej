@@ -7,16 +7,11 @@
 package com.syan.netonej.common;
 
 import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,16 +19,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.spongycastle.asn1.ASN1Encodable;
-import org.spongycastle.asn1.DERT61String;
-import org.spongycastle.asn1.DERUTF8String;
-import org.spongycastle.asn1.x500.AttributeTypeAndValue;
-import org.spongycastle.asn1.x500.RDN;
-import org.spongycastle.asn1.x500.X500Name;
-import org.spongycastle.util.encoders.Base64;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.DERT61String;
+import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.util.encoders.Base64;
 
 
 /**
@@ -44,7 +36,7 @@ import org.spongycastle.util.encoders.Base64;
  * @since 1.0.0
  */
 public class NetonejUtil {
-    private static final Log log = LogFactory.getLog(NetonejUtil.class);
+
     private static DateFormat dateFormat;
 
     /**
@@ -87,7 +79,7 @@ public class NetonejUtil {
                 char_string.append((char) Byte.parseByte(hex_string.substring(0, 2), 16));
                 hex_string = hex_string.substring(2);
             } catch (NumberFormatException e) {
-                log.error("HexString2StringError.NumberFormatException", e);
+//                log.error("HexString2StringError.NumberFormatException", e);
             }
         }
         return (new String(char_string));
@@ -116,7 +108,7 @@ public class NetonejUtil {
             messageDigest.reset();
             messageDigest.update(data);
         } catch (NoSuchAlgorithmException e) {
-            log.error("md5EncodeString.NoSuchAlgorithmException", e);
+            //log.error("md5EncodeString.NoSuchAlgorithmException", e);
         }
         byte[] byteArray = messageDigest.digest();
         StringBuffer md5StrBuff = new StringBuffer();
@@ -145,7 +137,6 @@ public class NetonejUtil {
      * 使用SHA1算法将字符串进行摘要（哈希、散列）
      *
      * @param _mess
-     * @param _algorithm
      * @return
      * @throws NoSuchAlgorithmException
      */
@@ -182,7 +173,7 @@ public class NetonejUtil {
             md = MessageDigest.getInstance("SHA-1");
             resultString = byte2HexString(md.digest(data));
         } catch (NoSuchAlgorithmException e) {
-            log.error("sha1EncodeString.NoSuchAlgorithmException", e);
+            //log.error("sha1EncodeString.NoSuchAlgorithmException", e);
         }
 
         return resultString.toUpperCase();
@@ -202,7 +193,7 @@ public class NetonejUtil {
             md = MessageDigest.getInstance(_algorithm);
             resultString = byte2HexString(md.digest(data.getBytes()));
         } catch (NoSuchAlgorithmException e) {
-            log.error("sha1EncodeString.NoSuchAlgorithmException", e);
+            //log.error("sha1EncodeString.NoSuchAlgorithmException", e);
         }
 
         return resultString.toUpperCase();
@@ -221,7 +212,7 @@ public class NetonejUtil {
             md = MessageDigest.getInstance(_algorithm);
             resultString = byte2HexString(md.digest(data));
         } catch (NoSuchAlgorithmException e) {
-            log.error("sha1EncodeString.NoSuchAlgorithmException", e);
+            //log.error("sha1EncodeString.NoSuchAlgorithmException", e);
         }
 
         return resultString.toUpperCase();
@@ -262,7 +253,7 @@ public class NetonejUtil {
      * @return 判断结果
      */
     public static boolean isEmpty(String string) {
-        if ("".equals(string) || string == null || string.trim().length() == 0) {
+        if (string == null || "".equals(string) || string.trim().length() == 0) {
             return true;
         } else {
             return false;
@@ -307,6 +298,7 @@ public class NetonejUtil {
         pemString = pemString.replaceAll("-----BEGIN CERTIFICATE-----", "");
         pemString = pemString.replaceAll("-----END CERTIFICATE-----", "");
         pemString = pemString.replaceAll("\r\n", "");
+        pemString = pemString.replaceAll("\n", "");
         return pemString;
     }
 
@@ -382,6 +374,15 @@ public class NetonejUtil {
         }
 
         return newRDNs;
+    }
+
+
+
+    public static String getCNFromSubject(String subject){
+        if(subject == null || !subject.contains("CN=")){
+            return "";
+        }
+        return subject.split("CN=")[1];
     }
 
 }

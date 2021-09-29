@@ -7,6 +7,8 @@
  */
 package com.syan.netonej.http.entity;
 
+import java.util.Base64;
+
 /**
  * 请求的返回对象
  *
@@ -19,11 +21,25 @@ public class NetoneResponse {
      * 状态码值
      */
     private int statusCode;
-    /**
-     * 请求返回的字符串
-     */
-    private String retString;
 
+    /**
+     * Netone服务器返回的数据
+     */
+    private byte[] retBytes;
+
+
+    public NetoneResponse(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public NetoneResponse(int statusCode, byte[] retBytes) {
+        this.statusCode = statusCode;
+        this.retBytes = retBytes;
+    }
+
+    public byte[] getRetBytes() {
+        return retBytes;
+    }
 
     /**
      * @return 状态码值
@@ -33,38 +49,18 @@ public class NetoneResponse {
     }
 
     /**
-     * @param statusCode 状态码值
-     */
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
-
-    /**
      * @return 请求返回的字符串
      */
     public String getRetString() {
-        return retString;
+        if(retBytes == null){
+            return null;
+        }
+        return new String(retBytes);
     }
 
-    /**
-     * @param retString 请求返回的字符串
-     */
-    public void setRetString(String retString) {
-        this.retString = retString;
+
+    public void setRetString(String str) {
+        this.retBytes = Base64.getDecoder().decode(str);
     }
 
-    /**
-     * toString
-     *
-     * @return
-     * @since 3.0.10
-     */
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder("NetoneResponse{");
-        builder.append("statusCode=").append(statusCode);
-        builder.append(",retString=").append(retString).append("}");
-
-        return builder.toString();
-    }
 }

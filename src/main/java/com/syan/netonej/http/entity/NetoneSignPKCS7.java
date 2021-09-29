@@ -10,22 +10,14 @@ package com.syan.netonej.http.entity;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
-
-import org.spongycastle.cert.X509CertificateHolder;
-import org.spongycastle.cms.CMSException;
-import org.spongycastle.cms.CMSSignedData;
-import org.spongycastle.cms.SignerInformation;
-import org.spongycastle.util.Store;
-import org.spongycastle.util.encoders.Base64;
-import org.spongycastle.asn1.cms.IssuerAndSerialNumber;
-
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
 import com.syan.netonej.common.CMSSignedDataUtil;
-import com.syan.netonej.common.NetonejUtil;
 
 /**Netone PKCS#7签名对象
  * 
@@ -104,8 +96,6 @@ public class NetoneSignPKCS7  extends NetonePCS{
 	public List<NetoneCertificate> getCertList() {
 		return certList;
 	}
-
-
 
 	/**
 	 * 获取签名者证书

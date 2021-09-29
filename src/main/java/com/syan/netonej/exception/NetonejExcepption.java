@@ -7,12 +7,6 @@
  */
 package com.syan.netonej.exception;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
 * NetONEJ  API 全局的异常类
 * @author  liyb

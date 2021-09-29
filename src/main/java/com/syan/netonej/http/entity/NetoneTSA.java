@@ -8,27 +8,28 @@
 package com.syan.netonej.http.entity;
 
 import java.io.IOException;
-import java.security.cert.CertificateException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.spongycastle.asn1.cms.IssuerAndSerialNumber;
-import org.spongycastle.asn1.x500.X500Name;
-import org.spongycastle.asn1.x509.GeneralName;
-import org.spongycastle.cert.X509CertificateHolder;
-import org.spongycastle.cms.CMSException;
-import org.spongycastle.cms.CMSSignedData;
-import org.spongycastle.cms.SignerInformation;
-import org.spongycastle.tsp.TSPException;
-import org.spongycastle.tsp.TimeStampResponse;
-import org.spongycastle.tsp.TimeStampTokenInfo;
-import org.spongycastle.util.encoders.Base64;
+//import org.spongycastle.asn1.cms.IssuerAndSerialNumber;
+//import org.spongycastle.asn1.x500.X500Name;
+//import org.spongycastle.asn1.x509.GeneralName;
+//import org.spongycastle.cert.X509CertificateHolder;
+//import org.spongycastle.cms.CMSException;
+//import org.spongycastle.cms.CMSSignedData;
+//import org.spongycastle.cms.SignerInformation;
+//import org.spongycastle.tsp.TSPException;
+//import org.spongycastle.tsp.TimeStampResponse;
+//import org.spongycastle.tsp.TimeStampTokenInfo;
+//import org.spongycastle.util.encoders.Base64;
 
 import com.syan.netonej.common.CMSSignedDataUtil;
 import com.syan.netonej.common.NetonejUtil;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.tsp.TSPException;
+import org.bouncycastle.tsp.TimeStampResponse;
+import org.bouncycastle.tsp.TimeStampTokenInfo;
 
 public class NetoneTSA extends NetoneBase {
 
@@ -58,18 +59,15 @@ public class NetoneTSA extends NetoneBase {
      */
     public NetoneTSA(NetoneResponse response) throws TSPException, IOException {
         super(response.getStatusCode());
-        this.timestampbase64 = response.getRetString();
-        if (timestampbase64 != null) {
-            tsTokeninfo = new TimeStampResponse(Base64.decode(timestampbase64.getBytes())).getTimeStampToken().getTimeStampInfo();
-
+        if (response.getRetBytes() != null) {
             try {
-                TimeStampResponse resp = new TimeStampResponse(Base64.decode(timestampbase64.getBytes()));
+                TimeStampResponse resp = new TimeStampResponse(response.getRetBytes());
+                tsTokeninfo = new TimeStampResponse(response.getRetBytes()).getTimeStampToken().getTimeStampInfo();
                 CMSSignedDataUtil cms = new CMSSignedDataUtil(resp.getTimeStampToken().getEncoded());
                 List<IssuerAndSerialNumber> issuerAndSerialNumbers = cms.getSignerIssuerAndSerialNumber();
                 if (issuerAndSerialNumbers.size() > 0) {
                     this.serial = issuerAndSerialNumbers.get(0).getSerialNumber().getValue().toString(16);
                 }
-
                 X500Name x500name = X500Name.getInstance(tsTokeninfo.getTsa().getName());
                 x500name = NetonejUtil.canonicalX500Name(x500name);
                 this.subject = x500name.toString();
@@ -78,7 +76,10 @@ public class NetoneTSA extends NetoneBase {
                 // TODO Auto-generated catch block
                 throw new TSPException(e.getMessage(), e);
             }
-            this.nonce = tsTokeninfo.getNonce().toString(16).toUpperCase();
+            if(tsTokeninfo.getNonce() != null){
+                this.nonce = tsTokeninfo.getNonce().toString(16).toUpperCase();
+            }
+
             this.imprint = NetonejUtil.byte2HexString(tsTokeninfo.getMessageImprintDigest());
             this.timestamp = tsTokeninfo.getGenTime();
             String algoName = algoMap.get(tsTokeninfo.getMessageImprintAlgOID().toString());
@@ -189,7 +190,7 @@ public class NetoneTSA extends NetoneBase {
      * @return 时间戳数据
      */
     public byte[] getEncoded() {
-        return timestampbase64 == null ? null : Base64.decode(timestampbase64);
+        return timestampbase64 == null ? null : Base64.getDecoder().decode(timestampbase64);
     }
 
     public TimeStampTokenInfo getTsTokeninfo() {

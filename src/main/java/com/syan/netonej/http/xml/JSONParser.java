@@ -8,29 +8,32 @@
 package com.syan.netonej.http.xml;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.spongycastle.util.encoders.Base64;
 
 
 
 import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.http.entity.NetoneCertificate;
+import com.syan.netonej.http.json.JSONArray;
 import com.syan.netonej.http.json.JSONObject;
 
 public class JSONParser   implements Parser{
 
 	@Override
 	public Object parse(String xmlstr) throws Exception {
+		List<NetoneCertificate> list=new ArrayList<>();
 		JSONObject json=new JSONObject(xmlstr);
+		JSONArray jsonArray = json.optJSONArray("item");
+		if(jsonArray != null){
+			return list;
+		}
 		JSONObject items=json.getJSONObject("item");
 		String[] names=json.getNames(items);
-		List<NetoneCertificate> list=new ArrayList<NetoneCertificate>();
 		for(int i=0;i<names.length;i++){
 			JSONObject item=items.getJSONObject(names[i]);
-			String base64String=NetonejUtil.pemToBase64String(new String(Base64.decode(item.getString("crt"))));
+			String base64String=NetonejUtil.pemToBase64String(new String(Base64.getDecoder().decode(item.getString("crt"))));
 			list.add(new NetoneCertificate(base64String))	;
 		}
 		return list;

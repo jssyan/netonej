@@ -9,24 +9,20 @@ package com.syan.netonej.http.entity;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.*;
 
-import javax.security.auth.x500.X500Principal;
 
-import org.apache.commons.codec.binary.Base64;
-import org.spongycastle.asn1.ASN1Encodable;
-import org.spongycastle.asn1.ASN1ObjectIdentifier;
-import org.spongycastle.asn1.DERT61String;
-import org.spongycastle.asn1.DERUTF8String;
-import org.spongycastle.asn1.x500.AttributeTypeAndValue;
-import org.spongycastle.asn1.x500.RDN;
-import org.spongycastle.asn1.x500.X500Name;
-import org.spongycastle.asn1.x509.Extensions;
-import org.spongycastle.cert.X509CertificateHolder;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.DERT61String;
+import org.bouncycastle.asn1.DERUTF8String;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extensions;
+import org.bouncycastle.cert.X509CertificateHolder;
 
 
 import com.syan.netonej.common.NetonejUtil;
@@ -85,7 +81,7 @@ public class NetoneCertificate extends NetoneBase {
      */
     public NetoneCertificate(byte[] cert) throws CertificateException, IOException {
         if (cert != null) {
-            this.certBase64String = new String(Base64.encodeBase64(cert));
+            this.certBase64String = new String(Base64.getEncoder().encodeToString(cert));
             this.certificate = new X509CertificateHolder(cert);
         }
     }
@@ -109,7 +105,7 @@ public class NetoneCertificate extends NetoneBase {
      */
     public NetoneCertificate(NetoneResponse response) throws CertificateException, IOException {
         super(response.getStatusCode());
-        if (!NetonejUtil.isEmpty(response.getRetString())) {
+        if (response.getRetBytes() != null) {
             this.certBase64String = response.getRetString();
             this.certificate = new X509CertificateHolder(getCertEncoded());
         }
@@ -177,7 +173,7 @@ public class NetoneCertificate extends NetoneBase {
     }
 
     public String getPublicKey() {
-        return certificate == null ? null : Base64.encodeBase64String(certificate.getSubjectPublicKeyInfo().getPublicKeyData().getBytes());
+        return certificate == null ? null : Base64.getEncoder().encodeToString(certificate.getSubjectPublicKeyInfo().getPublicKeyData().getBytes());
     }
 
     public Set getCriticalExtensionOIDs() {
@@ -212,7 +208,7 @@ public class NetoneCertificate extends NetoneBase {
      * @return 证书编码数据
      */
     public byte[] getCertEncoded() {
-        return certBase64String == null ? null : Base64.decodeBase64(certBase64String);
+        return certBase64String == null ? null : Base64.getDecoder().decode(certBase64String);
     }
 
     /**

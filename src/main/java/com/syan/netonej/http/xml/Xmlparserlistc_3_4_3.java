@@ -10,13 +10,8 @@ package com.syan.netonej.http.xml;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-
-import javax.security.cert.CertificateException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -28,7 +23,6 @@ import com.syan.netonej.http.entity.NetoneCertificate;
  * @since 2.0.0
  */
 class Xmlparserlistc_3_4_3 implements Parser {
-    private static final Log log = LogFactory.getLog(Xmlparserlistc_3_4_3.class);
 
     @Override
     public Object parse(String xmlstr) throws Exception {
@@ -51,7 +45,7 @@ class Xmlparserlistc_3_4_3 implements Parser {
                     try {
                         listc.add(new NetoneCertificate(items.item(j).getFirstChild().getTextContent()));
                     } catch (Exception e) {
-                        log.error("Xmlparserlistc_3_4_3 XML 解析中 构造证书失败" + e + "::" + items.item(j).getFirstChild().getTextContent());
+                        throw new Exception("Xmlparserlistc_3_4_3 XML 解析中 构造证书失败" + e + "::" + items.item(j).getFirstChild().getTextContent());
                     }
                 }
             }

@@ -10,11 +10,7 @@ package com.syan.netonej.http.xml;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
-
 import com.syan.netonej.exception.NetonejExcepption;
 
 /**
@@ -25,7 +21,6 @@ import com.syan.netonej.exception.NetonejExcepption;
  * @since 2.0.0
  */
 public class XmlparserFacotry {
-    private static final Log log = LogFactory.getLog(XmlparserFacotry.class);
     /**
      * 解析器文件名前缀
      */
@@ -57,11 +52,9 @@ public class XmlparserFacotry {
                 //XML
                 String actionAndVersion = getActionVersion(xmlstring);
                 Parser parser = (Parser) Class.forName(package_path + fix_name + actionAndVersion).newInstance();
-
                 return parser.parse(xmlstring);
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new NetonejExcepption(e.getMessage(), e);
         }
     }
@@ -86,7 +79,6 @@ public class XmlparserFacotry {
 
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new NetonejExcepption(e.getMessage(), e);
         }
     }

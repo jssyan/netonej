@@ -10,75 +10,62 @@ package com.syan.netonej.http.client;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import com.syan.netonej.common.dict.Action;
+import com.syan.netonej.common.dict.IdMagic;
 import com.syan.netonej.exception.NetonejExcepption;
-import com.syan.netonej.http.HttpPostProcesser;
-import com.syan.netonej.http.HttpPostProcesserFactory;
-import com.syan.netonej.http.HttpStatus;
 import com.syan.netonej.http.entity.NetoneCertList;
 import com.syan.netonej.http.entity.NetoneCertificate;
-import com.syan.netonej.http.entity.NetoneKeyList;
 import com.syan.netonej.http.entity.NetoneResponse;
 import com.syan.netonej.http.xml.XmlparserFacotry;
 
 public class EapiClient extends BaseClient {
 	
-	
-	private static final Log log = LogFactory.getLog(EapiClient.class);
-	/**
-	 * EAPI 服务IP
-	 */
-	private  String _host;
-	/**
-	 * EAPI 服务PORT
-	 */
-	private  String _port;
-	
-	private  String EAPI_ACTION="eapi.php";
-	/**
-	 * Parameters - ID类型键值  "idmagic"
-	 */
-	private final static String PARAME_IDMAGIC = "idmagic";	
-	/**
-	 * 根据action号选择返回对应的服务URL
-	 * @param action 业务类型号
-	 * @return 完整服务URL
-	 */
-	@Override
-	protected String getServiceUrl(String action){
-		StringBuffer uri = new StringBuffer("https://"+getHostIp()+":"+getPort()+"/"+action);		
-		return uri.toString();
-	}
-	
 	public EapiClient(String host,String port) {
-		super(HttpPostProcesserFactory.createPostProcesser());
-		this._host = host;
-		this._port = port;
+		super(host,port);
 	}
-	
 
-	public NetoneResponse uploadCert(String base64_cert) throws NetonejExcepption{
-		
-		NetoneResponse response=null;
-		try {	
-		
-			Map<String,String> params = new HashMap<String,String>();		
-			
+	public EapiClient(String host) {
+		super(host,"9108");
+	}
+
+	/**
+	 * 上传证书
+	 * @param cert base64编码的证书
+	 * @param revoked true向不可信列表上传,false向可信列表上传
+	 * @return
+	 * @throws NetonejExcepption
+	 */
+	public NetoneResponse uploadCert(String cert,boolean revoked) throws NetonejExcepption{
+		try {
+			Map<String,String> params = new HashMap<String,String>();
 			params.put("module", "pki");
-			params.put("action", "addtrusted");
-			params.put("data", base64_cert);				
-			response=processer.doPost(getServiceUrl(EAPI_ACTION), params);			
-		} catch (Exception e) {		
-			log.error("-EAPI（uploadCert）上传证书失败", e);
+			if(revoked){
+				params.put("action", "addrevoked");
+			}else{
+				params.put("action", "addtrusted");
+			}
+			params.put("data", cert);
+			return doHttpPost(Action.EAPI_ACTION, params);
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NetonejExcepption("-EAPI（uploadCert）上传证书失败"+ e,e);
 		}
-		return response;			
 	}
-	
+
+	public NetoneResponse uploadCert(String cert) throws NetonejExcepption{
+		return uploadCert(cert,false);
+	}
+
+
+	public NetoneResponse deleteCert(String data, IdMagic idMagic) throws NetonejExcepption{
+		return deleteCert(data,idMagic.name(),false);
+	}
+
+
+	public NetoneResponse deleteCert(String data, IdMagic idMagic,boolean revoked) throws NetonejExcepption{
+		return deleteCert(data,idMagic.name(),revoked);
+	}
+
 	/**
 	 * 
 	 * @param data
@@ -86,62 +73,55 @@ public class EapiClient extends BaseClient {
 	 * @return
 	 * @throws NetonejExcepption
 	 */
-public NetoneResponse deleteCert(String data,String idmagic) throws NetonejExcepption{
-		
+	private NetoneResponse deleteCert(String data,String idmagic,boolean revoked) throws NetonejExcepption{
 		NetoneResponse response=null;
 		try {	
-		
-			Map<String,String> params = new HashMap<String,String>();		
+			Map<String,String> params = new HashMap<String,String>();
 			params.put("module", "pki");
-			params.put("action", "deltrusted");
-			params.put(PARAME_IDMAGIC, idmagic);		
+			if(revoked){
+				params.put("action", "delrevoked");
+			}else{
+				params.put("action", "deltrusted");
+			}
+			params.put("idmagic", idmagic.toLowerCase());
 			params.put("data", data);				
-			response=processer.doPost(getServiceUrl(EAPI_ACTION), params);			
+			response=doHttpPost(Action.EAPI_ACTION, params);
 		} catch (Exception e) {		
-			log.error("-EAPI（uploadCert）上传证书失败", e);
+
 			e.printStackTrace();
 			throw new NetonejExcepption("-EAPI（deleteCert）删除证书失败"+ e,e);
 		}
 		return response;			
 	}
 
-	/** 枚举服务端证书列表
-	 * @return NetoneCertList  服务端证书列表
+
+	public NetoneCertList listCertificates() throws NetonejExcepption{
+		return listCertificates(false);
+	}
+
+	/**
+	 * 枚举服务端证书列表
+	 * @param revoked true返回不可信列表，false返回可信列表
+	 * @return
 	 * @throws NetonejExcepption
 	 */
-	public NetoneCertList listCertificates() throws NetonejExcepption{	
-		
-		log.debug("-EAPI（listCertificates）");
-		
-		NetoneCertList list = null;
-		Map<String, String> params = new HashMap<String, String>();		
-		params.put(RESPONSE_FORMAT_KEY,responseformat);		
+	public NetoneCertList listCertificates(boolean revoked) throws NetonejExcepption{
+		Map<String, String> params = new HashMap<String, String>();
 		params.put("module", "pki");
-		params.put("action", "listtrusted");
-		
+		if(revoked){
+			params.put("action", "listrevoked");
+		}else{
+			params.put("action", "listtrusted");
+		}
 		try{
-			 NetoneResponse response=processer.doPost(getServiceUrl(EAPI_ACTION), params);	
-			 list= new NetoneCertList(response.getStatusCode());
-			 if(response.getStatusCode()==HttpStatus.SC_OK){				
-			 	list.setCertList((List<NetoneCertificate>)XmlparserFacotry.parseXmlString(response.getRetString()));
-			 }
+			NetoneResponse response=doHttpPost(Action.EAPI_ACTION, params);
+			NetoneCertList list= new NetoneCertList(response.getStatusCode());
+			if(response.getStatusCode()==200){
+				list.setCertList((List<NetoneCertificate>) XmlparserFacotry.parseXmlString(response.getRetString()));
+			}
+			return list;
 		}catch(Exception e){
-			
-			log.error("-EAPI（listtrusted）枚举服务端的证书", e);
-			
 			throw new NetonejExcepption("-EAPI（listtrusted）枚举服务端的证书"+ e,e);
 		}
-		return list;
 	}
-	
-	@Override
-	public String getHostIp() {
-		return this._host;
-	}
-
-	@Override
-	public String getPort() {
-		return this._port;
-	}
-
 }

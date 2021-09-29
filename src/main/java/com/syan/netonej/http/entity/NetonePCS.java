@@ -7,17 +7,15 @@
  */
 package com.syan.netonej.http.entity;
 
-import org.apache.commons.codec.binary.Base64;
 
+import java.util.Base64;
 
 public class NetonePCS extends NetoneBase{
 	/**
 	 * 返回数据的base64编码字符串
 	 */
 	private String retBase64String;
-	
-	public NetonePCS(){		
-	}
+
 	/**
 	 * @param response 
 	 */
@@ -30,7 +28,7 @@ public class NetonePCS extends NetoneBase{
 	 * @return base64解码后的数据byte[]
 	 */
 	public byte[] getEncoded() {
-		return retBase64String==null ? null:Base64.decodeBase64(retBase64String);
+		return retBase64String==null ? null: Base64.getDecoder().decode(retBase64String);
 	}
 	
 	/** 获取服务返回信息base64编码字符串

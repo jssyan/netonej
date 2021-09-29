@@ -9,10 +9,6 @@ package com.syan.netonej.http.entity;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
-
-import com.syan.netonej.http.HttpStatus;
-import com.syan.netonej.http.xml.XmlparserFacotry;
-
 /**
  * SVS服务返回信息
  * <p>
@@ -41,15 +37,15 @@ public class NetoneSVS extends NetoneBase {
     public NetoneSVS(NetoneResponse response) throws CertificateException, IOException {
         super(response.getStatusCode());
         try {
-            if (response.getStatusCode() == HttpStatus.SC_OK) {
-                String orginal = XmlparserFacotry.parseXmlString4Data(response.getRetString()).toString();
-                Object obj = XmlparserFacotry.parseXmlString(response.getRetString());
+            if (response.getStatusCode() == 200) {
+                //String orginal = XmlparserFacotry.parseXmlString4Data(response.getRetString()).toString();
+                //Object obj = XmlparserFacotry.parseXmlString(response.getRetString());
 
-                if (obj != null) {
-                    certificate = new NetoneCertificate(obj.toString());
-                }
-
-                this.setOrginalBase64(orginal);
+//                if (obj != null) {
+//                    certificate = new NetoneCertificate(obj.toString());
+//                }
+//
+//                this.setOrginalBase64(orginal);
             }
         } catch (Exception e) {
             throw new CertificateException(e.getMessage(), e);

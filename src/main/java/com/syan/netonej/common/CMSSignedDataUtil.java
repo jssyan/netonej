@@ -9,16 +9,16 @@
 package com.syan.netonej.common;
 
 
-import org.spongycastle.asn1.ASN1Encodable;
-import org.spongycastle.asn1.ASN1Sequence;
-import org.spongycastle.asn1.ASN1Set;
-import org.spongycastle.asn1.cms.ContentInfo;
-import org.spongycastle.asn1.cms.IssuerAndSerialNumber;
-import org.spongycastle.asn1.cms.SignedData;
-import org.spongycastle.cert.X509CertificateHolder;
-import org.spongycastle.cms.CMSException;
-import org.spongycastle.cms.CMSSignedData;
-import org.spongycastle.util.encoders.Base64;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1Sequence;
+import org.bouncycastle.asn1.ASN1Set;
+import org.bouncycastle.asn1.cms.ContentInfo;
+import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
+import org.bouncycastle.asn1.cms.SignedData;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.CMSException;
+import org.bouncycastle.cms.CMSSignedData;
+import org.bouncycastle.util.encoders.Base64;
 
 import java.io.IOException;
 import java.util.ArrayList;
