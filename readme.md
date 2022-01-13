@@ -50,13 +50,16 @@ NetoneJ是一个连接先安`NetONE`安全网关 SVS PCS TSA EAPI等模块的工
 
 ## 下载
 
-NetoneJ的jar包位于工程下的resource目录中，请下载最新版本的jar包，目前暂未上传到maven中央仓库，未来将支持maven方式依赖，下列表格中"X.X.X"表示发布的最新版本。
+请下载最新版本的jar包使用
 
-| 依赖库   |  下载目录            |说明            |
-| --------|------------- |------------- |
-| NetoneJ      |resource/vX.X.X |netonej在发布时，会提供两种形式的j ar包，netonej-X.X.X.jar不包含依赖，netonej-X.X.X-jar-with-dependencies.jar包含了依赖库|
+| 依赖库   |  说明            |
+| --------|------------- |
+| netonej-X.X.X.jar      |打包时不包含依赖库|
+| netonej-X.X.X-jar-with-dependencies.jar      |打包时包含了所有依赖库|
 
-
+<p align="left">
+	<a href="https://github.com/jssyan/netonej/releases">点击下载NetoneJ最新包</a>
+</p>
 
 ## 帮助文档
 
