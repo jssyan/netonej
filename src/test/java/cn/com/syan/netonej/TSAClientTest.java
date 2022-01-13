@@ -21,7 +21,7 @@ import java.util.Base64;
 public class TSAClientTest {
 
 
-    TSAClient client = new TSAClient("192.168.10.15");
+    TSAClient client = new TSAClient("202.100.108.30","9198");
 
 
     /**
@@ -32,7 +32,7 @@ public class TSAClientTest {
     @Test
     public void testGetTimestamp() throws NetonejExcepption {
         String data = Base64.getEncoder().encodeToString("123456".getBytes());
-        NetoneTSA netoneTSA = client.createTimestamp(data,DataType.PLAIN,DigestAlgorithm.MD5);
+        NetoneTSA netoneTSA = client.createTimestamp(data,DataType.PLAIN,DigestAlgorithm.SHA1);
         System.out.println(netoneTSA.getTimestampbase64());
 
         netoneTSA = client.verifyTimestamp(netoneTSA.getTimestampbase64(),data,DataType.PLAIN);

@@ -61,8 +61,9 @@ public class NetoneTSA extends NetoneBase {
         super(response.getStatusCode());
         if (response.getRetBytes() != null) {
             try {
-                TimeStampResponse resp = new TimeStampResponse(response.getRetBytes());
-                tsTokeninfo = new TimeStampResponse(response.getRetBytes()).getTimeStampToken().getTimeStampInfo();
+                byte[] stamp = response.getRetBytes();
+                TimeStampResponse resp = new TimeStampResponse(stamp);
+                tsTokeninfo = resp.getTimeStampToken().getTimeStampInfo();
                 CMSSignedDataUtil cms = new CMSSignedDataUtil(resp.getTimeStampToken().getEncoded());
                 List<IssuerAndSerialNumber> issuerAndSerialNumbers = cms.getSignerIssuerAndSerialNumber();
                 if (issuerAndSerialNumbers.size() > 0) {
@@ -71,19 +72,21 @@ public class NetoneTSA extends NetoneBase {
                 X500Name x500name = X500Name.getInstance(tsTokeninfo.getTsa().getName());
                 x500name = NetonejUtil.canonicalX500Name(x500name);
                 this.subject = x500name.toString();
+                if(tsTokeninfo.getNonce() != null){
+                    this.nonce = tsTokeninfo.getNonce().toString(16).toUpperCase();
+                }
 
+                this.imprint = NetonejUtil.byte2HexString(tsTokeninfo.getMessageImprintDigest());
+                this.timestamp = tsTokeninfo.getGenTime();
+                String algoName = algoMap.get(tsTokeninfo.getMessageImprintAlgOID().toString());
+                this.algo = algoName == null ? tsTokeninfo.getMessageImprintAlgOID().toString() : algoName;
+
+                this.timestampbase64 = Base64.getEncoder().encodeToString(stamp);
             } catch (CMSException e) {
                 // TODO Auto-generated catch block
                 throw new TSPException(e.getMessage(), e);
             }
-            if(tsTokeninfo.getNonce() != null){
-                this.nonce = tsTokeninfo.getNonce().toString(16).toUpperCase();
-            }
 
-            this.imprint = NetonejUtil.byte2HexString(tsTokeninfo.getMessageImprintDigest());
-            this.timestamp = tsTokeninfo.getGenTime();
-            String algoName = algoMap.get(tsTokeninfo.getMessageImprintAlgOID().toString());
-            this.algo = algoName == null ? tsTokeninfo.getMessageImprintAlgOID().toString() : algoName;
         }
     }
 

@@ -1,3 +1,5 @@
+## v3.0.16
+- 修复netoneTSA.getTimestampbase64()获取Base64编码的时间戳为null的问题
 ## v3.0.15
 
 - 内部网络请求优化
