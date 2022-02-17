@@ -82,10 +82,19 @@ public class SVSClientTest {
 
         svs = client.verifyPKCS7(p7Attach);
 
+        //状态码 200为成功，其他为失败
         System.out.println(svs.getStatusCode());
+        //base64编码的签名原文
+        System.out.println(svs.getOrginalBase64());
+        //签名证书
+        NetoneCertificate netoneCertificate = svs.getCertificate();
+        System.out.println(netoneCertificate.getSubject());
 
         svs = client.verifyPKCS7(p7Dettach,data);
         System.out.println(svs.getStatusCode());
+        System.out.println(svs.getOrginalBase64());
+        netoneCertificate = svs.getCertificate();
+        System.out.println(netoneCertificate.getSubject());
     }
 
 

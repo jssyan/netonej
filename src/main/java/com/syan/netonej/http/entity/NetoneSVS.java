@@ -7,6 +7,8 @@
  */
 package com.syan.netonej.http.entity;
 
+import com.syan.netonej.http.xml.XmlparserFacotry;
+
 import java.io.IOException;
 import java.security.cert.CertificateException;
 /**
@@ -38,14 +40,14 @@ public class NetoneSVS extends NetoneBase {
         super(response.getStatusCode());
         try {
             if (response.getStatusCode() == 200) {
-                //String orginal = XmlparserFacotry.parseXmlString4Data(response.getRetString()).toString();
-                //Object obj = XmlparserFacotry.parseXmlString(response.getRetString());
-
-//                if (obj != null) {
-//                    certificate = new NetoneCertificate(obj.toString());
-//                }
-//
-//                this.setOrginalBase64(orginal);
+                String orginal = XmlparserFacotry.parseXmlString4Data(response.getRetString()).toString();
+                if(orginal != null){
+                    this.setOrginalBase64(orginal);
+                }
+                Object obj = XmlparserFacotry.parseXmlString(response.getRetString());
+                if (obj != null) {
+                    certificate = new NetoneCertificate(obj.toString());
+                }
             }
         } catch (Exception e) {
             throw new CertificateException(e.getMessage(), e);
