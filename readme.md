@@ -7,7 +7,7 @@
 
 <p align="center">
   <a target="_blank" href="">
-		<img src="https://img.shields.io/badge/release-v3.0.16-blue.svg" />
+		<img src="https://img.shields.io/badge/release-v3.0.17-blue.svg" />
 	</a>
 	<a target="_blank" href="">
 		<img src="https://img.shields.io/badge/maven-3.6.0-yellowgreen.svg" />
