@@ -34,7 +34,6 @@ public class TSAClientTest {
         String data = Base64.getEncoder().encodeToString("123456".getBytes());
         NetoneTSA netoneTSA = client.createTimestamp(data,DataType.PLAIN,DigestAlgorithm.SHA1);
         System.out.println(netoneTSA.getTimestampbase64());
-
         netoneTSA = client.verifyTimestamp(netoneTSA.getTimestampbase64(),data,DataType.PLAIN);
         System.out.println(netoneTSA.getStatusCode());
     }

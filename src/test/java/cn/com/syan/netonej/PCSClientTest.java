@@ -19,11 +19,12 @@ import java.util.Base64;
 public class PCSClientTest {
 
 
-    PCSClient client = new PCSClient("192.168.10.215");
+    //192.168.10.215
+    PCSClient client = new PCSClient("192.168.10.149");
 
-    String kid = "afaf4cdb49964c24e172112f2a4b98c9";
+    String kid = "5d587a54f30436344f9dc6a422178e47";
 
-    String cn = "J-N-S-P-E";
+    String cn = "test";
 
     String pin = "111111";
 
@@ -42,13 +43,14 @@ public class PCSClientTest {
      * @throws NetonejExcepption
      */
     @Test
-    public void getBase64CertificateById() throws NetonejExcepption {
+    public void getBase64CertificateById() throws Exception {
         NetoneCertificate certificate;
         //根据kid
-        //certificate = client.getBase64CertificateById(kid);
+        certificate = client.getBase64CertificateById(kid);
         //根据证书主题项的CN
-        certificate = client.getBase64CertificateById(cn,IdMagic.SCN);
-        System.out.println(certificate.getCertBase64String());
+        //certificate = client.getBase64CertificateById(cn,IdMagic.SCN);
+        NetoneCertificate certificate1 = new NetoneCertificate(certificate.getCertBase64String());
+        System.out.println(certificate1.getSubject());
     }
 
     /**
@@ -59,12 +61,8 @@ public class PCSClientTest {
     public void createPKCS1Signature() throws NetonejExcepption {
         String data = Base64.getEncoder().encodeToString("123456".getBytes());
         NetonePCS pcs;
-
         //pcs = client.createPKCS1Signature(kid,pin,data, DataType.PLAIN, DigestAlgorithm.ECDSASM2WITHSM3);
-
         pcs = client.createPKCS1Signature(cn,pin,IdMagic.SCN,data,DataType.PLAIN);
-
-
         System.out.println(pcs.getRetBase64String());
     }
 
@@ -97,7 +95,7 @@ public class PCSClientTest {
         //使用CN
         //pcs = client.createPKCS7Signature(cn,pin,IdMagic.SCN,data);
 
-        pcs = client.createPKCS7Signature(cn,pin,IdMagic.SCN,data,false);
+        pcs = client.createPKCS7Signature(cn,pin,IdMagic.SCN,data,false,DigestAlgorithm.ECDSASM2);
 
         System.out.println(pcs.getRetBase64String());
     }
@@ -113,7 +111,7 @@ public class PCSClientTest {
         System.out.println(data);
         NetonePCS pcs;
 
-        pcs = client.envelopePacket(kid,pin,data, CipherAlgorithm.AES192CBC);
+        //pcs = client.envelopePacket(kid,pin,data, CipherAlgorithm.AES192CBC);
 
         //使用SCN
         pcs = client.envelopePacket(cn,pin,IdMagic.SCN,data, CipherAlgorithm.AES192CBC);
@@ -127,10 +125,10 @@ public class PCSClientTest {
      */
     @Test
     public void createEnvelopeUnPacket() throws NetonejExcepption {
-        String data = "MIIBeAYKKoEcz1UGAQQCA6CCAWgwggFkAgEBMYIBHjCCARoCAQAwfjBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRQINAPjxdl3mFMf3ySNchjANBgkqgRzPVQGCLQMFAASBhTCBggIhANveuazYmp2po1Hbh7p7ZIYdhSmG6wLzmVfXLnldPNHaAiEA4Qzo2jl3t844nQ3Epb82VqRHK7jyumhZVNiBwxVZAooEIMJK5zgyAqhxoF4t+aJGX4i/CIVcK9PJ/aqWsu26RGtBBBgMlP+wdI4RNl9tQ5q93NKhu2JfcTnY8iAwPQYKKoEcz1UGAQQCATAdBglghkgBZQMEARYEEO5vaacYr3kSJPnn1ahuYieAENGnippyGCBV/SLYLfCSo9o=";
+        String data = "MIIBtAYJKoZIhvcNAQcDoIIBpTCCAaECAQAxggFcMIIBWAIBADBAMC8xCzAJBgNVBAYTAkNOMREwDwYDVQQKDAhBQkMgbHRkLjENMAsGA1UEAwwEdGVzdAINAIW6xRLnTaw3sZncQzANBgkqhkiG9w0BAQEFAASCAQBBu5qRrk5kAlPAPY8fcFihchwpg/0FdD+XMlTABXVDTXLxsXkbXlmsjhKjqx27r9hKA4kTjCqgpyEfygO9pncTEWWLJb/o1tI7EXunlvNcJDfcd0mtIWFvIrvU0sL5ALZa7WLeiuQ0K4Hw5MfbmM0zx3U8YhmQ4GHPUwwXRKXwNQ8OpOmTFdbCVcagrcylh2eZX0oBQvWQXkxNQKfU1dqttIbHsfOM8XtgcIY7eHGk5ZtBury9tpqyPJCgRUMSOrELBCXENNjauFx0F2LSIzpHRwXW5/bZy2Pvc9M7IjObMeibMG4fO4RFY3W64k3MRcUGielX5PjX6BVCrh3PQnEaMDwGCSqGSIb3DQEHATAdBglghkgBZQMEARYEEFFsG5iB9cBGvQof6DHvfm6AEOqOsR0T72A3lgyvxYvF6WU=";
         NetonePCS pcs;
 
-        pcs = client.envelopeUnpack(kid,pin,data);
+        //pcs = client.envelopeUnpack(kid,pin,data);
 
         //使用SCN
         pcs = client.envelopeUnpack(cn,pin,IdMagic.SCN,data);

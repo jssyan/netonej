@@ -19,7 +19,8 @@ public enum DigestAlgorithm {
 	SHA384("sha384"),
 	SHA512("sha512"),
 	SM3("sm3"),
-	ECDSASM2WITHSM3("ecdsa-sm2-with-sm3");
+	ECDSASM2WITHSM3("ecdsa-sm2-with-sm3"),
+	ECDSASM2("ecdsa-sm2");
 
 	private String name;
 
