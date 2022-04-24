@@ -20,9 +20,9 @@ public class PCSClientTest {
 
 
     //192.168.10.215
-    PCSClient client = new PCSClient("192.168.10.149");
+    PCSClient client = new PCSClient("192.168.10.215");
 
-    String kid = "5d587a54f30436344f9dc6a422178e47";
+    String kid = "7814d367f31c8170b5ceda3fb4dfcb42";
 
     String cn = "test";
 

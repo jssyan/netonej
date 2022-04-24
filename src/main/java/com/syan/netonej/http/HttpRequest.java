@@ -3,9 +3,8 @@ package com.syan.netonej.http;
 
 import com.syan.netonej.exception.NetonejExcepption;
 import com.syan.netonej.http.entity.NetoneResponse;
+import com.syan.netonej.http.okhttp.NetoneJHttpClient;
 import okhttp3.*;
-import sun.nio.ch.Net;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -18,16 +17,13 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author mmdet
  * @Date 2021-08-16 13:19
  * @Description
  */
-public class HttpClient {
-
-    private static volatile OkHttpClient okHttpClient = null;
+public class HttpRequest {
     private static volatile Semaphore semaphore = null;
     private Map<String, String> headerMap;
     private Map<String, String> paramMap;
@@ -37,23 +33,23 @@ public class HttpClient {
     /**
      * 初始化okHttpClient，并且允许https访问
      */
-    private HttpClient() {
-        if (okHttpClient == null) {
-            synchronized (HttpClient.class) {
-                if (okHttpClient == null) {
-                    TrustManager[] trustManagers = buildTrustManagers();
-                    okHttpClient = new OkHttpClient.Builder()
-                            .connectTimeout(15, TimeUnit.SECONDS)
-                            .writeTimeout(20, TimeUnit.SECONDS)
-                            .readTimeout(20, TimeUnit.SECONDS)
-                            .sslSocketFactory(createSSLSocketFactory(trustManagers), (X509TrustManager) trustManagers[0])
-                            .hostnameVerifier((hostName, session) -> true)
-                            .retryOnConnectionFailure(true)
-                            .build();
-                    addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36");
-                }
-            }
-        }
+    private HttpRequest() {
+//        if (okHttpClient == null) {
+//            synchronized (HttpRequest.class) {
+//                if (okHttpClient == null) {
+//                    TrustManager[] trustManagers = buildTrustManagers();
+//                    okHttpClient = new OkHttpClient.Builder()
+//                            .connectTimeout(15, TimeUnit.SECONDS)
+//                            .writeTimeout(20, TimeUnit.SECONDS)
+//                            .readTimeout(20, TimeUnit.SECONDS)
+//                            .sslSocketFactory(createSSLSocketFactory(trustManagers), (X509TrustManager) trustManagers[0])
+//                            .hostnameVerifier((hostName, session) -> true)
+//                            .retryOnConnectionFailure(true)
+//                            .build();
+//                    addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36");
+//                }
+//            }
+//        }
     }
 
     /**
@@ -63,7 +59,7 @@ public class HttpClient {
      */
     private static Semaphore getSemaphoreInstance() {
         //只能1个线程同时访问
-        synchronized (HttpClient.class) {
+        synchronized (HttpRequest.class) {
             if (semaphore == null) {
                 semaphore = new Semaphore(0);
             }
@@ -77,8 +73,8 @@ public class HttpClient {
      *
      * @return
      */
-    public static HttpClient builder() {
-        return new HttpClient();
+    public static HttpRequest builder() {
+        return new HttpRequest();
     }
 
     /**
@@ -87,7 +83,7 @@ public class HttpClient {
      * @param url
      * @return
      */
-    public HttpClient url(String url) {
+    public HttpRequest url(String url) {
         this.url = url;
         return this;
     }
@@ -99,7 +95,7 @@ public class HttpClient {
      * @param value 参数值
      * @return
      */
-    public HttpClient addParam(String key, String value) {
+    public HttpRequest addParam(String key, String value) {
         if (paramMap == null) {
             paramMap = new HashMap<>();
         }
@@ -112,7 +108,7 @@ public class HttpClient {
      * @param map
      * @return
      */
-    public HttpClient addParam(Map<String,String> map) {
+    public HttpRequest addParam(Map<String,String> map) {
         if(map == null){
             return this;
         }
@@ -130,7 +126,7 @@ public class HttpClient {
      * @param value 参数值
      * @return
      */
-    public HttpClient addHeader(String key, String value) {
+    public HttpRequest addHeader(String key, String value) {
         if (headerMap == null) {
             headerMap = new LinkedHashMap<>(16);
         }
@@ -142,7 +138,7 @@ public class HttpClient {
      * 添加请求头
      * @return
      */
-    public HttpClient addHeader(Map<String,String> map) {
+    public HttpRequest addHeader(Map<String,String> map) {
         if(map == null){
             return this;
         }
@@ -158,7 +154,7 @@ public class HttpClient {
      *
      * @return
      */
-    public HttpClient get() {
+    public HttpRequest get() {
         request = new Request.Builder().get();
         StringBuilder urlBuilder = new StringBuilder(url);
         if (paramMap != null) {
@@ -179,7 +175,7 @@ public class HttpClient {
         return this;
     }
 
-    public HttpClient post() {
+    public HttpRequest post() {
         RequestBody requestBody;
         FormBody.Builder formBody = new FormBody.Builder();
         if (paramMap != null) {
@@ -190,14 +186,14 @@ public class HttpClient {
         return this;
     }
 
-    public HttpClient postJson(String json) {
+    public HttpRequest postJson(String json) {
         RequestBody requestBody;
         requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json);
         request = new Request.Builder().post(requestBody).url(url);
         return this;
     }
 
-    public HttpClient postBytes(byte[] bytes) {
+    public HttpRequest postBytes(byte[] bytes) {
         RequestBody requestBody;
         requestBody = RequestBody.create(MediaType.parse("application/octet-stream"), bytes);
         request = new Request.Builder().post(requestBody).url(url);
@@ -212,6 +208,7 @@ public class HttpClient {
     public String sync() {
         setHeader(request);
         try {
+            OkHttpClient okHttpClient = NetoneJHttpClient.getInstance().getOkHttpClient();
             Response response = okHttpClient.newCall(request.build()).execute();
             return response.body().string();
         } catch (IOException e) {
@@ -228,6 +225,7 @@ public class HttpClient {
     public NetoneResponse syncBytes() throws NetonejExcepption {
         setHeader(request);
         try {
+            OkHttpClient okHttpClient = NetoneJHttpClient.getInstance().getOkHttpClient();
             Response response = okHttpClient.newCall(request.build()).execute();
             if(response.code() == 200){
                 return new NetoneResponse(response.code(),response.body().bytes());
@@ -245,6 +243,7 @@ public class HttpClient {
     public String async() {
         StringBuilder buffer = new StringBuilder("");
         setHeader(request);
+        OkHttpClient okHttpClient = NetoneJHttpClient.getInstance().getOkHttpClient();
         okHttpClient.newCall(request.build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -272,6 +271,7 @@ public class HttpClient {
      */
     public void async(ICallBack callBack) {
         setHeader(request);
+        OkHttpClient okHttpClient = NetoneJHttpClient.getInstance().getOkHttpClient();
         okHttpClient.newCall(request.build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

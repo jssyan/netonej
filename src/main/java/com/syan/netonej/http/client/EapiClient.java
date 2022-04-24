@@ -86,9 +86,7 @@ public class EapiClient extends BaseClient {
 			params.put("idmagic", idmagic.toLowerCase());
 			params.put("data", data);				
 			response=doHttpPost(Action.EAPI_ACTION, params);
-		} catch (Exception e) {		
-
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new NetonejExcepption("-EAPI（deleteCert）删除证书失败"+ e,e);
 		}
 		return response;			

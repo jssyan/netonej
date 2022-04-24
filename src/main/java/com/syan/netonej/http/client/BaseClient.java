@@ -8,7 +8,7 @@ package com.syan.netonej.http.client;
 
 import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.exception.NetonejExcepption;
-import com.syan.netonej.http.HttpClient;
+import com.syan.netonej.http.HttpRequest;
 import com.syan.netonej.http.entity.NetoneResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,13 +67,13 @@ public abstract class BaseClient {
 	}
 	protected NetoneResponse doHttpPost(String action,Map<String,String> params,Map<String,String> headers) throws NetonejExcepption {
 		String url = getServiceUrl(host,port)+action;
-		return HttpClient.builder().url(url).addParam(params).addHeader(headers).post().syncBytes();
+		return HttpRequest.builder().url(url).addParam(params).addHeader(headers).post().syncBytes();
 	}
 
 
 	protected NetoneResponse doHttpPostBytes(String action,byte[] bytes) throws NetonejExcepption {
 		String url = getServiceUrl(host,port)+action;
-		return HttpClient.builder().url(url).postBytes(bytes).syncBytes();
+		return HttpRequest.builder().url(url).postBytes(bytes).syncBytes();
 	}
 
 
