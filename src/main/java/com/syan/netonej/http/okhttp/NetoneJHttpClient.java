@@ -2,7 +2,6 @@ package com.syan.netonej.http.okhttp;
 
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
-
 import javax.net.ssl.*;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
@@ -19,8 +18,6 @@ public class NetoneJHttpClient {
      * 全局保持一个okHttpClient对象，
      * 每个OkHttpClient对象都有自己的连接池和线程池，创建多个会导致大量的线程堆积，从而可能会导致程序崩溃。
      */
-    private OkHttpClient.Builder builder;
-
     private OkHttpClient okHttpClient;
 
     private static class SingletonHolder{
@@ -29,7 +26,7 @@ public class NetoneJHttpClient {
 
     private NetoneJHttpClient(){
         TrustManager[] trustManagers = buildTrustManagers();
-        builder = new OkHttpClient.Builder();
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(60, TimeUnit.SECONDS);
         builder.writeTimeout(60, TimeUnit.SECONDS);
         builder.readTimeout(60, TimeUnit.SECONDS);
@@ -41,6 +38,7 @@ public class NetoneJHttpClient {
             }
         });
         builder.retryOnConnectionFailure(true);
+        okHttpClient = builder.build();
     }
 
     public static NetoneJHttpClient getInstance(){
@@ -48,9 +46,7 @@ public class NetoneJHttpClient {
     }
 
     public OkHttpClient getOkHttpClient() {
-        if(okHttpClient != null)
-            return okHttpClient;
-        return builder.build();
+       return okHttpClient;
     }
 
     public void setOkHttpClient(OkHttpClient okHttpClient) {
@@ -58,13 +54,13 @@ public class NetoneJHttpClient {
     }
 
     public void connectTimeout(long timeout, TimeUnit unit){
-        builder.connectTimeout(timeout, unit);
+        okHttpClient = okHttpClient.newBuilder().connectTimeout(timeout, unit).build();
     }
     public void writeTimeout(long timeout, TimeUnit unit){
-        builder.writeTimeout(timeout, unit);
+        okHttpClient = okHttpClient.newBuilder().writeTimeout(timeout, unit).build();
     }
     public void readTimeout(long timeout, TimeUnit unit){
-        builder.readTimeout(timeout, unit);
+        okHttpClient = okHttpClient.newBuilder().readTimeout(timeout, unit).build();
     }
 
     /**
@@ -73,7 +69,7 @@ public class NetoneJHttpClient {
      */
     public void setConnectPool(int maxPoolSize){
         ConnectionPool connectionPool = new ConnectionPool(maxPoolSize,1L,TimeUnit.MINUTES);
-        builder.connectionPool(connectionPool);
+        okHttpClient = okHttpClient.newBuilder().connectionPool(connectionPool).build();
     }
 
     /**
@@ -82,14 +78,12 @@ public class NetoneJHttpClient {
      */
     public void setConnectPool(int maxPoolSize,long keepAliveDuration, TimeUnit timeUnit){
         ConnectionPool connectionPool = new ConnectionPool(maxPoolSize,keepAliveDuration,timeUnit);
-        builder.connectionPool(connectionPool);
+        okHttpClient = okHttpClient.newBuilder().connectionPool(connectionPool).build();
     }
 
     public void closeConnectPool(){
         getOkHttpClient().connectionPool().evictAll();
     }
-
-
 
     /**
      * 生成安全套接字工厂，用于https请求的证书跳过
