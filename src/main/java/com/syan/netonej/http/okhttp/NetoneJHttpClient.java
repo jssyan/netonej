@@ -85,12 +85,18 @@ public class NetoneJHttpClient {
         builder.connectionPool(connectionPool);
     }
 
+    public void closeConnectPool(){
+        getOkHttpClient().connectionPool().evictAll();
+    }
+
+
+
     /**
      * 生成安全套接字工厂，用于https请求的证书跳过
      *
      * @return
      */
-    private static SSLSocketFactory createSSLSocketFactory(TrustManager[] trustAllCerts) {
+    private SSLSocketFactory createSSLSocketFactory(TrustManager[] trustAllCerts) {
         SSLSocketFactory ssfFactory = null;
         try {
             SSLContext sc = SSLContext.getInstance("SSL");
@@ -102,7 +108,7 @@ public class NetoneJHttpClient {
         return ssfFactory;
     }
 
-    private static TrustManager[] buildTrustManagers() {
+    private TrustManager[] buildTrustManagers() {
         return new TrustManager[]{
                 new X509TrustManager() {
                     @Override
