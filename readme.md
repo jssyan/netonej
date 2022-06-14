@@ -7,13 +7,13 @@
 
 <p align="center">
   <a target="_blank" href="">
-		<img src="https://img.shields.io/badge/release-v3.0.18-blue.svg" />
+		<img src="https://img.shields.io/badge/release-v3.0.19-blue.svg" />
 	</a>
 	<a target="_blank" href="">
 		<img src="https://img.shields.io/badge/maven-3.6.0-yellowgreen.svg" />
 	</a>
 	<a target="_blank" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">
-		<img src="https://img.shields.io/badge/JDK-8+-green.svg" />
+		<img src="https://img.shields.io/badge/JDK-6+-green.svg" />
 	</a>
 	<a target="_blank" href="">
 		<img src="https://travis-ci.com/dromara/hutool.svg?branch=v4-master" />
@@ -31,15 +31,33 @@
 
 ## 简介
 
-NetoneJ是一个连接`NetONE`安全模块的Java工具类库,可以在Java应用开发中方便快捷的使用如下功能：
-* PCS 签名服务
-* SVS 验签服务
-* TSA 时间戳
-* EAPI 证书操作等
+NetoneJ是一个连接`NetONE`安全模块的Java工具类库,可以在Java应用开发中方便快捷的使用如下服务或功能：
+
+1.PCS 私钥密码服务
+* 生成PKCS#1格式签名.
+* 生成PKCS#7格式签名.
+* 生成XML签名.
+* 公私钥加密/解密.
+* 数字信封解包、封包.
+
+2.SVS 签名验证服务
+* 数字签名验证(PKCS#1, PKCS#7等).
+* 数字证书有效性验证.
+* XML签名验证.
+
+3.TSA 时间戳服务
+* RFC3161时间戳签发和验证
+
+4.EAPI 开放API服务
+* 证书管理(获取、上传、删除)
+* 证书黑名单/白名单
+
+5.本地PKI密码运算
+* 摘要运算
 
 ## 包含的依赖库
 
-以下内容为NetoneJ所使用的依赖库文件，如下列表：
+以下内容为NetoneJ所使用的依赖库，如列表：
 
 | 依赖库   |     介绍      |版本            |下载            |
 | --------|------------- |----------|--------------- |
@@ -50,14 +68,14 @@ NetoneJ是一个连接`NetONE`安全模块的Java工具类库,可以在Java应�
 
 
 
-## 下载
+## 下载NetoneJ
 
-请<a href="https://github.com/jssyan/netonej/releases">点击下载NetoneJ最新版本的jar包</a>使用
+<a href="https://github.com/jssyan/netonej/releases">点击前往NetoneJ发布记录选择对应的版本进行下载</a>
 
-| 依赖库   |  说明            |
-| --------|------------- |
-| netonej-X.X.X.jar      |打包时不包含依赖库，开发者需添加相关依赖到项目|
-| netonej-X.X.X-jar-with-dependencies.jar      |打包时包含了所有依赖库，直接使用即可|
+| NetoneJ   | 说明                       |
+| -----|--------------------------|
+| netonej-X.X.X.jar   | 该JAR不包含依赖库，开发者需添加相关依赖到项目 |
+| netonej-X.X.X-jar-with-dependencies.jar   | 该JAR包含了依赖库，直接引用到项目使用     |
 
 
 ## 帮助文档
@@ -66,9 +84,6 @@ NetoneJ是一个连接`NetONE`安全模块的Java工具类库,可以在Java应�
 	<a href="netonej_development_documentation.md">📘 接口说明文档</a>
 </p>
 
-<p align="left">
-	<a href="CHANGELOG.md">📙 版本更新历史</a>
-</p>
 
 ## 快速开始
 ##### 1.使用PCS进行签名
@@ -77,14 +92,36 @@ NetoneJ是一个连接`NetONE`安全模块的Java工具类库,可以在Java应�
 ```
 PCSClient client = new PCSClient("192.168.10.149","9178");
 ```
-然后便可以进行PKCS1签名、PKCS7签名、数字封包解包等
+然后便可以进行PKCS1签名、PKCS7签名、数字封包解包等，如PKCS1签名示例如下：
 ```
-public void createPKCS1Signature() throws NetonejExcepption {
-    String data = Base64.getEncoder().encodeToString("123456".getBytes());
-    NetonePCS pcs;
-    pcs = client.createPKCS1Signature(cn,pin,IdMagic.SCN,data,DataType.PLAIN);
-    System.out.println(pcs.getRetBase64String());
-}
+public void createPKCS1Signature() throws NetonejException {
+        String data = "123";
+        NetonePCS pcs = pcsClient.pkcs1Builder()
+                .setResponseformat("1")
+                .setPasswd(pin)
+                .setId(cn)
+                .setIdmagic(IdMagic.SCN)
+                .setData(data.getBytes())
+                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)
+                .build();
+        System.out.println(pcs.getResult());
+        System.out.println(pcs.getSingerCert());
+    }
+```
+PKCS7签名示例如下：
+```aidl
+public void createPKCS7Signature() throws NetonejException {
+        String data = "hello";
+        NetonePCS pcs = pcsClient.pkcs7Builder().setPasswd(pin)
+                .setResponseformat("1")
+                .setId(kid)
+                .setIdmagic(IdMagic.CID)
+                .setData(data.getBytes())
+                .setAlgo(DigestAlgorithm.ECDSASM2)
+                .setAttach(false)
+                .build();
+        System.out.println(pcs.getResult());
+    }
 ```
 ##### 2.使用SVS进行验证签名
 
@@ -94,16 +131,21 @@ SVSClient client = new SVSClient("192.168.10.149","9188");
 ```
 然后可以进行PKCS1签名验证、PKCS7签名验证、证书验证等
 ```
-public void verifyPKCS1() throws NetonejExcepption {
-    String data = Base64.getEncoder().encodeToString("123456".getBytes());
-    String p1 = "MEUCIQDWh1CKmCnGRlkkdzjqigWakTjhOdp53RKVYKCnzB3OWgIgSH33VLFdhIO/etvDcqRz68Q23nUgbFxV7Y9/0+tJrrk=";
-    NetoneSVS svs;
-    //使用证书验证
-    svs = client.verifyPKCS1(data,p1,DigestAlgorithm.ECDSASM2WITHSM3,DataType.PLAIN,cert);
-    //使用证书的CN项验证或者KID
-    svs = client.verifyPKCS1(cn,IdMagic.SCN,data,p1,DigestAlgorithm.ECDSASM2WITHSM3,DataType.PLAIN);
-    System.out.println(svs.getStatusCode());
-}
+public void verifyPKCS1() throws NetonejException {
+        String data = "123";
+        String pkcs1 = "MEQCICLf3sCOu3d3nwedhoAKKUK5N9cIUOAkTrFlJmygzq/VAiAlSikG9z7bOBCeRrjkGSuN8it+pFWTQxOu9hAExQZRWg==";
+        NetoneSVS svs;
+        svs = svsClient.pkcs1VerifyBuilder()
+                //.setCert(cert) //使用证书验证
+                .setId(cn)
+                .setIdmagic(IdMagic.SCN)
+                .setBase64Signature(pkcs1)
+                .setData(data)
+                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)
+                .build();
+        System.out.println(svs.getStatusCode());
+        System.out.println(svs.getCertificate().getSubject());
+    }
 ```
 ##### 3.使用TSA进行时间戳签署
 首先需要创建一个`TSAClient`对象，设置TSA时间戳服务器的地址,端口号等
@@ -112,17 +154,23 @@ TSAClient client = new TSAClient("192.168.10.149","9198");
 ```
 然后可以进行时间戳签署、验证等
 ```
-public void testGetTimestamp() throws NetonejExcepption {
-    String data = Base64.getEncoder().encodeToString("123456".getBytes());
-    //签署
-    NetoneTSA netoneTSA = client.createTimestamp(data,DataType.PLAIN,DigestAlgorithm.SHA1);
-    System.out.println(netoneTSA.getTimestampbase64());
-    //验证
-    netoneTSA = client.verifyTimestamp(netoneTSA.getTimestampbase64(),data,DataType.PLAIN);
-    System.out.println(netoneTSA.getStatusCode());
+public void testGetTimestamp() throws NetonejException {
+        String data = "123456";
+        //签署
+        NetoneTSA netoneTSA = tsaClient.tsaCreateBuilder()
+                .setAlgo(DigestAlgorithm.SHA1)
+                .setData(data.getBytes())
+                .build();
+        System.out.println(netoneTSA.getResult());
+        //验证
+        netoneTSA = tsaClient.tsaVerifyBuilder()
+                .setData(data.getBytes())
+                .setBase64Timestamp(netoneTSA.getResult())
+                .build();
+        System.out.println(netoneTSA.getStatusCode());
 }
 ```
-详细使用请参阅开发文档。
+详细使用请参阅开发文档或单元测试代码。
 
 ## 测试、调试
 

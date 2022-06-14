@@ -9,7 +9,13 @@ package com.syan.netonej.common.dict;
 
 
 public enum CipherAlgorithm {
+	DES("DES"),
+	DESEDE3CBC("DES-EDE3-CBC"),
 	SM4CBC("SM4-CBC"),
+	SM4OFB("SM4-OFB"),
+	SMS4CBC("SMS4-CBC"),
+	SMS4OFB("SMS4-OFB"),
+	SM1CBC("SM1-CBC"),
 	AES192CBC("AES-192-CBC"),
 	AES256CBC("AES-256-CBC");
 

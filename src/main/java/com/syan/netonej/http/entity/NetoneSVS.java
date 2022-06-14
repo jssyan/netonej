@@ -7,27 +7,20 @@
  */
 package com.syan.netonej.http.entity;
 
-import com.syan.netonej.http.xml.XmlparserFacotry;
-
+import com.syan.netonej.common.NetoneCertificate;
+import com.syan.netonej.common.xml.XMLParser;
+import com.syan.netonej.common.xml.XmlData;
+import com.syan.netonej.exception.NetonejException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.cert.CertificateException;
-/**
- * SVS服务返回信息
- * <p>
- * update by wangjx 2018-5-22
- *
- * @author liyb
- * @version 2.0.0
- * @since 2.0.0
- */
-public class NetoneSVS extends NetoneBase {
+
+
+public class NetoneSVS extends NetoneResponse {
     /**
      *
      */
     private NetoneCertificate certificate;
-
-    //原文
-    private String orginalBase64;
 
     /**
      * 根据返回结果构造SVS对象
@@ -36,21 +29,15 @@ public class NetoneSVS extends NetoneBase {
      * @throws CertificateException
      * @throws IOException
      */
-    public NetoneSVS(NetoneResponse response) throws CertificateException, IOException {
+    public NetoneSVS(NetoneResponse response) throws NetonejException {
         super(response.getStatusCode());
-        try {
-            if (response.getStatusCode() == 200) {
-                String orginal = XmlparserFacotry.parseXmlString4Data(response.getRetString()).toString();
-                if(orginal != null){
-                    this.setOrginalBase64(orginal);
-                }
-                Object obj = XmlparserFacotry.parseXmlString(response.getRetString());
-                if (obj != null) {
-                    certificate = new NetoneCertificate(obj.toString());
-                }
+        if(response != null && response.getStatusCode() == 200){
+            String result = response.getResult();
+            XmlData xmlData = XMLParser.parserCertList(new ByteArrayInputStream(result.getBytes()));
+            certificate = xmlData.getCertificates().get(0);
+            if(xmlData.getData() != null){
+                setResult(xmlData.getData());
             }
-        } catch (Exception e) {
-            throw new CertificateException(e.getMessage(), e);
         }
     }
 
@@ -67,14 +54,5 @@ public class NetoneSVS extends NetoneBase {
     public void setCertificate(NetoneCertificate certificate) {
         this.certificate = certificate;
     }
-
-    public String getOrginalBase64() {
-        return orginalBase64;
-    }
-
-    public void setOrginalBase64(String orginalBase64) {
-        this.orginalBase64 = orginalBase64;
-    }
-
 
 }

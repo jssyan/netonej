@@ -1,12 +1,10 @@
 package cn.com.syan.netonej;
 
 import com.syan.netonej.common.dict.*;
-import com.syan.netonej.exception.NetonejExcepption;
-import com.syan.netonej.http.client.PCSClient;
+import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.SVSClient;
 import com.syan.netonej.http.entity.*;
 import org.junit.Test;
-
 import java.util.Base64;
 
 /**
@@ -17,88 +15,105 @@ import java.util.Base64;
 
 public class SVSClientTest {
 
-    SVSClient client = new SVSClient("192.168.10.215");
 
+    private SVSClient svsClient = new SVSClient("192.168.10.215","9188");
 
     String kid = "afaf4cdb49964c24e172112f2a4b98c9";
 
     String cn = "J-N-S-P-E";
-
 
     //kid对应的证书
     String cert = "MIICNDCCAdugAwIBAgINAPjxdl3mFMf3ySNchjAKBggqgRzPVQGDdTBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRTAeFw0yMDAxMjAxNjAwMDBaFw0zMDAxMTcxNjAwMDBaMG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIDAJKUzELMAkGA1UEBwwCTkoxDTALBgNVBAoMBFN5YW4xEDAOBgNVBAsMB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAwwJSi1OLVMtUC1FMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAETGxel2ar0ttp5IYu9asjRna+hgK8oqUDf7A6E/DSiYZSzGO35IKsNfUd3GVSxsmQeQr9vZyliEwbP9O7+BfrraNgMF4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4EFgQUuFLOe2CMn8t6tYvmOVG6CtXOHGowHwYDVR0jBBgwFoAUuFLOe2CMn8t6tYvmOVG6CtXOHGowDgYDVR0PAQH/BAQDAgGGMAoGCCqBHM9VAYN1A0cAMEQCIBALIzaSMYahxAtkR0x/kd9z9OQ5R7RlCAgjVwiAXo1fAiAZu7rGRfVzozGvm32VcKD7bCp0DZ2bmtwwKuz5FA1tmQ==";
 
     /**
      * 验证证书的有效性
-     * @throws NetonejExcepption
+     * @throws NetonejException
      */
     @Test
-    public void testVerifyCertificate() throws NetonejExcepption {
-        NetoneSVS svs = client.verifyCertificate(cert);
+    public void testVerifyCertificate() throws NetonejException {
+        NetoneResponse svs = svsClient.certificateVerifyBuilder()
+                .setCert(cert)//设置证书
+                .setId("kid").setIdMagic(IdMagic.KID)//可选，使用id形式
+                .build();
         System.out.println(svs.getStatusCode());
+        System.out.println(svs.getStatusCodeMessage());
     }
 
     /**
      * 枚举服务端证书
-     * @throws NetonejExcepption
+     * @throws NetonejException
      */
     @Test
-    public void listCertificates() throws NetonejExcepption {
-        NetoneCertList list = client.listCertificates();
-        System.out.println(list.getCertList().size());
+    public void listCertificates() throws NetonejException {
+        NetoneCertList list = svsClient
+                .certificateListBuilder()
+                .build();
+        System.out.println(list.getCertList());
     }
 
 
     /**
      * 验证p1签名
-     * @throws NetonejExcepption
+     * @throws NetonejException
      */
     @Test
-    public void verifyPKCS1() throws NetonejExcepption {
-        String data = Base64.getEncoder().encodeToString("123456".getBytes());
-        String p1 = "MEUCIQDWh1CKmCnGRlkkdzjqigWakTjhOdp53RKVYKCnzB3OWgIgSH33VLFdhIO/etvDcqRz68Q23nUgbFxV7Y9/0+tJrrk=";
+    public void verifyPKCS1() throws NetonejException {
+        String data = "123";
+        String pkcs1 = "MEQCICLf3sCOu3d3nwedhoAKKUK5N9cIUOAkTrFlJmygzq/VAiAlSikG9z7bOBCeRrjkGSuN8it+pFWTQxOu9hAExQZRWg==";
 
-        NetoneSVS svs;
-
-        //使用证书验证
-        svs = client.verifyPKCS1(data,p1,DigestAlgorithm.ECDSASM2WITHSM3,DataType.PLAIN,cert);
-
-        //使用证书的CN项验证或者KID
-        svs = client.verifyPKCS1(cn,IdMagic.SCN,data,p1,DigestAlgorithm.ECDSASM2WITHSM3,DataType.PLAIN);
-
+        NetoneSVS svs = svsClient.pkcs1VerifyBuilder()
+                //.setCert(cert) //使用证书验证
+                .setId(cn).setIdmagic(IdMagic.SCN)//可选，使用id形式
+                .setBase64Signature(pkcs1)//base64格式的签名
+                .setData(data)//原文
+                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选，签名摘要算法
+                .build();
         System.out.println(svs.getStatusCode());
+        System.out.println(svs.getCertificate().getSubject());
     }
 
     /**
      * 单元测试：PKCS7签名结果验证
-     * @throws NetonejExcepption
+     * @throws NetonejException
      */
     @Test
-    public void verifyPKCS7() throws NetonejExcepption {
-        String data = Base64.getEncoder().encodeToString("123456".getBytes());
+    public void verifyPKCS7() throws Exception {
+        String data = Base64.getEncoder().encodeToString("Hello".getBytes());
 
         //替换为您的签名值
-        String p7Attach = "MIIDawYKKoEcz1UGAQQCAqCCA1swggNXAgEBMQ4wDAYIKoEcz1UBgxEFADAWBgoqgRzPVQYBBAIBoAgEBjEyMzQ1NqCCAjgwggI0MIIB26ADAgECAg0A+PF2XeYUx/fJI1yGMAoGCCqBHM9VAYN1MG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIDAJKUzELMAkGA1UEBwwCTkoxDTALBgNVBAoMBFN5YW4xEDAOBgNVBAsMB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAwwJSi1OLVMtUC1FMB4XDTIwMDEyMDE2MDAwMFoXDTMwMDExNzE2MDAwMFowbTELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkpTMQswCQYDVQQHDAJOSjENMAsGA1UECgwEU3lhbjEQMA4GA1UECwwHUHJvZHVjZTEPMA0GA1UEDAwGZW1wbGVlMRIwEAYDVQQDDAlKLU4tUy1QLUUwWTATBgcqhkjOPQIBBggqgRzPVQGCLQNCAARMbF6XZqvS22nkhi71qyNGdr6GAryipQN/sDoT8NKJhlLMY7fkgqw19R3cZVLGyZB5Cv29nKWITBs/07v4F+uto2AwXjAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBS4Us57YIyfy3q1i+Y5UboK1c4cajAfBgNVHSMEGDAWgBS4Us57YIyfy3q1i+Y5UboK1c4cajAOBgNVHQ8BAf8EBAMCAYYwCgYIKoEcz1UBg3UDRwAwRAIgEAsjNpIxhqHEC2RHTH+R33P05DlHtGUICCNXCIBejV8CIBm7usZF9XOjMa+bfZVwoPtsKnQNnZua3DAq7PkUDW2ZMYHtMIHqAgEBMH4wbTELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkpTMQswCQYDVQQHDAJOSjENMAsGA1UECgwEU3lhbjEQMA4GA1UECwwHUHJvZHVjZTEPMA0GA1UEDAwGZW1wbGVlMRIwEAYDVQQDDAlKLU4tUy1QLUUCDQD48XZd5hTH98kjXIYwDAYIKoEcz1UBgxEFADANBgkqgRzPVQGCLQEFAARIMEYCIQCUa79iv4OZ4OgrtlMnq2AZbI5MQoVtCBXtoVWr3yomXQIhAI5Da66VKiNK9FpnlF7fTrdpm/AXIDzTcw5lt5l8Ao+i";
-        String p7Dettach = "MIIDYQYKKoEcz1UGAQQCAqCCA1EwggNNAgEBMQ4wDAYIKoEcz1UBgxEFADAMBgoqgRzPVQYBBAIBoIICODCCAjQwggHboAMCAQICDQD48XZd5hTH98kjXIYwCgYIKoEcz1UBg3UwbTELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkpTMQswCQYDVQQHDAJOSjENMAsGA1UECgwEU3lhbjEQMA4GA1UECwwHUHJvZHVjZTEPMA0GA1UEDAwGZW1wbGVlMRIwEAYDVQQDDAlKLU4tUy1QLUUwHhcNMjAwMTIwMTYwMDAwWhcNMzAwMTE3MTYwMDAwWjBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRTBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABExsXpdmq9LbaeSGLvWrI0Z2voYCvKKlA3+wOhPw0omGUsxjt+SCrDX1HdxlUsbJkHkK/b2cpYhMGz/Tu/gX662jYDBeMAwGA1UdEwQFMAMBAf8wHQYDVR0OBBYEFLhSzntgjJ/LerWL5jlRugrVzhxqMB8GA1UdIwQYMBaAFLhSzntgjJ/LerWL5jlRugrVzhxqMA4GA1UdDwEB/wQEAwIBhjAKBggqgRzPVQGDdQNHADBEAiAQCyM2kjGGocQLZEdMf5Hfc/TkOUe0ZQgII1cIgF6NXwIgGbu6xkX1c6Mxr5t9lXCg+2wqdA2dm5rcMCrs+RQNbZkxge0wgeoCAQEwfjBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRQINAPjxdl3mFMf3ySNchjAMBggqgRzPVQGDEQUAMA0GCSqBHM9VAYItAQUABEgwRgIhAMLlJ1ZJVifKPCAD72lbnXANAG+5SKWsNJEN7CnnJVR9AiEAuvvmVdUT5+IMtR1Ph823s5Fdg+9IzQ15Z8ce9ZzmTGo=";
+        String p7Attach = "MIIDZQYJKoZIhvcNAQcCoIIDVjCCA1ICAQExDjAMBggqgRzPVQGDEQUAMBIGCSqGSIb3DQEHAaAFBAMxMjOgggI4MIICNDCCAdugAwIBAgINAPjxdl3mFMf3ySNchjAKBggqgRzPVQGDdTBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRTAeFw0yMDAxMjAxNjAwMDBaFw0zMDAxMTcxNjAwMDBaMG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIDAJKUzELMAkGA1UEBwwCTkoxDTALBgNVBAoMBFN5YW4xEDAOBgNVBAsMB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAwwJSi1OLVMtUC1FMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAETGxel2ar0ttp5IYu9asjRna+hgK8oqUDf7A6E/DSiYZSzGO35IKsNfUd3GVSxsmQeQr9vZyliEwbP9O7+BfrraNgMF4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4EFgQUuFLOe2CMn8t6tYvmOVG6CtXOHGowHwYDVR0jBBgwFoAUuFLOe2CMn8t6tYvmOVG6CtXOHGowDgYDVR0PAQH/BAQDAgGGMAoGCCqBHM9VAYN1A0cAMEQCIBALIzaSMYahxAtkR0x/kd9z9OQ5R7RlCAgjVwiAXo1fAiAZu7rGRfVzozGvm32VcKD7bCp0DZ2bmtwwKuz5FA1tmTGB7DCB6QIBATB+MG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIEwJKUzELMAkGA1UEBxMCTkoxDTALBgNVBAoTBFN5YW4xEDAOBgNVBAsTB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAxMJSi1OLVMtUC1FAg0A+PF2XeYUx/fJI1yGMAwGCCqBHM9VAYMRBQAwDQYJKoEcz1UBgi0BBQAERzBFAiBVuaGEoeEnJ5/CA/5S7M8iYRgl9scKIZKzLchIO8CM1gIhAN2y2e7ADiw919j1XhSmWYebpydU8WImxX6TpUvIRrVw";
+        //String p7Attach = "MIIEUAYKKoEcz1UGAQQCAqCCBEAwggQ8AgEBMQ4wDAYIKoEcz1UBgxEFADAWBgoqgRzPVQYBBAIBoAgEBjEyMzQ1NqCCAjgwggI0MIIB26ADAgECAg0A+PF2XeYUx/fJI1yGMAoGCCqBHM9VAYN1MG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIDAJKUzELMAkGA1UEBwwCTkoxDTALBgNVBAoMBFN5YW4xEDAOBgNVBAsMB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAwwJSi1OLVMtUC1FMB4XDTIwMDEyMDE2MDAwMFoXDTMwMDExNzE2MDAwMFowbTELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkpTMQswCQYDVQQHDAJOSjENMAsGA1UECgwEU3lhbjEQMA4GA1UECwwHUHJvZHVjZTEPMA0GA1UEDAwGZW1wbGVlMRIwEAYDVQQDDAlKLU4tUy1QLUUwWTATBgcqhkjOPQIBBggqgRzPVQGCLQNCAARMbF6XZqvS22nkhi71qyNGdr6GAryipQN/sDoT8NKJhlLMY7fkgqw19R3cZVLGyZB5Cv29nKWITBs/07v4F+uto2AwXjAMBgNVHRMEBTADAQH/MB0GA1UdDgQWBBS4Us57YIyfy3q1i+Y5UboK1c4cajAfBgNVHSMEGDAWgBS4Us57YIyfy3q1i+Y5UboK1c4cajAOBgNVHQ8BAf8EBAMCAYYwCgYIKoEcz1UBg3UDRwAwRAIgEAsjNpIxhqHEC2RHTH+R33P05DlHtGUICCNXCIBejV8CIBm7usZF9XOjMa+bfZVwoPtsKnQNnZua3DAq7PkUDW2ZMYIB0TCCAc0CAQEwfjBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRQINAPjxdl3mFMf3ySNchjAMBggqgRzPVQGDEQUAoIHkMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTIyMDQyOTA5MTc0MFowLwYJKoZIhvcNAQkEMSIEICB89BBTL5Kkfe4kXOmxH/cfV469dj6zu+pE69BD0Bj7MHkGCSqGSIb3DQEJDzFsMGowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMAwGCCqBHM9VAYN1BQAwRQIhAPT74rN24AmKePtw5Ygdx13zti7I5/F7O33RooCjtKVHAiB/j4UIFhjUtsn6PwtO11+TZ+fTyEG6n9IbOtlsXBvJ3Q==";
+        String p7Dettach = "MIIESQYKKoEcz1UGAQQCAqCCBDkwggQ1AgEBMQ4wDAYIKoEcz1UBgxEFADAMBgoqgRzPVQYBBAIBoIICODCCAjQwggHboAMCAQICDQD48XZd5hTH98kjXIYwCgYIKoEcz1UBg3UwbTELMAkGA1UEBhMCQ04xCzAJBgNVBAgMAkpTMQswCQYDVQQHDAJOSjENMAsGA1UECgwEU3lhbjEQMA4GA1UECwwHUHJvZHVjZTEPMA0GA1UEDAwGZW1wbGVlMRIwEAYDVQQDDAlKLU4tUy1QLUUwHhcNMjAwMTIwMTYwMDAwWhcNMzAwMTE3MTYwMDAwWjBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRTBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABExsXpdmq9LbaeSGLvWrI0Z2voYCvKKlA3+wOhPw0omGUsxjt+SCrDX1HdxlUsbJkHkK/b2cpYhMGz/Tu/gX662jYDBeMAwGA1UdEwQFMAMBAf8wHQYDVR0OBBYEFLhSzntgjJ/LerWL5jlRugrVzhxqMB8GA1UdIwQYMBaAFLhSzntgjJ/LerWL5jlRugrVzhxqMA4GA1UdDwEB/wQEAwIBhjAKBggqgRzPVQGDdQNHADBEAiAQCyM2kjGGocQLZEdMf5Hfc/TkOUe0ZQgII1cIgF6NXwIgGbu6xkX1c6Mxr5t9lXCg+2wqdA2dm5rcMCrs+RQNbZkxggHUMIIB0AIBATB+MG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIDAJKUzELMAkGA1UEBwwCTkoxDTALBgNVBAoMBFN5YW4xEDAOBgNVBAsMB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAwwJSi1OLVMtUC1FAg0A+PF2XeYUx/fJI1yGMAwGCCqBHM9VAYMRBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjIwNDI1MDYwNDI4WjAvBgkqhkiG9w0BCQQxIgQgIHz0EFMvkqR97iRc6bEf9x9Xjr12PrO76kTr0EPQGPsweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoEcz1UBgi0BBQAERzBFAiEAx135YUBqGub/8KsmlKojOMTYD8GmPEu8fgam4xGVDo8CIFiDfiuBQaaqIph7SXi2ikfHQhOIViCOu3QebDaonG+b";
 
         //验证一：签名带原文的情况验证，业务处理应对返回的NetoneSVS对象做状态码、NULL值等失败情况的判断
-        NetoneSVS svs = client.verifyPKCS7(p7Attach);
+//
+        NetoneSVS svs = svsClient.pkcs7VerifyBuilder()
+                .setBase64Pkcs7(p7Attach)
+                .build();
 
-        //状态码 200为成功，其他为失败
-        System.out.println(svs.getStatusCode());
-        //base64编码的签名原文
-        System.out.println(svs.getOrginalBase64());
-        //签名证书
-        NetoneCertificate netoneCertificate = svs.getCertificate();
-        System.out.println(netoneCertificate.getSubject());
+        System.out.println(svs.getResult());
+        System.out.println(svs.getCertificate().getSubject());
 
-        //验证二：签名不带原文的情况
-        svs = client.verifyPKCS7(p7Dettach,data);
-        //以下函数使用同（验证一）
+         svs = svsClient.pkcs7VerifyBuilder()
+                .setBase64Pkcs7(p7Dettach)//P7签名
+                .setBase64Data(data)//可选，原文，Attach模式下不需要设置
+                .build();
+        System.out.println(svs.getResult());
+        System.out.println(svs.getCertificate().getSubject());
+
+    }
+
+    @Test
+    public void verifyXMLSign() throws NetonejException {
+        String p1 = "PD94bWwgdmVyc2lvbj0iMS4wIj8+CjxTaWduYXR1cmUgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyMiPgo8U2lnbmVkSW5mbz4KPENhbm9uaWNhbGl6YXRpb25NZXRob2QgQWxnb3JpdGhtPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzEwL3htbC1leGMtYzE0biMiLz4KPFNpZ25hdHVyZU1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDEvMDQveG1sZHNpZy1tb3JlI3JzYS1zaGEyNTYiLz4KPFJlZmVyZW5jZSBVUkk9IiNkYXRhIj4KPERpZ2VzdE1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyNzaGExIi8+CjxEaWdlc3RWYWx1ZT40THl0MjdnaVJGQ1JoWTFtZitJVXRodXZnWDQ9PC9EaWdlc3RWYWx1ZT4KPC9SZWZlcmVuY2U+CjwvU2lnbmVkSW5mbz4KPFNpZ25hdHVyZVZhbHVlPmkzK0szcFNRdkUzR3FCai84c3QvdFRiaC9sRVpua3Q5ZlFvV296Y2dOSGZOUU5xbUtRYlBFUG95NEFTZWp4MkEKVWplc0FtallZTjhGOVVTbUpPdU5mUmxTZ1dqVll3YzY4ZXlVT2xKUGh6WnNFYXZoRjM0Nm1VY2ppU0o2SnZ4bgpGc2dRemJVZmU1YldVYkhLQW1WSWNEWEtQelRyV21UR2N4a29FWkNEQjFmS1VERXU1Y3NUYW1qaDA1T21SRWZ3CjdtQWZuUFFFNW9NL1dGM1p6QWpXR0tBM2JwcGo0cXpEeWtNRnZjOFZLM094T1R0NWxsa2duTXVaWnFVS0hmbkEKZHdLbSt4c1cxZDd0QW9BRVIxS1hRWUdUVnRxSys4dldGZi95aW5NdUJCOXo0WWtZcXdUNXAyWnZnME1tYkUycwp1N1dKV3lEM0t5cVUweWJtMWpEZjlBPT08L1NpZ25hdHVyZVZhbHVlPgo8S2V5SW5mbz4KPFg1MDlEYXRhPgo8WDUwOUNlcnRpZmljYXRlPk1JSUVLakNDQXhLZ0F3SUJBZ0lOQVBmbXJDWXd5RDk1SnZIemZEQU5CZ2txaGtpRzl3MEJBUXNGQURBeE1Rc3cKQ1FZRFZRUUdFd0pEVGpFUk1BOEdBMVVFQ2d3SVFVSkRJR3gwWkM0eER6QU5CZ05WQkFNTUJtTmhMV2RsYmpBZQpGdzB5TWpBME1UVXdOakkyTlRKYUZ3MDBNREEwTVRReE5qQXdNREJhTUI0eEN6QUpCZ05WQkFZVEFrTk9NUTh3CkRRWURWUVFEREFicHU0VGxnYVV3Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRQ3cKWjJQb0NPajA2ZERPMWFSTDNsWDMxTFFNbXZsNkh2YXdQZ3VVbnlJTjlLMW1Nb2Q5MVdSamRuOXdtSmhoWE95UwoyVUpweW52NXE4WENxTDY4ZFowSkw0MjEvQWViYmpteGppRUNzL2xlZG82eDRhbmgyNEMxK2dYYnkwUVZNTk9ECjZBR1c0bDh3QTBiOEp5NzAwbU8xWEE0aXFtKzM5UGk0amtxNmhOazRSQVNFVEkzNlNEQzFJcHd1NHV4S08vM1gKZEJtQmhzaDdNc1ZEbEN6ejJxWHZVQWRVQ1JDa2lNTzBORkJpZDBFSHhMa1RQZ2hwcnJwTDZrZjZVSndPYmRXUwo0NThaVktGaGJiUzVxcENLYU0rWnV2U2pEdk9lSXJMVk1UZ3dHN2ZwOUYvVEpGK1F6YXdsNkYzNklMaEkwZzhJCnhpcFVyNGNFbEVKNng4WE9hRTRSQWdNQkFBR2pnZ0ZTTUlJQlRqQU1CZ05WSFJNRUJUQURBUUgvTUIwR0ExVWQKRGdRV0JCVFdBTUQ2YnBjUnArMks5RDNhMFBxSlZ5cENxREFQQmdOVkhROEJBZjhFQlFNREIvK0FNQllHQTFVZApKUUVCL3dRTU1Bb0dDQ3NHQVFVRkJ3TUlNQzRHQTFVZEh3UW5NQ1V3STZBaG9CK0dIV2gwZEhCek9pOHZZV2xoCkxuTjVZVzR1WTI5dExtTnVMMk55YkM5aE1HSUdDQ3NHQVFVRkJ3RUJCRll3VkRBa0JnZ3JCZ0VGQlFjd0FZWVkKYUhSMGNITTZMeTl2WTNOd0xuTjVZVzR1WTI5dExtTnVNQ3dHQ0NzR0FRVUZCekFDaGlCb2RIUndjem92TDJGcApZUzV6ZVdGdUxtTnZiUzVqYmk5cGMzTjFaWEl2WVRBZkJnTlZIU01FR0RBV2dCUlJSYkUwU2xmTkkycWcyTzlrClk1OFBLSS9GTnpCQkJnTlZIU0FFT2pBNE1EWUdDQ3FCSElid0FHUUJNQ293S0FZSUt3WUJCUVVIQWdFV0hHaDAKZEhCek9pOHZZM0J6TG5ONVlXNHVZMjl0TG1OdUwyTndjekV3RFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUNaegowWkc1bmIrNCt5b0N6OEhYZUljdEIxejUzS2RhWTkzekJZN1lBNEcxanpJNDcxMjhFS0lkOHdOM2hnMWVCa3BqCjJyYkZwM001M0JmQWwxYk1vMEFuTTIyaXZlc0NGMEdtcGxERXJCUkg5V1F6UjduSVZhWlBrcmNlRVZQbEJFN1IKME1MRnMwVXRYNzAwb3AxT1phdDA1T0ZOK2dWMk9GZi9CenRaOGZ2UCt4TFdZRWVQS2ZHNDc0bTRpUnoyeFk2cwo4QVNGMG5FZllRYmljNk41Vm5Yek1mM202U0xjNW1XbUNwU1psVW03U2JYOG91Tnd1Q0p6dWE5bGdMYkpnRVZCCnhVaFJoaEFiVlRqL0ExdXlNN0I4STd1T21vQWtRdURQckFKN04wd0xJb0pocFZHL1hWVS9nbmlXL1MydGV6QlYKY1Fuc1FkMlBTbytMcFVYQTVBUT08L1g1MDlDZXJ0aWZpY2F0ZT4KPC9YNTA5RGF0YT4KPC9LZXlJbmZvPgo8T2JqZWN0IElkPSJkYXRhIj48ZGF0YT4xMjM0NTY8L2RhdGE+PC9PYmplY3Q+CjwvU2lnbmF0dXJlPgo=";
+
+        NetoneSVS svs;
+        svs = svsClient.xmlSignVerifyBuilder()
+                .setBase64Data(p1)
+                .build();
+
         System.out.println(svs.getStatusCode());
-        System.out.println(svs.getOrginalBase64());
-        netoneCertificate = svs.getCertificate();
-        System.out.println(netoneCertificate.getSubject());
+        System.out.println(svs.getCertificate().getSubject());
     }
 
 

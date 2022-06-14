@@ -7,7 +7,9 @@
  */
 package com.syan.netonej.http.entity;
 
-import java.util.Base64;
+import com.syan.netonej.common.dict.ResponseFormat;
+import com.syan.netonej.exception.ErrorCode;
+import org.bouncycastle.util.encoders.Base64;
 
 /**
  * 请求的返回对象
@@ -17,6 +19,8 @@ import java.util.Base64;
  * @since 2.0.0
  */
 public class NetoneResponse {
+
+    private ResponseFormat format = ResponseFormat.TEXT;
     /**
      * 状态码值
      */
@@ -25,42 +29,52 @@ public class NetoneResponse {
     /**
      * Netone服务器返回的数据
      */
-    private byte[] retBytes;
+    private byte[] result;
 
+    public NetoneResponse() { }
 
     public NetoneResponse(int statusCode) {
         this.statusCode = statusCode;
     }
 
-    public NetoneResponse(int statusCode, byte[] retBytes) {
+    public NetoneResponse(int statusCode, byte[] result) {
         this.statusCode = statusCode;
-        this.retBytes = retBytes;
+        this.result = result;
     }
 
-    public byte[] getRetBytes() {
-        return retBytes;
-    }
-
-    /**
-     * @return 状态码值
-     */
     public int getStatusCode() {
         return statusCode;
     }
 
-    /**
-     * @return 请求返回的字符串
-     */
-    public String getRetString() {
-        if(retBytes == null){
-            return null;
-        }
-        return new String(retBytes);
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
 
-
-    public void setRetString(String str) {
-        this.retBytes = Base64.getDecoder().decode(str);
+    public byte[] getBytesResult() {
+        return result;
     }
 
+    public String getResult() {
+        return new String(result);
+    }
+
+    public void setResult(byte[] result) {
+        this.result = result;
+    }
+
+    public void setResult(String result) {
+        this.result = result.getBytes();
+    }
+
+    public ResponseFormat getFormat() {
+        return format;
+    }
+
+    public void setFormat(ResponseFormat format) {
+        this.format = format;
+    }
+
+    public String getStatusCodeMessage() {
+        return ErrorCode.getStatusCodeMessage(statusCode);
+    }
 }

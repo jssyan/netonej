@@ -53,32 +53,39 @@ public class NetoneJHttpClient {
         this.okHttpClient = okHttpClient;
     }
 
-    public void connectTimeout(long timeout, TimeUnit unit){
+    public NetoneJHttpClient setConnectTimeout(long timeout, TimeUnit unit){
         okHttpClient = okHttpClient.newBuilder().connectTimeout(timeout, unit).build();
+        return this;
     }
-    public void writeTimeout(long timeout, TimeUnit unit){
+
+    public NetoneJHttpClient setWriteTimeout(long timeout, TimeUnit unit){
         okHttpClient = okHttpClient.newBuilder().writeTimeout(timeout, unit).build();
+        return this;
     }
-    public void readTimeout(long timeout, TimeUnit unit){
+
+    public NetoneJHttpClient setReadTimeout(long timeout, TimeUnit unit){
         okHttpClient = okHttpClient.newBuilder().readTimeout(timeout, unit).build();
+        return this;
     }
 
     /**
      * 设置连接池大小
      * @param maxPoolSize
      */
-    public void setConnectPool(int maxPoolSize){
+    public NetoneJHttpClient setConnectPool(int maxPoolSize){
         ConnectionPool connectionPool = new ConnectionPool(maxPoolSize,1L,TimeUnit.MINUTES);
         okHttpClient = okHttpClient.newBuilder().connectionPool(connectionPool).build();
+        return this;
     }
 
     /**
      * 设置连接池大小与空闲连接存活时长
      * @param maxPoolSize
      */
-    public void setConnectPool(int maxPoolSize,long keepAliveDuration, TimeUnit timeUnit){
+    public NetoneJHttpClient setConnectPool(int maxPoolSize,long keepAliveDuration, TimeUnit timeUnit){
         ConnectionPool connectionPool = new ConnectionPool(maxPoolSize,keepAliveDuration,timeUnit);
         okHttpClient = okHttpClient.newBuilder().connectionPool(connectionPool).build();
+        return this;
     }
 
     public void closeConnectPool(){
@@ -120,5 +127,4 @@ public class NetoneJHttpClient {
                 }
         };
     }
-
 }

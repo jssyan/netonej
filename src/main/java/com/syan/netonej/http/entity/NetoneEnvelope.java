@@ -16,6 +16,8 @@ import java.util.Map;
 
 import javax.security.auth.x500.X500Principal;
 
+import com.syan.netonej.common.NetoneCertificate;
+import com.syan.netonej.exception.NetonejException;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1Set;
@@ -36,7 +38,7 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
  * @version  2.0.0
  * @since  2.0.0
  */
-public class NetoneEnvelope extends NetonePCS {
+public class NetoneEnvelope {
 	private static Map<String, String> oidMap =new HashMap<String, String>();
 	static{
 		oidMap.put("2.5.4.45", "x500uniqueidentifier");
@@ -79,7 +81,7 @@ public class NetoneEnvelope extends NetonePCS {
     /**
      * 签名者证书
      */
-    private NetoneCertificate signerCertificate;    
+    private NetoneCertificate signerCertificate;
     /**
      * 签名者序列号
      */
@@ -111,93 +113,97 @@ public class NetoneEnvelope extends NetonePCS {
 	 * @throws CertificateException
 	 * @throws IOException
 	 */
-	public NetoneEnvelope(NetoneResponse response) throws CertificateException, IOException   
-    {   super(response);
+	public NetoneEnvelope(NetoneResponse response)throws NetonejException
+    {   //super(response);
     	
-    	ASN1Sequence seq=ASN1Sequence.getInstance(Base64.getDecoder().decode(response.getRetString()));
-		ContentInfo ci=ContentInfo.getInstance(seq);
-		Enumeration  enumeration=null;		
-		
-		if(signedAndEnveloped.equals(ci.getContentType().toString())){
-			seq=ASN1Sequence.getInstance(ci.getContent());	
-		
-	        Enumeration e = seq.getObjects();   
-	     
-	        version = (ASN1Integer)e.nextElement();   
-	      	        
-	     
-	        //接收者信息
-	        enumeration=  ((ASN1Set)e.nextElement()).getObjects(); 
-	    	while(enumeration.hasMoreElements()){
-				RecipientInfo rinfo=RecipientInfo.getInstance((ASN1Sequence)enumeration.nextElement());
-					
-				this.recipientInfo=(KeyTransRecipientInfo)rinfo.getInfo();
-				IssuerAndSerialNumber sssuerSerial=IssuerAndSerialNumber.getInstance(recipientInfo.getRecipientIdentifier().getId());
-        		X500Principal x500Principal=new X500Principal(sssuerSerial.getName().getEncoded());	
-        		this.recipientSerialNumber=sssuerSerial.getSerialNumber().toString();
-        		this.recipientSubject =x500Principal.getName(X500Principal.RFC2253,oidMap);
-        		
-	    	}
-	    	
-	    	//digestAlgorithms
-	    	enumeration=  ((ASN1Set)e.nextElement()).getObjects(); 
-	    	while(enumeration.hasMoreElements()){
-	    			digestAlgorithm=AlgorithmIdentifier.getInstance((ASN1Sequence)enumeration.nextElement());
-	      	}
-	    	
-	    	 encryptedContentInfo = EncryptedContentInfo.getInstance(e.nextElement());   
-	    	 	           
-        do   
-        {   
-            while(e.hasMoreElements())    
-            {   
-                Object o =e.nextElement();   
-             
-                if(o instanceof DERTaggedObject)   
-                {   
-                    DERTaggedObject tagged = (DERTaggedObject)o;   
-                   
-                    switch(tagged.getTagNo())   
-                    {   
-                    case 0: // '\0'    
-                    	//接收人证书                    	 
-                    	enumeration = ASN1Set.getInstance(tagged, false).getObjects();   
-                    	while(enumeration.hasMoreElements()){                    		
-                			ASN1Sequence s=	(ASN1Sequence)enumeration.nextElement();                			
-                			signerCertificate=new NetoneCertificate(s.getEncoded());               			               			
-                		}
-                        break;   
-   
-                    case 1: // '\001'    
-                    	
-                    	//无证书链数据 暂不处理
-//                        crls = ASN1Set.getInstance(tagged, false);   
-                        break;   
-   
-                    default:   
-                        throw new IllegalArgumentException("unknown tag value ".concat(String.valueOf(String.valueOf(tagged.getTagNo()))));   
-                    }   
-                } else   
-                {   //签名者信息
-                	ASN1Set  signerInfos = (ASN1Set)o;   
-                	enumeration=  signerInfos.getObjects();
-                	while(enumeration.hasMoreElements()){
-                		signerInfo=SignerInfo.getInstance((ASN1Sequence)enumeration.nextElement());
-                   		IssuerAndSerialNumber sssuerSerial=IssuerAndSerialNumber.getInstance(signerInfo.getSID().getId());
-                		X500Principal x500Principal=new X500Principal(sssuerSerial.getName().getEncoded());	
-                		this.signerSerialNumber=sssuerSerial.getSerialNumber().toString();
-                		this.signerSubject =x500Principal.getName(X500Principal.RFC2253,oidMap);
-        			}
-                }   
-            }   
-            return;   
-        } while(true);   
-	}
+//    	ASN1Sequence seq=ASN1Sequence.getInstance(Base64.getDecoder().decode(response.getResult()));
+//		ContentInfo ci=ContentInfo.getInstance(seq);
+//		Enumeration  enumeration=null;
+//
+//		if(signedAndEnveloped.equals(ci.getContentType().toString())){
+//			seq=ASN1Sequence.getInstance(ci.getContent());
+//
+//	        Enumeration e = seq.getObjects();
+//
+//	        version = (ASN1Integer)e.nextElement();
+//
+//
+//	        //接收者信息
+//	        enumeration=  ((ASN1Set)e.nextElement()).getObjects();
+//	    	while(enumeration.hasMoreElements()){
+//				RecipientInfo rinfo=RecipientInfo.getInstance((ASN1Sequence)enumeration.nextElement());
+//
+//				this.recipientInfo=(KeyTransRecipientInfo)rinfo.getInfo();
+//				IssuerAndSerialNumber sssuerSerial=IssuerAndSerialNumber.getInstance(recipientInfo.getRecipientIdentifier().getId());
+//        		X500Principal x500Principal=new X500Principal(sssuerSerial.getName().getEncoded());
+//        		this.recipientSerialNumber=sssuerSerial.getSerialNumber().toString();
+//        		this.recipientSubject =x500Principal.getName(X500Principal.RFC2253,oidMap);
+//
+//	    	}
+//
+//	    	//digestAlgorithms
+//	    	enumeration=  ((ASN1Set)e.nextElement()).getObjects();
+//	    	while(enumeration.hasMoreElements()){
+//	    			digestAlgorithm=AlgorithmIdentifier.getInstance((ASN1Sequence)enumeration.nextElement());
+//	      	}
+//
+//	    	 encryptedContentInfo = EncryptedContentInfo.getInstance(e.nextElement());
+//
+//        do
+//        {
+//            while(e.hasMoreElements())
+//            {
+//                Object o =e.nextElement();
+//
+//                if(o instanceof DERTaggedObject)
+//                {
+//                    DERTaggedObject tagged = (DERTaggedObject)o;
+//
+//                    switch(tagged.getTagNo())
+//                    {
+//                    case 0: // '\0'
+//                    	//接收人证书
+//                    	enumeration = ASN1Set.getInstance(tagged, false).getObjects();
+//                    	while(enumeration.hasMoreElements()){
+//                			ASN1Sequence s=	(ASN1Sequence)enumeration.nextElement();
+//							try {
+//								signerCertificate=new NetoneCertificate(s.getEncoded());
+//							} catch (NetonejException ex) {
+//								ex.printStackTrace();
+//							}
+//						}
+//                        break;
+//
+//                    case 1: // '\001'
+//
+//                    	//无证书链数据 暂不处理
+////                        crls = ASN1Set.getInstance(tagged, false);
+//                        break;
+//
+//                    default:
+//                        throw new IllegalArgumentException("unknown tag value ".concat(String.valueOf(String.valueOf(tagged.getTagNo()))));
+//                    }
+//                } else
+//                {   //签名者信息
+//                	ASN1Set  signerInfos = (ASN1Set)o;
+//                	enumeration=  signerInfos.getObjects();
+//                	while(enumeration.hasMoreElements()){
+//                		signerInfo=SignerInfo.getInstance((ASN1Sequence)enumeration.nextElement());
+//                   		IssuerAndSerialNumber sssuerSerial=IssuerAndSerialNumber.getInstance(signerInfo.getSID().getId());
+//                		X500Principal x500Principal=new X500Principal(sssuerSerial.getName().getEncoded());
+//                		this.signerSerialNumber=sssuerSerial.getSerialNumber().toString();
+//                		this.signerSubject =x500Principal.getName(X500Principal.RFC2253,oidMap);
+//        			}
+//                }
+//            }
+//            return;
+//        } while(true);
+//	}
 	}   
      
 
 	/** 签名者证书
-	 * @return  {@link com.syan.netonej.http.entity.NetoneCertificate} 签名者证书
+	 *
 	 */
 	public NetoneCertificate getSignerCertificate() {
 		return signerCertificate;

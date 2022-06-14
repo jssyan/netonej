@@ -12,12 +12,14 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
-import org.bouncycastle.cert.X509CertificateHolder;
+
+import com.syan.netonej.common.NetoneCertificate;
+import com.syan.netonej.common.dict.ResponseFormat;
+import com.syan.netonej.common.xml.XMLParser;
+import com.syan.netonej.common.xml.XmlData;
+import com.syan.netonej.exception.NetonejException;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
-import org.bouncycastle.util.encoders.Base64;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import com.syan.netonej.common.CMSSignedDataUtil;
 
 /**Netone PKCS#7签名对象
  * 
@@ -25,7 +27,10 @@ import com.syan.netonej.common.CMSSignedDataUtil;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class NetoneSignPKCS7  extends NetonePCS{
+public class NetoneSignPKCS7  extends NetoneResponse{
+
+	private String signature;
+
 	/**
 	 * PKCS#7签名对象
 	 */
@@ -55,39 +60,55 @@ public class NetoneSignPKCS7  extends NetonePCS{
 		return textdata;
 	}
 
-	
+//
+//	public NetoneSignPKCS7(NetoneResponse response) throws CMSException, CertificateException, IOException{
+//		super(response);
+//		if(response.getStatusCode()==200){
+//			  try{
+//				   CMSSignedDataUtil cms = new CMSSignedDataUtil(Base64.decode(response.getResult()));
+//				    List<X509CertificateHolder> certs = cms.getCertificates();
+//			        for (X509CertificateHolder holder : certs) {
+//			        	certList.add(new NetoneCertificate(holder.getEncoded()));
+//			        }
+//			        List<IssuerAndSerialNumber> issuerAndSerialNumbers = cms.getSignerIssuerAndSerialNumber();
+//			        for (IssuerAndSerialNumber is : issuerAndSerialNumbers) {
+//			            X509CertificateHolder signer = cms.getSignerCert(is);
+//			        	signedCertificates.add(new NetoneCertificate(signer.getEncoded())) ;
+//			        }
+//			       signedData=new CMSSignedData(new ByteArrayInputStream(Base64.decode(response.getResult())));
+//		        //签名原文
+//		        if(signedData.getSignedContent()!=null){
+//		        	textdata =new String((byte[])signedData.getSignedContent().getContent());
+//		        }
+//
+//		  }catch(Exception e){
+//			  e.printStackTrace();
+//		  }
+//
+//		}
+//	}
+
 	/** 构造PKCS#7返回对象
 	 * @param response  调用post服务返回对象
-	 * @throws CMSException 
-	 * @throws IOException 
-	 * @throws CertificateException 
+	 * @throws CMSException
+	 * @throws IOException
+	 * @throws CertificateException
 	 */
-	public NetoneSignPKCS7(NetoneResponse response) throws CMSException, CertificateException, IOException{
-		super(response);
-		if(response.getStatusCode()==200){
-			  try{
-				   CMSSignedDataUtil cms = new CMSSignedDataUtil(Base64.decode(response.getRetString()));
-				    List<X509CertificateHolder> certs = cms.getCertificates();
-			        for (X509CertificateHolder holder : certs) {
-			        	certList.add(new NetoneCertificate(holder.getEncoded()));		         
-			        }		        
-			        List<IssuerAndSerialNumber> issuerAndSerialNumbers = cms.getSignerIssuerAndSerialNumber();
-			        for (IssuerAndSerialNumber is : issuerAndSerialNumbers) {
-			            X509CertificateHolder signer = cms.getSignerCert(is);
-			        	signedCertificates.add(new NetoneCertificate(signer.getEncoded())) ;		       
-			        }
-			       signedData=new CMSSignedData(new ByteArrayInputStream(Base64.decode(response.getRetString()))); 
-		        //签名原文
-		        if(signedData.getSignedContent()!=null){
-		        	textdata =new String((byte[])signedData.getSignedContent().getContent());
-		        }
-
-		  }catch(Exception e){
-			  e.printStackTrace();
-		  }
-	        
+	public NetoneSignPKCS7(NetoneResponse response) throws NetonejException {
+		super(response.getStatusCode());
+		if(response.getStatusCode() == 200){
+			String result = response.getResult();
+			if(response.getFormat() == ResponseFormat.TEXT){
+				signature = result;
+			}else{
+				XmlData xmlData = XMLParser.parserXmlData(new ByteArrayInputStream(result.getBytes()));
+				if(xmlData != null){
+					signature = xmlData.getData();
+				}
+			}
 		}
 	}
+
 
 	/**
 	 * 获取签名数据的证书链列表

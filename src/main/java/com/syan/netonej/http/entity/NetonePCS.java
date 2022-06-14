@@ -8,33 +8,47 @@
 package com.syan.netonej.http.entity;
 
 
-import java.util.Base64;
+import com.syan.netonej.common.NetoneCertificate;
+import com.syan.netonej.common.dict.ResponseFormat;
+import com.syan.netonej.common.xml.XMLParser;
+import com.syan.netonej.common.xml.XmlData;
+import com.syan.netonej.exception.NetonejException;
+import java.io.ByteArrayInputStream;
 
-public class NetonePCS extends NetoneBase{
-	/**
-	 * 返回数据的base64编码字符串
-	 */
-	private String retBase64String;
+public class NetonePCS extends NetoneResponse{
 
 	/**
-	 * @param response 
+	 * base64编码的签名证书
 	 */
-	public NetonePCS(NetoneResponse response){
+	private NetoneCertificate singerCert;
+
+	/**
+	 * @param response
+	 */
+	public NetonePCS(NetoneResponse response) throws NetonejException {
 		super(response.getStatusCode());
-		this.retBase64String = response.getRetString();
+		if(response != null && response.getStatusCode() == 200){
+			String result = response.getResult();
+			if(response.getFormat() == ResponseFormat.TEXT){
+				setResult(result);
+			}else{
+				XmlData xmlData = XMLParser.parserXmlData(new ByteArrayInputStream(result.getBytes()));
+				if(xmlData != null){
+					setResult(xmlData.getData());
+					if(xmlData.getCertificates().size() > 0){
+						singerCert = xmlData.getCertificates().get(0);
+					}
+				}
+			}
+		}
 	}
-	
-	/**
-	 * @return base64解码后的数据byte[]
-	 */
-	public byte[] getEncoded() {
-		return retBase64String==null ? null: Base64.getDecoder().decode(retBase64String);
+
+
+	public NetoneCertificate getSingerCert() {
+		return singerCert;
 	}
-	
-	/** 获取服务返回信息base64编码字符串
-	 * @return base64编码字符串
-	 */
-	public String getRetBase64String() {
-		return retBase64String;
+
+	public void setSingerCert(NetoneCertificate singerCert) {
+		this.singerCert = singerCert;
 	}
 }

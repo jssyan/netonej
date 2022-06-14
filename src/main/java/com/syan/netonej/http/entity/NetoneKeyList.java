@@ -7,9 +7,12 @@
  */
 package com.syan.netonej.http.entity;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import com.syan.netonej.common.NetonejUtil;
+import com.syan.netonej.common.dict.ResponseFormat;
+import com.syan.netonej.common.xml.XMLParser;
+import com.syan.netonej.exception.NetonejException;
 
 /**
  * 获取PCS 密钥库中所有密钥id列表
@@ -17,37 +20,33 @@ import com.syan.netonej.common.NetonejUtil;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class NetoneKeyList extends NetonePCS {
+public class NetoneKeyList extends NetoneResponse {
 	/**
 	 * 密钥id列表
 	 */
-	private List<String> keys;
-	
+	private List<KeyListItem> keys;
 
 	/**
 	 * @param response 服务接口的返回对象
 	 */
-	public NetoneKeyList(NetoneResponse response) {		
-		super(response);			
-		String base64String = response.getRetString();
-		if(keys==null && !NetonejUtil.isEmpty(base64String)){			
-				List<String> keys=new ArrayList<String>();
-				String[] keyids = base64String.trim().split("\n");
-				for(int i=0;i<keyids.length;i++){
-					keys.add(keyids[i]);
+	public NetoneKeyList(NetoneResponse response) throws NetonejException {
+		super(response.getStatusCode());
+		if(response != null && response.getStatusCode() == 200){
+			String result = response.getResult();
+			if(response.getFormat() == ResponseFormat.TEXT){
+				String[] keyids = result.trim().split("\n");
+				keys = new ArrayList<KeyListItem>(keyids.length);
+				for(String key : keyids){
+					keys.add(new KeyListItem(key));
 				}
-				this.keys = keys;
-			
+			}else{
+				keys = XMLParser.parserKeyList(new ByteArrayInputStream(result.getBytes()));
+			}
 		}
 	}
-	
-	/**
-	 * 获取PCS 密钥库中密钥id列表
-	 * @return List<String> keys  密钥id列表
-	 */
-	public List<String> getKeyList() {		
-		
+
+	public List<KeyListItem> getKeyList() {
 		return keys;
 	}
-	
+
 }

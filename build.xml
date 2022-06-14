@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project default="main" basedir="E:/NETONESDK/netonesdk/java/NetONEJ">
+	 <property name="java.lib.dir" value="E:\install\Java\jdk1.7.0_67\lib"/>
+    <property name="version" value="2.0.3"/>
+	 <path id="compile.classpath">  
+	        <fileset dir="${java.lib.dir}">  
+	            <include name="tools.jar" />  
+	        </fileset>  
+	        <fileset dir="${basedir}/lib/">  
+	            <include name="*.jar" />  
+	        </fileset>  
+	    </path>  
+	
+    <target name="main" depends="jar" description="Main target">
+       <echo>Building the .jar file.</echo>
+    </target>
+    <target name="compile" description="Compilation target">
+       <javac srcdir="${basedir}/src/"  destdir="${basedir}/aout/" >
+       	<classpath refid="compile.classpath" />  
+        </javac>  
+    </target>
+	 <target name="copy" depends="compile"  description="Compilation target">
+	    <copy overwrite="true" todir="${basedir}/aout/com/syan/netonej/exception/">
+	            <fileset dir="${basedir}/src/com/syan/netonej/exception/">
+	                <include name="*.properties"/>
+	            </fileset>
+	    </copy>
+	</target>
+    <target name="jar" depends="copy" description="Compression target">
+       <jar  basedir="${basedir}/aout/" destfile="${basedir}/release/NetONEJ-${version}.jar">
+       	 <zipgroupfileset dir="${basedir}/lib/" includes="*.jar" /> 
+    	 </jar>
+    </target>
+</project>
