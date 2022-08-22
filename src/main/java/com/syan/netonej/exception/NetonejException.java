@@ -14,7 +14,18 @@ package com.syan.netonej.exception;
 * @since  1.0.0
  */
 public class NetonejException extends Exception {
-	
+
+	//默认的、本地的、未知的异常code为-1
+	private int code = -1;
+
+	public int getCode() {
+		return code;
+	}
+
+	public NetonejException(int code, String message) {
+		super(message);
+		this.code = code;
+	}
 
 	/**
 	 * @param message
@@ -28,6 +39,11 @@ public class NetonejException extends Exception {
 	 * @param message
 	 * @param cause
 	 */
+	public NetonejException(int code,String message, Throwable cause){
+		super(message,cause);
+		this.code = code;
+	}
+
 	public NetonejException(String message, Throwable cause){
 		super(message,cause);
 	}

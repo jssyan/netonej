@@ -1,14 +1,9 @@
 package com.syan.netonej.common.xml;
 
-import com.syan.netonej.common.NetoneCertificate;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.entity.KeyListItem;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 

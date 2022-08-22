@@ -55,7 +55,10 @@ public class NetoneResponse {
     }
 
     public String getResult() {
-        return new String(result);
+        if(result != null){
+            return new String(result);
+        }
+        return null;
     }
 
     public void setResult(byte[] result) {

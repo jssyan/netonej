@@ -18,6 +18,7 @@ public class CertificateBuilder extends BaseClient<CertificateBuilder> {
 
     private String id;
     private IdMagic idmagic= IdMagic.KID;
+    private String usage="1";
 
     @Override
     protected Map<String, String> buildParams() throws NetonejException {
@@ -26,6 +27,7 @@ public class CertificateBuilder extends BaseClient<CertificateBuilder> {
         if (idmagic != null) {
             params.put("idmagic", idmagic.name().toLowerCase());
         }
+        params.put("usage", usage);
         return params;
     }
 
@@ -41,6 +43,11 @@ public class CertificateBuilder extends BaseClient<CertificateBuilder> {
 
     public CertificateBuilder setIdmagic(IdMagic idmagic) {
         this.idmagic = idmagic;
+        return this;
+    }
+
+    public CertificateBuilder setUsage(String usage) {
+        this.usage = usage;
         return this;
     }
 

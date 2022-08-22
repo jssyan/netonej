@@ -40,6 +40,8 @@ public class NetoneCertificate extends NetoneResponse {
      */
     private X509Certificate certificate;
 
+    private String hasPrivkey = "0";
+
     /**
      * 根据证书base64编码数据构造NetoneCertificate实例
      * @param certBase64String
@@ -47,10 +49,10 @@ public class NetoneCertificate extends NetoneResponse {
      * @throws IOException
      */
     public NetoneCertificate(String certBase64String) throws NetonejException {
-        parseCertificate(certBase64String);
+        parseCertificate(certBase64String,"0");
     }
 
-    public void parseCertificate(String certBase64String) throws NetonejException {
+    public void parseCertificate(String certBase64String,String privkry) throws NetonejException {
         if (NetonejUtil.isEmpty(certBase64String)) {
             throw new NetonejException("证书内容不能为空");
         }
@@ -58,6 +60,7 @@ public class NetoneCertificate extends NetoneResponse {
             ByteArrayInputStream in = new ByteArrayInputStream(Base64.decode(certBase64String));
             CertificateFactory factory = new CertificateFactory();
             certificate = (X509Certificate) factory.engineGenerateCertificate(in);
+            this.hasPrivkey = privkry;
             setStatusCode(200);
         } catch (Exception e) {
             setStatusCode(-1);
@@ -72,7 +75,7 @@ public class NetoneCertificate extends NetoneResponse {
      * @throws IOException
      */
     public NetoneCertificate(byte[] cert) throws NetonejException {
-        parseCertificate(Base64.toBase64String(cert));
+        parseCertificate(Base64.toBase64String(cert),"0");
     }
 
     /**
@@ -86,17 +89,21 @@ public class NetoneCertificate extends NetoneResponse {
         if(response != null && response.getStatusCode() == 200){
             String result = response.getResult();
             if(response.getFormat() == ResponseFormat.TEXT){
-                parseCertificate(result);
+                parseCertificate(result,"0");
             }else{
                 KeyListItem item = XMLParser.parserCert(new ByteArrayInputStream(result.getBytes()));
                 if(item == null){
                     throw new NetonejException("证书解析失败");
                 }
-                parseCertificate(item.getCertificate());
+                parseCertificate(item.getCertificate(),item.getPrivk());
             }
         }
     }
 
+
+    public String getHasPrivkey() {
+        return hasPrivkey;
+    }
 
     /**
      * 获取证书主题项
@@ -233,7 +240,7 @@ public class NetoneCertificate extends NetoneResponse {
         return certificate.getPublicKey().getAlgorithm();
     }
 
-    public X509Certificate getCertificate() {
+    public X509Certificate getX509Certificate() {
         return certificate;
     }
 }

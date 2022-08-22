@@ -7,7 +7,7 @@
 
 <p align="center">
   <a target="_blank" href="">
-		<img src="https://img.shields.io/badge/release-v3.0.19-blue.svg" />
+		<img src="https://img.shields.io/badge/release-v3.0.20-blue.svg" />
 	</a>
 	<a target="_blank" href="">
 		<img src="https://img.shields.io/badge/maven-3.6.0-yellowgreen.svg" />
@@ -61,8 +61,6 @@ NetoneJ是一个连接`NetONE`安全模块的Java工具类库,可以在Java应�
 
 | 依赖库   |     介绍      |版本            |下载            |
 | --------|------------- |----------|--------------- |
-| okhttp3      |     一个处理网络请求的框架           |3.10.0|[jar](https://repo1.maven.org/maven2/com/squareup/okhttp3/okhttp/3.10.0/okhttp-3.10.0.jar) [maven](https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp/3.10.0)
-| okio    |     okhttp所依赖的一个io库  |1.14.0|[jar](https://repo1.maven.org/maven2/com/squareup/okio/okio/1.14.0/okio-1.14.0.jar) [maven](https://mvnrepository.com/artifact/com.squareup.okio/okio/1.14.0)
 | bouncycastle-bcprov |     密码组件              |1.68|[jar](https://repo1.maven.org/maven2/org/bouncycastle/bcprov-jdk15on/1.68/bcprov-jdk15on-1.68.jar) [maven](https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on/1.68)
 | bouncycastle-bcpkix      |     密码组件                |1.68|[jar](https://repo1.maven.org/maven2/org/bouncycastle/bcpkix-jdk15on/1.68/bcpkix-jdk15on-1.68.jar) [maven](https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on/1.68)
 

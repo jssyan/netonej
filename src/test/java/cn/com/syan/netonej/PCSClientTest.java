@@ -20,45 +20,14 @@ import java.util.List;
 
 public class PCSClientTest {
 
-    private PCSClient pcsClient = new PCSClient("192.168.10.215","9178");
+    private PCSClient pcsClient = new PCSClient("192.168.20.223","9178");
 
 
-    String kid = "afaf4cdb49964c24e172112f2a4b98c9";
-    String sm2kid = "afaf4cdb49964c24e172112f2a4b98c9";
+    String sm2kid = "86d879253d9c96bae3a688dbbdeb1186";
 
-    String cn = "J-N-S-P-E";
+    String sm2cn = "sm2";
 
-    String cert = "MIICNDCCAdugAwIBAgINAPjxdl3mFMf3ySNchjAKBggqgRzPVQGDdTBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRTAeFw0yMDAxMjAxNjAwMDBaFw0zMDAxMTcxNjAwMDBaMG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIDAJKUzELMAkGA1UEBwwCTkoxDTALBgNVBAoMBFN5YW4xEDAOBgNVBAsMB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAwwJSi1OLVMtUC1FMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAETGxel2ar0ttp5IYu9asjRna+hgK8oqUDf7A6E/DSiYZSzGO35IKsNfUd3GVSxsmQeQr9vZyliEwbP9O7+BfrraNgMF4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4EFgQUuFLOe2CMn8t6tYvmOVG6CtXOHGowHwYDVR0jBBgwFoAUuFLOe2CMn8t6tYvmOVG6CtXOHGowDgYDVR0PAQH/BAQDAgGGMAoGCCqBHM9VAYN1A0cAMEQCIBALIzaSMYahxAtkR0x/kd9z9OQ5R7RlCAgjVwiAXo1fAiAZu7rGRfVzozGvm32VcKD7bCp0DZ2bmtwwKuz5FA1tmQ==";
-
-    String pin = "111111";
-
-    String rsakid = "03ac7fd59857b8f850826b7f95f9c188";
-    String rsacn = "黄健";
-    String pemcert = "MIIEKjCCAxKgAwIBAgINAPfmrCYwyD95JvHzfDANBgkqhkiG9w0BAQsFADAxMQsw\n" +
-            "CQYDVQQGEwJDTjERMA8GA1UECgwIQUJDIGx0ZC4xDzANBgNVBAMMBmNhLWdlbjAe\n" +
-            "Fw0yMjA0MTUwNjI2NTJaFw00MDA0MTQxNjAwMDBaMB4xCzAJBgNVBAYTAkNOMQ8w\n" +
-            "DQYDVQQDDAbpu4TlgaUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCw\n" +
-            "Z2PoCOj06dDO1aRL3lX31LQMmvl6HvawPguUnyIN9K1mMod91WRjdn9wmJhhXOyS\n" +
-            "2UJpynv5q8XCqL68dZ0JL421/AebbjmxjiECs/ledo6x4anh24C1+gXby0QVMNOD\n" +
-            "6AGW4l8wA0b8Jy700mO1XA4iqm+39Pi4jkq6hNk4RASETI36SDC1Ipwu4uxKO/3X\n" +
-            "dBmBhsh7MsVDlCzz2qXvUAdUCRCkiMO0NFBid0EHxLkTPghprrpL6kf6UJwObdWS\n" +
-            "458ZVKFhbbS5qpCKaM+ZuvSjDvOeIrLVMTgwG7fp9F/TJF+Qzawl6F36ILhI0g8I\n" +
-            "xipUr4cElEJ6x8XOaE4RAgMBAAGjggFSMIIBTjAMBgNVHRMEBTADAQH/MB0GA1Ud\n" +
-            "DgQWBBTWAMD6bpcRp+2K9D3a0PqJVypCqDAPBgNVHQ8BAf8EBQMDB/+AMBYGA1Ud\n" +
-            "JQEB/wQMMAoGCCsGAQUFBwMIMC4GA1UdHwQnMCUwI6AhoB+GHWh0dHBzOi8vYWlh\n" +
-            "LnN5YW4uY29tLmNuL2NybC9hMGIGCCsGAQUFBwEBBFYwVDAkBggrBgEFBQcwAYYY\n" +
-            "aHR0cHM6Ly9vY3NwLnN5YW4uY29tLmNuMCwGCCsGAQUFBzAChiBodHRwczovL2Fp\n" +
-            "YS5zeWFuLmNvbS5jbi9pc3N1ZXIvYTAfBgNVHSMEGDAWgBRRRbE0SlfNI2qg2O9k\n" +
-            "Y58PKI/FNzBBBgNVHSAEOjA4MDYGCCqBHIbwAGQBMCowKAYIKwYBBQUHAgEWHGh0\n" +
-            "dHBzOi8vY3BzLnN5YW4uY29tLmNuL2NwczEwDQYJKoZIhvcNAQELBQADggEBACZz\n" +
-            "0ZG5nb+4+yoCz8HXeIctB1z53KdaY93zBY7YA4G1jzI47128EKId8wN3hg1eBkpj\n" +
-            "2rbFp3M53BfAl1bMo0AnM22ivesCF0GmplDErBRH9WQzR7nIVaZPkrceEVPlBE7R\n" +
-            "0MLFs0UtX700op1OZat05OFN+gV2OFf/BztZ8fvP+xLWYEePKfG474m4iRz2xY6s\n" +
-            "8ASF0nEfYQbic6N5VnXzMf3m6SLc5mWmCpSZlUm7SbX8ouNwuCJzua9lgLbJgEVB\n" +
-            "xUhRhhAbVTj/A1uyM7B8I7uOmoAkQuDPrAJ7N0wLIoJhpVG/XVU/gniW/S2tezBV\n" +
-            "cQnsQd2PSo+LpUXA5AQ=";
-
-    String rsacert = pemcert.replaceAll("\n","");
+    String pin = "11111111";
 
     /**
      * 获取可用的PCS中的kid
@@ -67,10 +36,9 @@ public class PCSClientTest {
     @Test
     public void testGetKids() throws NetonejException {
 
-        System.out.println("");
         NetoneKeyList response =
                 pcsClient.keyBuilder()
-                        .setLimit(10) //可选，返回前n个符合条件的密钥
+                        //.setLimit(10) //可选，返回前n个符合条件的密钥
                         .setKeyUseage(KeyUseage.SIGN)//可选，用于返回特定用法的密钥列表（根据证书对应的密钥用法）
                         .setKeyAlgorithm(KeyAlgorithm.SM2) //可选,用于返回特定算法的密钥
                         .build();
@@ -80,6 +48,21 @@ public class PCSClientTest {
         System.out.println(list.size());
     }
 
+
+    public String getCN(String subject){
+        if(!NetonejUtil.isEmpty(subject)){
+            String[] scns = subject.split(",");
+            for (String ob :scns){
+                String[] cns = ob.split("=");
+                if(cns[0].equals("CN")){
+                    return cns[1];
+                }
+            }
+        }
+        return "";
+    }
+
+
     /**
      * 获取证书
      * @throws NetonejException
@@ -87,10 +70,12 @@ public class PCSClientTest {
     @Test
     public void getBase64CertificateById() throws Exception {
         NetoneCertificate certificate = pcsClient.certificateBuilder()
-                .setId(kid)
+                .setResponseformat(ResponseFormat.XML)
+                .setId(sm2kid)
                 .setIdmagic(IdMagic.KID)
                 .build();
-        System.out.println(certificate.getPEMString());
+        System.out.println(certificate.getSubject());
+        System.out.println(certificate.getHasPrivkey());
     }
 
     /**
@@ -101,16 +86,17 @@ public class PCSClientTest {
     public void createPKCS1Signature() throws NetonejException {
         byte[] data = "123".getBytes();
         NetonePCS pcs = pcsClient.pkcs1Builder()
+                .setResponseformat(ResponseFormat.XML)
                 .setPasswd(pin)//可选，设置私钥保护口令
-                .setId(cn) //设置id参数，这里设置的证书cn项
-                .setIdmagic(IdMagic.SCN)//指定id的数据类型
+                .setId(sm2kid) //设置id参数，这里设置的证书cn项
+                //.setIdmagic(IdMagic.SNHEX)//指定id的数据类型
                 .setData(data)//签名原文
                 .setDataType(DataType.PLAIN)//可选，默认为原文签名
                 .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选,指定签名摘要算法
-                .setUserId("userid".getBytes())//可选，SM2签发者ID
+                //.setUserId("userid".getBytes())//可选，SM2签发者ID
                 .build();
         System.out.println(pcs.getResult());
-        System.out.println(pcs.getSingerCert());
+        //System.out.println(pcs.getSingerCert().getSubject());
     }
 
     /**
@@ -122,7 +108,8 @@ public class PCSClientTest {
         String data = "<data>123456</data>";
         NetonePCS pcs = pcsClient.xmlSignBuilder()
                 .setPasswd(pin)
-                .setId(rsakid)
+                .setId(sm2cn)
+                .setIdmagic(IdMagic.SCN)
                 .setData(data)
                 .setSigmode(SignMode.enveloping)
                 .setAlgo(DigestAlgorithm.SHA1)
@@ -148,12 +135,13 @@ public class PCSClientTest {
      */
     @Test
     public void createPKCS7Signature() throws NetonejException {
-        String data = "hello";
+        //String data = "hello";
+        String base64Data = "suLK1NStzsQxMjM/";
         NetonePCS pcs = pcsClient.pkcs7Builder()
                 .setPasswd(pin)//可选，设置私钥保护口令
-                .setId(kid)
-                .setIdmagic(IdMagic.CID)
-                .setData(data.getBytes())
+                .setId(sm2cn)
+                .setIdmagic(IdMagic.SCN)
+                .setBase64Data(base64Data)
                 .setAlgo(DigestAlgorithm.ECDSASM2)
                 .setAttach(false)//可选，签名结果中是否包含原始数据
                 .setFullchain(false)//可选，签名结果是否嵌入整个证书链
@@ -170,11 +158,11 @@ public class PCSClientTest {
     public void createEnvelopePacket() throws Exception {
         String data = "123456";
         NetonePCS pcs = pcsClient.envelopePacketBuilder()
-                .setId(kid)
+                .setId(sm2kid)
                 .setPasswd(pin)
                 .setData(data)
-                .setCipherAlgo("sm1-cbc")//可选，设置对称密钥算法
-                .setPeer(rsacert)//可选，设置加密证书
+                .setCipherAlgo(CipherAlgorithm.AES192CBC)//可选，设置对称密钥算法
+                .setPeer(sm2kid)//可选，设置加密证书
                 .setPeerMagic(IdMagic.KID)//可选，指定加密证书的类型
                 .setDigestAlgo("ecdsa-sm2-with-sm3")//可选
                 .build();
@@ -189,13 +177,13 @@ public class PCSClientTest {
      */
     @Test
     public void createEnvelopeUnPacket() throws Exception {
-        String data = "MIIE3gYKKoEcz1UGAQQCBKCCBM4wggTKAgEBMYIBXjCCAVoCAQAwQjAxMQswCQYDVQQGEwJDTjERMA8GA1UECgwIQUJDIGx0ZC4xDzANBgNVBAMMBmNhLWdlbgINAPfmrCYwyD95JvHzfDANBgkqhkiG9w0BAQEFAASCAQCFrrCvyxHfvzdjiPW8jvf606pDLJ2ihzH/9iROhqzpNbOppQbgo550XciW4OEq/NLg4YxLzyU+V0BMdjZUt3FzLTbeojvJ3pLfG7xXpQQMnqEgALdP5tY3BE9lAZD7bgipvtkqL0HewKICmDFt292LSays5fo2SbDh4ZvF4ALcvW4ubDaEvWsZkLd4C9pbdOvTj/5+fdsHRRvKgQfrB4c8oYXOlvhXUnBXv0qA07jOUW41W/USoCISBJu8onkp7AgMhnHw5FzPE4LWK0pU6L2kuLmvzSInD/FmaeKlg3PibNnSZsZdZ79h90LhTtbGc+kNZcU3GHS9trFzoaz+NqLZMQ4wDAYIKoEcz1UBgxEFADAsBgoqgRzPVQYBBAIBMBQGCCqGSIb3DQMHBAgHSCBbvxB3u4AId9L0RnutxsygggI4MIICNDCCAdugAwIBAgINAPjxdl3mFMf3ySNchjAKBggqgRzPVQGDdTBtMQswCQYDVQQGEwJDTjELMAkGA1UECAwCSlMxCzAJBgNVBAcMAk5KMQ0wCwYDVQQKDARTeWFuMRAwDgYDVQQLDAdQcm9kdWNlMQ8wDQYDVQQMDAZlbXBsZWUxEjAQBgNVBAMMCUotTi1TLVAtRTAeFw0yMDAxMjAxNjAwMDBaFw0zMDAxMTcxNjAwMDBaMG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIDAJKUzELMAkGA1UEBwwCTkoxDTALBgNVBAoMBFN5YW4xEDAOBgNVBAsMB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAwwJSi1OLVMtUC1FMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAETGxel2ar0ttp5IYu9asjRna+hgK8oqUDf7A6E/DSiYZSzGO35IKsNfUd3GVSxsmQeQr9vZyliEwbP9O7+BfrraNgMF4wDAYDVR0TBAUwAwEB/zAdBgNVHQ4EFgQUuFLOe2CMn8t6tYvmOVG6CtXOHGowHwYDVR0jBBgwFoAUuFLOe2CMn8t6tYvmOVG6CtXOHGowDgYDVR0PAQH/BAQDAgGGMAoGCCqBHM9VAYN1A0cAMEQCIBALIzaSMYahxAtkR0x/kd9z9OQ5R7RlCAgjVwiAXo1fAiAZu7rGRfVzozGvm32VcKD7bCp0DZ2bmtwwKuz5FA1tmTGB6DCB5QIBATB+MG0xCzAJBgNVBAYTAkNOMQswCQYDVQQIDAJKUzELMAkGA1UEBwwCTkoxDTALBgNVBAoMBFN5YW4xEDAOBgNVBAsMB1Byb2R1Y2UxDzANBgNVBAwMBmVtcGxlZTESMBAGA1UEAwwJSi1OLVMtUC1FAg0A+PF2XeYUx/fJI1yGMAwGCCqBHM9VAYMRBQAwDAYIKoEcz1UBg3UFADBEAiBG90Zi53iJMDIF0bn/zZr4s0HD9uLRQQfFzq+ifjpuvAIgXv16XMK7gVG/0wcCt0p1XTmGWnIKAoRTT3HEgg9HYJY=";
+        String data = "MIIDswYKKoEcz1UGAQQCBKCCA6MwggOfAgEBMYHcMIHZAgEAMD8wLjELMAkGA1UEBhMCQ04xETAPBgNVBAoeCFFIW4l50WKAMQwwCgYDVQQDEwNzbTICDQC9ErluFqJv4/DOafkwDQYJKoEcz1UBgi0DBQAEgYMwgYACID0X0xw3SH8Niv1tWZz/jBppYO3c4V/wV1upxEhOvZgyAiA2VD2QHQRoU3r1hP664PJY9JYklNqQgA1M+ijD1SrFNAQgAAIwpnwFp2WwLarLQHUCWuHovLhSY6EHhaftemrduqAEGO2ti2dOBiVeETYHQuY2mOo4+Hqs60rGWTEOMAwGCCqBHM9VAYMRBQAwPQYKKoEcz1UGAQQCATAdBglghkgBZQMEARYEECGc0j7SLBB3HkaOPUGWfX2AEJ7ZRlge3GLGZOT3uP7i7higggG8MIIBuDCCAV6gAwIBAgINAL0SuW4Wom/j8M5p+TAKBggqgRzPVQGDdTAuMQswCQYDVQQGEwJDTjERMA8GA1UECh4IUUhbiXnRYoAxDDAKBgNVBAMTA3NtMjAiGA8yMDIwMDgwNzAwMDAwMFoYDzIwMzAwODA1MDAwMDAwWjAuMQswCQYDVQQGEwJDTjERMA8GA1UECh4IUUhbiXnRYoAxDDAKBgNVBAMTA3NtMjBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABCDd/1wVqreFFn/Fhw2f3fMuYnzEB3r7RCfTnuIXcEH9YuEUgf3NZil/Wf+KHkYHid0r8MIqTxfC9u63k/Ss9PSjXTBbMAwGA1UdEwQFMAMBAf8wHQYDVR0OBBYEFMA0kmswVj5KCWI3kywDuKVC+GJeMB8GA1UdIwQYMBaAFMA0kmswVj5KCWI3kywDuKVC+GJeMAsGA1UdDwQEAwIBhjAKBggqgRzPVQGDdQNIADBFAiEAhc8Cf8dkDfLDgNKG9S7+0DV1qun+BSxy1q/vku5gi9gCIEK9K5kET/KGLEE7G01UF3EGQerVWLEj1WCeKekF/g25MYGrMIGoAgEBMD8wLjELMAkGA1UEBhMCQ04xETAPBgNVBAoeCFFIW4l50WKAMQwwCgYDVQQDEwNzbTICDQC9ErluFqJv4/DOafkwDAYIKoEcz1UBgxEFADAMBggqgRzPVQGDdQUAMEYCIQCGtisADMeyIVDor1MNWJjS8OQgZyb1h0OvlZvvDChLAgIhAPF5Br4XHjs6hwx6i+4BDnWF9VcTS7Cjs1dWCEvSS2DH";
         NetonePCS pcs = pcsClient.envelopeUnpackBuilder()
-                .setId(rsakid)
+                .setId(sm2kid)
                 .setPasswd(pin)
                 .setBase64Data(data)//设置待解包的数据
                 .build();
-        System.out.println(pcs.getSingerCert().getSubject());
+        System.out.println(pcs.getResult());
     }
 
     /**
@@ -207,25 +195,25 @@ public class PCSClientTest {
 
         String data = "123456";
 
-        //私钥加密,ECC算法不支持私钥加密
-        NetonePCS pcs = pcsClient.privateKeyBuilder()
-                .setId(rsakid)
-                .setPasswd(pin)
-                .setData(data)
-                .setEncrypt()//加密
-                .build();
-        //System.out.println(pcs.getResult());
-        //公钥解密,ECC算法不支持公钥解密
-        pcs = pcsClient.publicKeyBuilder()
-                .setId(kid)
-                .setBase64Data(pcs.getResult())
-                .setDecrypt()
-                .build();
-        //System.out.println(pcs.getResult());
+//        //私钥加密,ECC算法不支持私钥加密
+//        NetonePCS pcs = pcsClient.privateKeyBuilder()
+//                .setId(sm2kid)
+//                .setPasswd(pin)
+//                .setData(data)
+//                .setEncrypt()//加密
+//                .build();
+//        System.out.println(pcs.getResult());
+//        //公钥解密,ECC算法不支持公钥解密
+//        pcs = pcsClient.publicKeyBuilder()
+//                .setId(sm2kid)
+//                .setBase64Data(pcs.getResult())
+//                .setDecrypt()
+//                .build();
+//        System.out.println(pcs.getResult());
 //
         //公钥加密
-        pcs = pcsClient.publicKeyBuilder()
-                .setId(kid)
+        NetonePCS pcs = pcsClient.publicKeyBuilder()
+                .setId(sm2kid)
                 .setData(data)
                 .setEncrypt()
                 .build();
@@ -233,7 +221,7 @@ public class PCSClientTest {
 //
         //私钥解密
         pcs = pcsClient.privateKeyBuilder()
-                .setId(kid)
+                .setId(sm2kid)
                 .setPasswd(pin)
                 .setBase64Data(pcs.getResult())
                 .setDecrypt()//解密
@@ -246,10 +234,14 @@ public class PCSClientTest {
     @Test
     public void testChangepin() throws NetonejException {
         NetonePCS response = pcsClient.pinBuilder()
-                .setId(kid)
+                .setId(sm2kid)
                 .setOldpwd(pin)//设置旧密码
                 .setNewpwd("123456")//设置新密码
                 .build();
+        //0: 成功
+        //1: 旧口令验证不通过
+        //2: 密钥库操作失败
+        //3: 更新新口令失败
         System.out.println(response.getResult());
     }
 }

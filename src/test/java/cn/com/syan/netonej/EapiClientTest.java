@@ -4,9 +4,6 @@ import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.common.dict.IdMagic;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.EapiClient;
-import com.syan.netonej.http.client.eapi.CertificateDeleteBuilder;
-import com.syan.netonej.http.client.eapi.CertificateListBuilder;
-import com.syan.netonej.http.client.eapi.CertificateUploadBuilder;
 import com.syan.netonej.http.entity.NetoneCertList;
 import com.syan.netonej.http.entity.NetoneResponse;
 import org.junit.Test;
@@ -90,8 +87,8 @@ public class EapiClientTest {
     @Test
     public void deleteCertificates() throws Exception {
         NetoneResponse response = eapiClient.certificateDeleteBuilder()
-                .setId("test_tsa").setIdMagic(IdMagic.SCN)//设置要删除证书的CN
-                .setRevoked(true)//可选，删除不可信证书
+                .setId("黄")
+                .setIdMagic(IdMagic.SCN)//设置要删除证书的CN
                 .build();
         System.out.println(response.getStatusCode());
     }

@@ -1,18 +1,13 @@
 package cn.com.syan.netonej;
 
 import com.syan.netonej.common.NetoneDigest;
-import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.common.dict.*;
-import com.syan.netonej.exception.NetonejException;
-import com.syan.netonej.http.client.SVSClient;
 import com.syan.netonej.http.client.TSAClient;
-import com.syan.netonej.http.client.tsa.TSACreateBuilder;
-import com.syan.netonej.http.client.tsa.TSAVerifyBuilder;
 import com.syan.netonej.http.entity.NetoneTSA;
-import com.syan.netonej.http.okhttp.NetoneJHttpClient;
 import org.bouncycastle.cms.CMSAlgorithm;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
+import org.bouncycastle.util.encoders.Base64;
 import org.junit.Test;
 
 /**
@@ -23,27 +18,27 @@ import org.junit.Test;
 
 public class TSAClientTest {
 
-    private TSAClient tsaClient = new TSAClient("192.168.20.223","9198");
-    /**
-     * 根据原文数据 签发时间戳
-     * @throws NetonejException
-     */
+    private TSAClient tsaClient = new TSAClient("http://demo.syan.com.cn","9198");
+
 
     @Test
-    public void testGetTimestamp() throws NetonejException {
-        String data = "123456";
+    public void testGetTimestamp2() throws Exception {
+        //原文
+        String data = "nEsVI+uBQwPyQYwUHpKh+iz1hHWtwS+Z3a0hXv3+Ntw+Hyqo6zkcQjDNCP5Kw6XGvR6PQJAl3CAga5HdSqGSHQ==";
+
         //签署
         NetoneTSA netoneTSA = tsaClient.tsaCreateBuilder()
-                .setAlgo(DigestAlgorithm.SHA1)//可选。设置签名摘要算法
-                .setData(data.getBytes())//设置签署原文
+                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选。设置摘要算法
+                .setData(Base64.decode(data))//设置签署原文
                 .build();
         System.out.println(netoneTSA.getResult());
+
         //验证
         netoneTSA = tsaClient.tsaVerifyBuilder()
-                .setData(data.getBytes())//设置签名原文
+                .setData(Base64.decode(data))//设置签名原文
                 .setBase64Timestamp(netoneTSA.getResult())//设置base64格式的时间戳
                 .build();
-        System.out.println(netoneTSA.getStatusCode());
+        System.out.println("验证响应码:"+netoneTSA.getStatusCode());
     }
 
     /**
@@ -74,6 +69,5 @@ public class TSAClientTest {
                 .build();
         System.out.println(netoneTSA.getStatusCode());
     }
-
 
 }

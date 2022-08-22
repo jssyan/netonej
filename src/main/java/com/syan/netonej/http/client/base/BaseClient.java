@@ -3,7 +3,7 @@ package com.syan.netonej.http.client.base;
 import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.exception.NetonejException;
-import com.syan.netonej.http.HttpClient;
+import com.syan.netonej.http.HttpURLConnectionClient;
 import com.syan.netonej.http.entity.NetoneResponse;
 
 import java.io.Serializable;
@@ -79,7 +79,14 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         if(childParams != null && childParams.size() > 0){
             params.putAll(childParams);
         }
-        NetoneResponse response = HttpClient.builder().url(url).addParam(params).post().syncBytes();
+        NetoneResponse response = new NetoneResponse();
+        byte[] res = HttpURLConnectionClient.builder().url(url).param(params).post();
+        if(res!= null){
+            response.setStatusCode(200);
+            response.setResult(res);
+        }else{
+            response.setStatusCode(-1);
+        }
         if(responseformat.equals("1")){
             response.setFormat(ResponseFormat.XML);
         }else{
@@ -90,7 +97,14 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
 
     protected NetoneResponse build(byte[] bytes) throws NetonejException{
         String url = buildFullUrl();
-        NetoneResponse response = HttpClient.builder().url(url).postBytes(bytes).syncBytes();
+        NetoneResponse response = new NetoneResponse();
+        byte[] res = HttpURLConnectionClient.builder().url(url).postBytes(bytes);
+        if(res!= null){
+            response.setStatusCode(200);
+            response.setResult(res);
+        }else{
+            response.setStatusCode(-1);
+        }
         return response;
     }
 

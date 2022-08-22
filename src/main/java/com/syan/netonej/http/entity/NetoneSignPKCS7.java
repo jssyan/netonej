@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.syan.netonej.common.NetoneCertificate;
 import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.common.xml.XMLParser;
