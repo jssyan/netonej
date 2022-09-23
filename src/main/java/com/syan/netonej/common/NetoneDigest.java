@@ -41,6 +41,7 @@ public class NetoneDigest {
     public void update(ByteBuffer b){
         messageDigest.update(b);
     }
+
     public void update(byte[] b, int offset, int len){
         messageDigest.update(b,offset,len);
     }
@@ -49,10 +50,12 @@ public class NetoneDigest {
         return messageDigest.digest();
     }
 
+    @Deprecated
     public byte[] digest(byte[] b){
         return messageDigest.digest(b);
     }
 
+    @Deprecated
     public int digest(byte[] b, int offset, int len) throws DigestException {
         return messageDigest.digest(b,offset,len);
     }
@@ -169,6 +172,7 @@ public class NetoneDigest {
         try {
             NetoneDigest digest = new NetoneDigest("SM3");
             digest.update(ss);
+            digest.digest();
         } catch (NetonejException e) {
             e.printStackTrace();
         }

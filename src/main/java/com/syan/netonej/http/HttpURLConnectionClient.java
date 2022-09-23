@@ -245,6 +245,10 @@ public class HttpURLConnectionClient {
                     e.printStackTrace();
                 }
             }
+            if(httpConn != null){
+                httpConn.disconnect();
+            }
+
         }
     }
 
