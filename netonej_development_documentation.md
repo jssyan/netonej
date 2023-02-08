@@ -320,7 +320,7 @@ NetoneCertList list = svsClient
 #### 3.1 构造TSAClient对象
 
 ```
-TSAClient client = new TSAClient(String host, String port);
+TSAClient tsaClient = new TSAClient(String host, String port);
 ```
 
 #### 3.2 创建时间戳
@@ -347,7 +347,7 @@ TSAClient client = new TSAClient(String host, String port);
 #### 4.1 构造EapiClient对象
 
 ```
-EapiClient client = new EapiClient(String host, String port);
+EapiClient eapiClient = new EapiClient(String host, String port);
 ```
 
 #### 4.2枚举服务端证书列表
