@@ -347,7 +347,7 @@ TSAClient client = new TSAClient(String host, String port);
 #### 4.1 构造EapiClient对象
 
 ```
-TSAClient client = new TSAClient(String host, String port);
+EapiClient client = new EapiClient(String host, String port);
 ```
 
 #### 4.2枚举服务端证书列表
