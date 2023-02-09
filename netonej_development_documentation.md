@@ -70,8 +70,8 @@ public enum IdMagic {
 ```
 NetonePCS pcs = pcsClient.pkcs1Builder()
                 .setPasswd(pin)//可选，设置私钥保护口令
-                .setId(cn) //设置id参数，这里设置的证书cn项
-                .setIdmagic(IdMagic.SCN)//指定id的数据类型
+                .setId(cn) //设置id参数
+                .setIdmagic(IdMagic.SCN)//指定id的数据类型，这里设置的是证书cn项
                 .setData(data)//签名原文
                 .setDataType(DataType.PLAIN)//可选，默认为原文签名
                 .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选,指定签名摘要算法
@@ -377,8 +377,12 @@ EapiClient eapiClient = new EapiClient(String host, String port);
 ```
 ### 5.本地密码运算
 #### 5.1 摘要运算
+支持MD5、SHA1、SHA224、SHA256、SHA384、SHA512、SM3等算法，使用方式如下：
 ```
+//设置算法名称（大写）
 NetoneDigest digest = new NetoneDigest("SHA256");
+//设置待计算的数据
 digest.update(data.getBytes());
+//得到摘要结果
 byte[] hsah = digest.digest();
 ```
