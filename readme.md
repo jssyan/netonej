@@ -7,13 +7,13 @@
 
 <p align="center">
   <a target="_blank" href="">
-		<img src="https://img.shields.io/badge/release-v3.0.21-blue.svg" />
+		<img src="https://img.shields.io/badge/release-v3.0.22-blue.svg" />
 	</a>
 	<a target="_blank" href="">
 		<img src="https://img.shields.io/badge/maven-3.6.0-yellowgreen.svg" />
 	</a>
 	<a target="_blank" href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html">
-		<img src="https://img.shields.io/badge/JDK-6+-green.svg" />
+		<img src="https://img.shields.io/badge/JDK-8+-green.svg" />
 	</a>
 	<a target="_blank" href="">
 		<img src="https://travis-ci.com/dromara/hutool.svg?branch=v4-master" />

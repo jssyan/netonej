@@ -1,15 +1,20 @@
 package cn.com.syan.netonej;
 
+import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import com.syan.netonej.common.NetoneCertificate;
 import com.syan.netonej.common.NetoneDigest;
 import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.common.dict.*;
+import com.syan.netonej.common.entity.FileSignSequence;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.PCSClient;
 import com.syan.netonej.http.entity.*;
+import org.bouncycastle.asn1.*;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -20,14 +25,46 @@ import java.util.List;
 
 public class PCSClientTest {
 
-    private PCSClient pcsClient = new PCSClient("192.168.20.223","9178");
+    //设置PCS（私钥密码服务）的服务器IP与端口号
+    private PCSClient pcsClient = new PCSClient("192.168.10.215","9178");
 
+    //证书ID
+    String sm2kid = "afaf4cdb49964c24e172112f2a4b98c9";
 
-    String sm2kid = "86d879253d9c96bae3a688dbbdeb1186";
+    String rsaKid = "03ac7fd59857b8f850826b7f95f9c188";
 
+    //证书的CN项
     String sm2cn = "sm2";
 
-    String pin = "11111111";
+    //证书的私钥保护口令
+    String pin = "111111";
+
+
+    @Test
+    public void testFileSign_filePath() throws Exception{
+
+        String in = "/Users/kisscat/Documents/app.apk";
+        String out = "/Users/kisscat/Documents/22.svaaa";
+        pcsClient.fileSignBuilder().setId(sm2kid).setIdmagic(IdMagic.KID).setPasswd(pin)
+                .setAlgo("SM3").build(in,out);
+    }
+
+    /**
+     * 文件保护结构
+     * @throws Exception
+     */
+    @Test
+    public void testFileSign_fileData() throws Exception{
+        //byte[] data= "123".getBytes();
+
+        byte[] data = FileUtil.read("/Users/kisscat/Documents/app.apk");
+
+        NetoneResponse response = pcsClient.fileSignBuilder().setId(sm2kid).setIdmagic(IdMagic.KID).setPasswd(pin)
+                .setAlgo("SM3").build(data);
+
+        System.out.println(response.getStatusCode());
+        System.out.println(Base64.toBase64String(response.getBytesResult()));
+    }
 
     /**
      * 获取可用的PCS中的kid
@@ -38,13 +75,15 @@ public class PCSClientTest {
 
         NetoneKeyList response =
                 pcsClient.keyBuilder()
-                        //.setLimit(10) //可选，返回前n个符合条件的密钥
+                        .setLimit(10) //可选，返回前n个符合条件的密钥
                         .setKeyUseage(KeyUseage.SIGN)//可选，用于返回特定用法的密钥列表（根据证书对应的密钥用法）
                         .setKeyAlgorithm(KeyAlgorithm.SM2) //可选,用于返回特定算法的密钥
                         .build();
-        List<KeyListItem> list =  response.getKeyList();
+        //结果
         System.out.println(response.getStatusCode());
+        //错误描述
         System.out.println(response.getStatusCodeMessage());
+        List<KeyListItem> list =  response.getKeyList();
         System.out.println(list.size());
     }
 
@@ -70,9 +109,11 @@ public class PCSClientTest {
     @Test
     public void getBase64CertificateById() throws Exception {
         NetoneCertificate certificate = pcsClient.certificateBuilder()
-                .setResponseformat(ResponseFormat.XML)
                 .setId(sm2kid)
                 .setIdmagic(IdMagic.KID)
+                //也可通过证书CN项的方式，按照如下两行设置即可：
+                //.setId(sm2cn)
+                //.setIdmagic(IdMagic.SCN)
                 .build();
         System.out.println(certificate.getSubject());
         System.out.println(certificate.getHasPrivkey());
@@ -86,7 +127,6 @@ public class PCSClientTest {
     public void createPKCS1Signature() throws NetonejException {
         byte[] data = "123".getBytes();
         NetonePCS pcs = pcsClient.pkcs1Builder()
-                .setResponseformat(ResponseFormat.XML)
                 .setPasswd(pin)//可选，设置私钥保护口令
                 .setId(sm2kid) //设置id参数，这里设置的证书cn项
                 //.setIdmagic(IdMagic.SNHEX)//指定id的数据类型

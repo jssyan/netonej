@@ -28,7 +28,7 @@ PCSClient client = new PCSClient(String host, String port);
 #### 1.2 获取可用的密钥(Kid)
 ```
 NetoneKeyList list = pcsClient.keyBuilder()
-          .setLimit(10) //可选，返回前n个符合条件的密钥
+          .setLimit(10) //可选，设置n个符合条件的密钥返回
           .setKeyUseage(KeyUseage.SIGN)//可选，用于返回特定用法的密钥列表（根据证书对应的密钥用法）
           .setKeyAlgorithm(KeyAlgorithm.SM2) //可选,用于返回特定算法的密钥
           .build();
@@ -70,8 +70,8 @@ public enum IdMagic {
 ```
 NetonePCS pcs = pcsClient.pkcs1Builder()
                 .setPasswd(pin)//可选，设置私钥保护口令
-                .setId(cn) //设置id参数
-                .setIdmagic(IdMagic.SCN)//指定id的数据类型，这里设置的是证书cn项
+                .setId(cn) //设置id参数，这里设置的证书cn项
+                .setIdmagic(IdMagic.SCN)//指定id的数据类型
                 .setData(data)//签名原文
                 .setDataType(DataType.PLAIN)//可选，默认为原文签名
                 .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选,指定签名摘要算法
@@ -245,6 +245,35 @@ NetonePCS response = pcsClient.pinBuilder()
                 .build();
 ```
 
+#### 1.14 创建APK文件保护结构
+
+
+```
+1.方式一：
+  byte[] data = File.readBytes("/xxx/app.apk");
+  NetoneResponse response = pcsClient.fileSignBuilder()
+                .setPasswd(pin)//可选，设置私钥保护口令
+                .setId(kid)//设置签名的KID
+                .setIdmagic(IdMagic.KID)//指定参数ID来源
+                .setAlgo(DigestAlgorithm.SM3)//文件摘要算法以及签名摘要算法
+                .build(data);
+         //结果
+        System.out.println(response.getStatusCode());
+        System.out.println(Base64.toBase64String(response.getBytesResult()));
+
+2.方式二：
+  //文件输入路径
+  String in = "/xxx/app.apk";
+  //文件输出路径
+  String out = "/xxx/app.sva";
+  pcsClient.fileSignBuilder()
+                .setPasswd(pin)//可选，设置私钥保护口令
+                .setId(kid)
+                .setIdmagic(IdMagic.KID)
+                .setAlgo(DigestAlgorithm.SM3)
+                .build(in,out);
+  //无异常，表示成功，数据已输出到文件
+```
 
 ### 2.SVS模块
 
@@ -320,7 +349,7 @@ NetoneCertList list = svsClient
 #### 3.1 构造TSAClient对象
 
 ```
-TSAClient tsaClient = new TSAClient(String host, String port);
+TSAClient client = new TSAClient(String host, String port);
 ```
 
 #### 3.2 创建时间戳
@@ -347,7 +376,7 @@ TSAClient tsaClient = new TSAClient(String host, String port);
 #### 4.1 构造EapiClient对象
 
 ```
-EapiClient eapiClient = new EapiClient(String host, String port);
+TSAClient client = new TSAClient(String host, String port);
 ```
 
 #### 4.2枚举服务端证书列表

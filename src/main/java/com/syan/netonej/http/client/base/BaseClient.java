@@ -5,7 +5,6 @@ import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.HttpURLConnectionClient;
 import com.syan.netonej.http.entity.NetoneResponse;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,29 +43,36 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         return (R)this;
     }
 
+    //绿色通道，需要服务端开启相关参数配合
     public R setGreenpass(String greenpass) {
         this.greenpass = greenpass;
         return (R)this;
     }
 
+    //设置模式
     public R setApplication(String application) {
         this.application = application;
         return (R)this;
     }
 
+    //希望签名服务器返回的数据格式，如xml text json等
     public R setResponseformat(String responseformat) {
         this.responseformat = responseformat;
         return (R)this;
     }
+
     public R setResponseformat(ResponseFormat responseformat) {
         this.responseformat = String.valueOf(responseformat.ordinal());
         return (R)this;
     }
 
+    //表单参数设置
     protected abstract Map<String, String> buildParams() throws NetonejException;
 
+    //资源路径 如/sl.svr
     protected abstract String buildUrlPath();
 
+    //post 表单形式
     public NetoneResponse build() throws NetonejException{
         String url = buildFullUrl();
         Map<String, String> params = new HashMap<String, String>();
@@ -95,6 +101,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         return response;
     }
 
+    //post bytes形式
     protected NetoneResponse build(byte[] bytes) throws NetonejException{
         String url = buildFullUrl();
         NetoneResponse response = new NetoneResponse();
@@ -108,6 +115,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         return response;
     }
 
+    //组织url
     private String buildFullUrl() throws NetonejException {
         if(NetonejUtil.isEmpty(host)){
             throw new NetonejException("host must be not empty");

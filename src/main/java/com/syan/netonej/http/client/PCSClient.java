@@ -15,6 +15,7 @@ public class PCSClient{
     public PCSClient(String host) {
         this.host = host;
     }
+
     public PCSClient(String host, String port) {
         this.host = host;
         this.port = port;
@@ -78,6 +79,10 @@ public class PCSClient{
 
     public XmlSignBuilder xmlSignBuilder(){
         return new XmlSignBuilder().setHost(host).setPort(port);
+    }
+
+    public FileSignBuilder fileSignBuilder(){
+        return new FileSignBuilder().setHost(host).setPort(port);
     }
 
 }

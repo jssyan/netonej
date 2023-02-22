@@ -21,8 +21,7 @@ public class DigestAlgorithms {
     //支持的算法名称
     private static final Map<String, String> allowedDigests = new HashMap();
 
-    public DigestAlgorithms() {
-    }
+    public DigestAlgorithms() {}
 
     public static MessageDigest getMessageDigestFromOid(String digestOid, String provider) throws NoSuchAlgorithmException, NoSuchProviderException {
         return getMessageDigest(getDigest(digestOid), provider);

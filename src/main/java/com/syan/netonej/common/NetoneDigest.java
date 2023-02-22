@@ -12,6 +12,8 @@ import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.entity.DigestAlgorithms;
 import org.bouncycastle.jcajce.provider.digest.MD2;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.DigestException;
 import java.security.GeneralSecurityException;
@@ -20,14 +22,15 @@ import java.security.NoSuchAlgorithmException;
 
 public class NetoneDigest {
 
+    private String oid;
     private MessageDigest messageDigest;
 
     public NetoneDigest(String hashAlgorithm) throws NetonejException {
-        try {
-            this.messageDigest = getMessageDigest(hashAlgorithm);
-        } catch (GeneralSecurityException e) {
-            throw new NetonejException("不支持的摘要算法",e);
+        this.oid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
+        if(oid == null){
+            throw new NetonejException("不支持的摘要算法:"+hashAlgorithm);
         }
+        this.messageDigest = getMessageDigest(hashAlgorithm,oid);
     }
 
     public void update(byte b){
@@ -46,6 +49,14 @@ public class NetoneDigest {
         messageDigest.update(b,offset,len);
     }
 
+    public void update(InputStream data) throws IOException {
+        byte[] buf = new byte[8192];
+        int n;
+        while((n = data.read(buf)) > 0) {
+            messageDigest.update(buf, 0, n);
+        }
+    }
+
     public byte[] digest(){
         return messageDigest.digest();
     }
@@ -60,19 +71,22 @@ public class NetoneDigest {
         return messageDigest.digest(b,offset,len);
     }
 
+    //重置messageDigest
     public void reset(){
         messageDigest.reset();
     }
 
+    //摘要结果长度
     public int getDigestLength(){
         return messageDigest.getDigestLength();
     }
 
-    private MessageDigest getMessageDigest(String hashAlgorithm) throws GeneralSecurityException {
-        String oid = DigestAlgorithms.getAllowedDigest(hashAlgorithm);
-        if(oid == null){
-            throw new NoSuchAlgorithmException(hashAlgorithm);
-        }
+    //摘要算法的OID
+    public String getDigestOID(){
+        return this.oid;
+    }
+
+    private MessageDigest getMessageDigest(String hashAlgorithm,String oid) throws NetonejException {
         byte var4 = -1;
         switch(oid.hashCode()) {
             case -2071451550:
@@ -162,10 +176,9 @@ public class NetoneDigest {
             case 11:
                 return new org.bouncycastle.jcajce.provider.digest.SM3.Digest();
             default:
-                throw new NoSuchAlgorithmException(hashAlgorithm);
+                throw new NetonejException("不支持的摘要算法:"+hashAlgorithm);
         }
     }
-
 
     public static void main(String[] args) {
         byte[] ss = "123".getBytes();
@@ -173,6 +186,7 @@ public class NetoneDigest {
             NetoneDigest digest = new NetoneDigest("SM3");
             digest.update(ss);
             digest.digest();
+            System.out.println(digest.getDigestOID());
         } catch (NetonejException e) {
             e.printStackTrace();
         }
