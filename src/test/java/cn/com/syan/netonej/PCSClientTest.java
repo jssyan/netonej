@@ -43,8 +43,8 @@ public class PCSClientTest {
     @Test
     public void testFileSign_filePath() throws Exception{
 
-        String in = "/Users/kisscat/Documents/app.apk";
-        String out = "/Users/kisscat/Documents/22.svaaa";
+        String in = "/Users/kisscat/Documents/spark-ebox-syan-1.0.5.apk";
+        String out = "/Users/kisscat/Documents/spark-ebox-syan-1.0.5.iapk";
         pcsClient.fileSignBuilder().setId(sm2kid).setIdmagic(IdMagic.KID).setPasswd(pin)
                 .setAlgo("SM3").build(in,out);
     }
@@ -57,7 +57,7 @@ public class PCSClientTest {
     public void testFileSign_fileData() throws Exception{
         //byte[] data= "123".getBytes();
 
-        byte[] data = FileUtil.read("/Users/kisscat/Documents/app.apk");
+        byte[] data = FileUtil.read("/Users/kisscat/Documents/spark-ebox-syan-1.0.5.apk");
 
         NetoneResponse response = pcsClient.fileSignBuilder().setId(sm2kid).setIdmagic(IdMagic.KID).setPasswd(pin)
                 .setAlgo("SM3").build(data);

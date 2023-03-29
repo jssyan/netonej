@@ -21,7 +21,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
 
     protected String port = "80";
 
-    //绿色通道
+    //绿色通道，0代表禁止，如果允许绿色通道，不要设置该参数即可
     protected String greenpass = "0";
 
     /**
@@ -43,7 +43,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         return (R)this;
     }
 
-    //绿色通道，需要服务端开启相关参数配合
+    //绿色通道，需要服务端开启相关参数配合，设置为0表示禁止,设置为null或者空则表示允许绿色通道
     public R setGreenpass(String greenpass) {
         this.greenpass = greenpass;
         return (R)this;
@@ -77,7 +77,9 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         String url = buildFullUrl();
         Map<String, String> params = new HashMap<String, String>();
         params.put("responseformat", responseformat);
-        params.put("greenpass", greenpass);
+        if (!NetonejUtil.isEmpty(greenpass) && greenpass.equals("0")) {
+            params.put("greenpass", greenpass);
+        }
         if (!NetonejUtil.isEmpty(application)) {
             params.put("application", application);
         }
