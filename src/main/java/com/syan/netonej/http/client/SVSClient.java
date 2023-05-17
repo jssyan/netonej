@@ -6,7 +6,14 @@
  */
 package com.syan.netonej.http.client;
 
+import com.syan.netonej.common.dict.DataType;
+import com.syan.netonej.common.dict.DigestAlgorithm;
+import com.syan.netonej.common.dict.IdMagic;
+import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.svs.*;
+import com.syan.netonej.http.entity.NetoneCertList;
+import com.syan.netonej.http.entity.NetoneSVS;
+import org.bouncycastle.util.encoders.Base64;
 
 /**
  * NetONE SVS API
@@ -21,12 +28,10 @@ public class SVSClient {
 
     protected String port = "9188";
 
-    public SVSClient() {
-    }
-
     public SVSClient(String host) {
         this.host = host;
     }
+
     public SVSClient(String host, String port) {
         this.host = host;
         this.port = port;
@@ -66,5 +71,133 @@ public class SVSClient {
 
     public XMLSignVerifyBuilder xmlSignVerifyBuilder(){
         return new XMLSignVerifyBuilder().setHost(host).setPort(port);
+    }
+
+    public NetoneSVS verifyCertificate(String base64Certificate, String signts) throws NetonejException {
+        return certificateVerifyBuilder().setCert(base64Certificate).setSignts(signts).build();
+    }
+
+    public NetoneSVS verifyCertificate(String Base64Certificate) throws NetonejException {
+        return verifyCertificate(Base64Certificate,"");
+    }
+
+    public NetoneSVS verifyCertificate(String id, IdMagic idMagic) throws NetonejException {
+        return verifyCertificate(id,idMagic,"");
+    }
+
+    public NetoneSVS verifyCertificate(String id,IdMagic idMagic,String signts) throws NetonejException {
+        return certificateVerifyBuilder().setId(id).setIdMagic(idMagic).setSignts(signts).build();
+    }
+
+    public NetoneSVS verifyCertificateByDn(String certDn) throws NetonejException {
+        return verifyCertificate(certDn,IdMagic.SCN,"");
+    }
+
+    public NetoneCertList listCertificates() throws NetonejException {
+        return certificateListBuilder().build();
+    }
+
+    public NetoneSVS verifyXML(String data) throws NetonejException {
+        return xmlSignVerifyBuilder().setBase64Data(data).build();
+    }
+
+    public NetoneSVS verifyPKCS7(String p7data) throws NetonejException {
+        return verifyPKCS7(p7data,null);
+    }
+
+    public NetoneSVS verifyPKCS7(String p7data, String p7odat) throws NetonejException {
+        return pkcs7VerifyBuilder().setBase64Data(p7odat).setBase64Pkcs7(p7data).build();
+    }
+
+    public NetoneSVS verifyPKCS7(String p7data, String p7odat, boolean dataB64) throws NetonejException {
+        PKCS7VerifyBuilder builder = pkcs7VerifyBuilder().setBase64Pkcs7(p7data);
+        if(dataB64){
+            builder.setBase64Data(p7odat);
+        }else{
+            builder.setData(p7odat);
+        }
+        return builder.build();
+    }
+
+    @Deprecated
+    public NetoneSVS verifyPKCS1(byte[] plainText, String signature, String certDN) throws NetonejException {
+        return pkcs1VerifyBuilder()
+                .setBase64Signature(signature)
+                .setData(plainText)
+                .setId(certDN)
+                .setIdmagic(IdMagic.SCN)
+                .build();
+    }
+    @Deprecated
+    public NetoneSVS verifyPKCS1(String data, String signature, String algo, String datt, String certificate, boolean dataB64) throws NetonejException {
+        PKCS1VerifyBuilder builder = pkcs1VerifyBuilder().setBase64Signature(signature);
+        if(!dataB64){
+            data = Base64.toBase64String(data.getBytes());
+        }
+        builder.setBase64Data(data).setAlgo(algo).setCert(certificate);
+        if(datt.equals("0")){
+            builder.setDataType(DataType.PLAIN);
+        }else{
+            builder.setDataType(DataType.DIGEST);
+        }
+        return builder.build();
+    }
+
+    @Deprecated
+    public NetoneSVS verifyPKCS1(String data, String signature, String datt, String Base64Certificate, boolean dataB64) throws NetonejException {
+        return verifyPKCS1(data, signature, null,datt, Base64Certificate, dataB64);
+    }
+
+    @Deprecated
+    public NetoneSVS verifyPKCS1(String data, String signature, String base64Certificate, boolean dataB64) throws NetonejException {
+        if(!dataB64){
+            data = Base64.toBase64String(data.getBytes());
+        }
+        return pkcs1VerifyBuilder()
+                .setBase64Signature(signature)
+                .setBase64Data(data)
+                .setCert(base64Certificate)
+                .setDataType(DataType.PLAIN)
+                .build();
+    }
+
+    public NetoneSVS verifyPKCS1(String data, String signature, DigestAlgorithm algo, DataType datt, String certificate) throws NetonejException {
+        return pkcs1VerifyBuilder()
+                .setBase64Signature(signature)
+                .setBase64Data(data)
+                .setAlgo(algo)
+                .setCert(certificate).setDataType(datt).build();
+    }
+    public NetoneSVS verifyPKCS1(String data, String signature, DataType datt, String certificate) throws NetonejException {
+        return verifyPKCS1(data,signature,null,datt,certificate);
+    }
+
+    public NetoneSVS verifyPKCS1(String data, String signature, DigestAlgorithm algo, String certificate) throws NetonejException {
+        return verifyPKCS1(data,signature,algo,null,certificate);
+    }
+    public NetoneSVS verifyPKCS1(String data, String signature, String certificate) throws NetonejException {
+        return verifyPKCS1(data,signature,null,null,certificate);
+    }
+
+    public NetoneSVS verifyPKCS1(String id,IdMagic idMagic,String data, String signature, DigestAlgorithm algo, DataType datt) throws NetonejException {
+        return pkcs1VerifyBuilder()
+                .setBase64Signature(signature)
+                .setBase64Data(data)
+                .setAlgo(algo)
+                .setId(id)
+                .setIdmagic(idMagic)
+                .setDataType(datt)
+                .build();
+    }
+    public NetoneSVS verifyPKCS1(String id,IdMagic idMagic,String data, String signature, DataType datt) throws NetonejException {
+        return verifyPKCS1(id,idMagic,data,signature,null,datt);
+    }
+
+    public NetoneSVS verifyPKCS1(String id,IdMagic idMagic,String data, String signature, DigestAlgorithm algo) throws NetonejException {
+        return verifyPKCS1(id,idMagic,data,signature,algo,null);
+    }
+
+    public NetoneSVS verifyPKCS1(String id, IdMagic idMagic,String data,String signature) throws NetonejException {
+        return verifyPKCS1(id,idMagic,data,signature,null,null);
     }
 }

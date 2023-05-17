@@ -7,6 +7,8 @@ import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.base.BaseClient;
 import com.syan.netonej.http.entity.NetoneTSA;
 import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +51,7 @@ public class TSAVerifyBuilder extends BaseClient<TSAVerifyBuilder> {
             if (DataType.PLAIN == dataType) {
                 params.put("data", Base64.toBase64String(data));
             } else {
-                params.put("digest", NetonejUtil.byte2HexString(data));
+                params.put("digest", Hex.toHexString(data));
             }
         }
         return params;
