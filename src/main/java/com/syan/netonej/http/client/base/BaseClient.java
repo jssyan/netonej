@@ -55,12 +55,14 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         return (R)this;
     }
 
+    @Deprecated
     //希望签名服务器返回的数据格式，如xml text json等
     public R setResponseformat(String responseformat) {
         this.responseformat = responseformat;
         return (R)this;
     }
 
+    @Deprecated
     public R setResponseformat(ResponseFormat responseformat) {
         this.responseformat = String.valueOf(responseformat.ordinal());
         return (R)this;
@@ -87,14 +89,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         if(childParams != null && childParams.size() > 0){
             params.putAll(childParams);
         }
-        NetoneResponse response = new NetoneResponse();
-        byte[] res = HttpURLConnectionClient.builder().url(url).param(params).post();
-        if(res!= null){
-            response.setStatusCode(200);
-            response.setResult(res);
-        }else{
-            response.setStatusCode(-1);
-        }
+        NetoneResponse response = HttpURLConnectionClient.builder().url(url).param(params).post();
         if(responseformat.equals("1")){
             response.setFormat(ResponseFormat.XML);
         }else{
@@ -106,14 +101,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
     //post bytes形式
     protected NetoneResponse build(byte[] bytes) throws NetonejException{
         String url = buildFullUrl();
-        NetoneResponse response = new NetoneResponse();
-        byte[] res = HttpURLConnectionClient.builder().url(url).postBytes(bytes);
-        if(res!= null){
-            response.setStatusCode(200);
-            response.setResult(res);
-        }else{
-            response.setStatusCode(-1);
-        }
+        NetoneResponse response = HttpURLConnectionClient.builder().url(url).postBytes(bytes);
         return response;
     }
 

@@ -14,10 +14,6 @@ import java.io.InputStream;
  */
 public class DigestDemo {
 
-    public static void main(String[] args) {
-        fileDigest();
-    }
-
     public static void fileDigest(){
         String path = "/Users/kisscat/Downloads/tkks_exam_client_setup_220816.exe";
         InputStream in = null;

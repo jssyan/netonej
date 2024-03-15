@@ -26,10 +26,10 @@ import java.util.List;
 public class PCSClientTest {
 
     //设置PCS（私钥密码服务）的服务器IP与端口号
-    private PCSClient pcsClient = new PCSClient("192.168.10.215","9178");
+    private PCSClient pcsClient = new PCSClient("192.168.80.167","9178");
 
     //证书ID
-    String sm2kid = "afaf4cdb49964c24e172112f2a4b98c9";
+    String sm2kid = "593e2e00fdfefced7428be967d6d5b72";
 
     String rsaKid = "03ac7fd59857b8f850826b7f95f9c188";
 
@@ -37,7 +37,7 @@ public class PCSClientTest {
     String sm2cn = "sm2";
 
     //证书的私钥保护口令
-    String pin = "111111";
+    String pin = "123456";
 
 
     @Test
@@ -139,6 +139,41 @@ public class PCSClientTest {
         //System.out.println(pcs.getSingerCert().getSubject());
     }
 
+    @Test
+    public void createPKCS1SignatureMore() throws NetonejException {
+
+        for(int i= 0;i<1000;i++){
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    byte[] data = "123".getBytes();
+                    try {
+                        NetonePCS pcs = pcsClient.pkcs1Builder()
+                                .setPasswd(pin)//可选，设置私钥保护口令
+                                .setId(sm2kid) //设置id参数，这里设置的证书cn项
+                                //.setIdmagic(IdMagic.SNHEX)//指定id的数据类型
+                                .setData(data)//签名原文
+                                .setDataType(DataType.PLAIN)//可选，默认为原文签名
+                                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选,指定签名摘要算法
+                                //.setUserId("userid".getBytes())//可选，SM2签发者ID
+                                .build();
+                        System.out.println(pcs.getStatusCode());
+                        System.out.println(pcs.getResult());
+                    } catch (NetonejException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }).start();
+
+        }
+
+        try {
+            Thread.sleep(500000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * XML签名
      * @throws NetonejException
@@ -188,6 +223,7 @@ public class PCSClientTest {
                 .setNoattr(false)//可选，签名结果中是否包含签名时间等属性
                 .build();
         System.out.println(pcs.getResult());
+
     }
 
     /**
@@ -201,7 +237,7 @@ public class PCSClientTest {
                 .setId(sm2kid)
                 .setPasswd(pin)
                 .setData(data)
-                .setCipherAlgo(CipherAlgorithm.AES192CBC)//可选，设置对称密钥算法
+                .setCipherAlgo(CipherAlgorithm.DES)//可选，设置对称密钥算法
                 .setPeer(sm2kid)//可选，设置加密证书
                 .setPeerMagic(IdMagic.KID)//可选，指定加密证书的类型
                 .setDigestAlgo("ecdsa-sm2-with-sm3")//可选

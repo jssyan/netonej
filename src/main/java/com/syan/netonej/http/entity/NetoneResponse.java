@@ -7,9 +7,9 @@
  */
 package com.syan.netonej.http.entity;
 
+import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.exception.ErrorCode;
-import org.bouncycastle.util.encoders.Base64;
 
 /**
  * 请求的返回对象
@@ -27,6 +27,11 @@ public class NetoneResponse {
     private int statusCode;
 
     /**
+     * code非200的情况下，可能返回的消息,默认为空
+     */
+    private String message = "";
+
+    /**
      * Netone服务器返回的数据
      */
     private byte[] result;
@@ -39,6 +44,17 @@ public class NetoneResponse {
 
     public NetoneResponse(int statusCode, byte[] result) {
         this.statusCode = statusCode;
+        this.result = result;
+    }
+
+    public NetoneResponse(int statusCode, String message) {
+        this.statusCode = statusCode;
+        this.message = message;
+    }
+
+    public NetoneResponse(int statusCode, byte[] result,String message) {
+        this.statusCode = statusCode;
+        this.message = message;
         this.result = result;
     }
 
@@ -78,6 +94,10 @@ public class NetoneResponse {
     }
 
     public String getStatusCodeMessage() {
-        return ErrorCode.getStatusCodeMessage(statusCode);
+        String emsg = ErrorCode.getStatusCodeMessage(statusCode);
+        if (NetonejUtil.isEmpty(emsg)){
+            return message;
+        }
+        return emsg;
     }
 }

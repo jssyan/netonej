@@ -85,6 +85,11 @@ public class Action {
      * SVS - Action 签名证书验证
      */
     public final static String SVS_ACTION_VC = "vc.svr";
+
+    /**
+     * SVS - Action 电子签章验证
+     */
+    public final static String SVS_ACTION_STAMP = "vstamp";
     /**
      * SVS - Action PKCS#1签名验证
      */

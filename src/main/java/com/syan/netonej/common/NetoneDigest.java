@@ -179,16 +179,4 @@ public class NetoneDigest {
                 throw new NetonejException("不支持的摘要算法:"+hashAlgorithm);
         }
     }
-
-    public static void main(String[] args) {
-        byte[] ss = "123".getBytes();
-        try {
-            NetoneDigest digest = new NetoneDigest("SM3");
-            digest.update(ss);
-            digest.digest();
-            System.out.println(digest.getDigestOID());
-        } catch (NetonejException e) {
-            e.printStackTrace();
-        }
-    }
 }

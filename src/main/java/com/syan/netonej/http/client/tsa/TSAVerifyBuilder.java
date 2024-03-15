@@ -64,6 +64,6 @@ public class TSAVerifyBuilder extends BaseClient<TSAVerifyBuilder> {
 
     @Override
     public NetoneTSA build() throws NetonejException {
-        return new NetoneTSA(super.build());
+       return new NetoneTSA(Base64.decode(timestamp),super.build());
     }
 }

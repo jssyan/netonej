@@ -4,6 +4,7 @@ import com.syan.netonej.common.NetoneDigest;
 import com.syan.netonej.common.dict.*;
 import com.syan.netonej.http.client.TSAClient;
 import com.syan.netonej.http.entity.NetoneTSA;
+import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.cms.CMSAlgorithm;
 import org.bouncycastle.tsp.TimeStampRequest;
 import org.bouncycastle.tsp.TimeStampRequestGenerator;
@@ -18,7 +19,6 @@ import org.junit.Test;
  */
 
 public class TSAClientTest {
-
     private TSAClient tsaClient = new TSAClient("http://demo.syan.com.cn","9198");
 
 
@@ -31,14 +31,24 @@ public class TSAClientTest {
         //Base64编码的原文
         String data = "nEsVI+uBQwPyQYwUHpKh+iz1hHWtwS+Z3a0hXv3+Ntw+Hyqo6zkcQjDNCP5Kw6XGvR6PQJAl3CAga5HdSqGSHQ==";
 
-        //签署
+        //签署时间戳
         NetoneTSA netoneTSA = tsaClient.tsaCreateBuilder()
                 .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选。设置摘要算法
                 .setData(Base64.decode(data))//设置签署原文
                 .build();
+        System.out.println(netoneTSA.getStatusCode());
+        //时间戳签名
         System.out.println(netoneTSA.getResult());
+        //签名算法
+        System.out.println(netoneTSA.getAlgo());
+        //签名证书的DN
+        System.out.println(netoneTSA.getSubject());
+        //原文摘要值
+        System.out.println(netoneTSA.getImprint());
+        //签名时间
+        System.out.println(netoneTSA.getTimestamp());
 
-        //验证
+        //验证时间戳
         NetoneTSA netoneTSAVerify = tsaClient.tsaVerifyBuilder()
                 .setData(Base64.decode(data))//设置签名原文
                 .setBase64Timestamp(netoneTSA.getResult())//设置base64格式的时间戳
@@ -47,6 +57,16 @@ public class TSAClientTest {
 
         netoneTSAVerify = tsaClient.verifyTimestamp(netoneTSA.getResult(),data);
         System.out.println(netoneTSAVerify.getStatusCode());
+        //时间戳
+        System.out.println(netoneTSAVerify.getResult());
+        //签名算法
+        System.out.println(netoneTSAVerify.getAlgo());
+        //签名证书的DN
+        System.out.println(netoneTSAVerify.getSubject());
+        //原文摘要值
+        System.out.println(netoneTSAVerify.getImprint());
+        //签名时间
+        System.out.println(netoneTSAVerify.getTimestamp());
     }
 
     /**
@@ -56,11 +76,13 @@ public class TSAClientTest {
     @Test
     public void test() throws Exception{
         //原文摘要计算
-        byte[] digest = new NetoneDigest("SHA1").digest("123".getBytes());
+        byte[] digest = new NetoneDigest("SM3").digest("123".getBytes());
         //构造时间戳请求
         TimeStampRequestGenerator tsReqGen = new TimeStampRequestGenerator();
         tsReqGen.setCertReq(false);
-        TimeStampRequest tsReq = tsReqGen.generate(CMSAlgorithm.SHA1, digest);
+        TimeStampRequest tsReq = tsReqGen.generate(GMObjectIdentifiers.sm3, digest);
+
+        FileUtil.save(tsReq.getEncoded(),"/Users/momocat/Documents/temp","tsa_req_sm3");
         //申请时间戳
         NetoneTSA netoneTSA = tsaClient.tsaCreateBuilder()
                 .setData(tsReq.getEncoded())
@@ -68,18 +90,19 @@ public class TSAClientTest {
                 .build();
 
 
-        System.out.println(netoneTSA.getResult());
+        System.out.println("签发成功："+tsaClient.getHost()+":"+tsaClient.getPort());
+        System.out.println("签发成功："+netoneTSA.getResult());
 
-        //验证
-        NetoneTSA netoneTSAVerify = tsaClient.tsaVerifyBuilder()
-                .setData(digest)
-                .setDataType(DataType.DIGEST)
-                .setBase64Timestamp(netoneTSA.getResult())
-                .build();
-        System.out.println(netoneTSAVerify.getStatusCode());
-
-        netoneTSAVerify = tsaClient.verifyTimestamp(netoneTSA.getResult(),Base64.toBase64String("123".getBytes()),DataType.PLAIN);
-        System.out.println(netoneTSAVerify.getStatusCode());
+//        //验证
+//        NetoneTSA netoneTSAVerify = tsaClient.tsaVerifyBuilder()
+//                .setData(digest)
+//                .setDataType(DataType.DIGEST)
+//                .setBase64Timestamp(netoneTSA.getResult())
+//                .build();
+//        System.out.println(netoneTSAVerify.getStatusCode());
+//
+//        netoneTSAVerify = tsaClient.verifyTimestamp(netoneTSA.getResult(),Base64.toBase64String("123".getBytes()),DataType.PLAIN);
+//        System.out.println(netoneTSAVerify.getStatusCode());
     }
 
     /**

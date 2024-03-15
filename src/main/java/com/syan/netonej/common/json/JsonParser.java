@@ -25,8 +25,12 @@ public class JsonParser {
                     for (int i = 0; i < keys.length; i++) {
                         JSONObject item=items.getJSONObject(keys[i]);
                         String cert = item.getString("crt");
+                        String privk = "No";
+                        if(item.has("privk")){
+                            privk = item.getString("privk");
+                        }
                         String base64String = NetonejUtil.pemStringToBase64(new String(Base64.decode(cert)));
-                        list.add(new NetoneCertificate(base64String));
+                        list.add(new NetoneCertificate(base64String,privk));
                     }
                 }
             }

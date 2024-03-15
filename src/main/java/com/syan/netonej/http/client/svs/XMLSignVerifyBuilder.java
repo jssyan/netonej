@@ -17,10 +17,7 @@ import java.util.Map;
  * @Description
  */
 public class XMLSignVerifyBuilder extends BaseClient<XMLSignVerifyBuilder> {
-
     private String data;
-    
-
     public XMLSignVerifyBuilder setData(byte[] data) {
         this.data = Base64.toBase64String(data);
         return this;
@@ -36,7 +33,6 @@ public class XMLSignVerifyBuilder extends BaseClient<XMLSignVerifyBuilder> {
         params.put("data", data);
         return params;
     }
-
     @Override
     protected String buildUrlPath() {
         return Action.SVS_ACTION_VX;

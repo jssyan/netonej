@@ -109,11 +109,6 @@ public class FileSignSequence {
     }
 
 
-    public static void main(String[] args) {
-        //writeLength(1000099,null);
-    }
-
-
     //输入数据的长度，计算编码时存储这个长度需要多少字节(不包含tag的长度（也是1字节）)
     public static int encodeLength(long length) {
         if (length > 127) {

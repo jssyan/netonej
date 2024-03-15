@@ -28,7 +28,7 @@ public enum ErrorCode {
     X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD(815,"CRL的lastUpdate格式非法"),
     X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD(816,"CRL的nextUpdate格式非法"),
     X509_V_ERR_OUT_OF_MEM(817,"处理时内存不足"),
-    X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT(818,"需要验证的第一个证书是自签名证书，而却不在信任证书列表中"),
+    X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT(818,"需要验证的证书是自签名证书，不在信任证书列表中"),
     X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN(819,"可以建立证书链，但在本地找不到根"),
     X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY(820,"证书链不完整"),
     X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE(821,"证书链只有一项，却不是根"),

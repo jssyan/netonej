@@ -69,7 +69,6 @@ public class TSAClient {
     public NetoneTSA createTimestamp(String data,String algo) throws NetonejException{
         return createTimestamp(Base64.decode(data),algo,DataType.PLAIN.ordinal());
     }
-
     @Deprecated
     public NetoneTSA createTimestamp(String data, DataType dataType, DigestAlgorithm algo) throws NetonejException{
         return createTimestamp(data,algo.getName(),dataType.ordinal());
@@ -103,11 +102,13 @@ public class TSAClient {
      * @return TSR实体对象类 {@link com.syan.netonej.http.entity.NetoneTSA}
      * @throws NetonejException API全局异常类
      */
+    @Deprecated
     public NetoneTSA verifyTimestamp(String timestamp) throws NetonejException{
         return tsaVerifyBuilder()
                 .setBase64Timestamp(timestamp)
                 .build();
     }
+    @Deprecated
     public NetoneTSA verifyTimestamp(String timestamp,String data) throws NetonejException{
         return tsaVerifyBuilder()
                 .setData(Base64.decode(data))
@@ -115,6 +116,7 @@ public class TSAClient {
                 .setBase64Timestamp(timestamp)
                 .build();
     }
+    @Deprecated
     public NetoneTSA verifyTimestamp(String timestamp,String data,DataType dataType) throws NetonejException{
         TSAVerifyBuilder builder = tsaVerifyBuilder().setBase64Timestamp(timestamp);
         if(dataType == DataType.PLAIN){

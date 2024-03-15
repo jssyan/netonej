@@ -17,7 +17,7 @@ import org.junit.Test;
 public class EapiClientTest {
 
 
-    private EapiClient eapiClient = new EapiClient("https://192.168.10.215","9108");
+    private EapiClient eapiClient = new EapiClient("https://192.168.20.160","9108");
 
     String cert = "MIIELDCCAxSgAwIBAgINANCknqdjofaI1pSEpDANBgkqhkiG9w0BAQsFADAxMQsw\n" +
             "CQYDVQQGEwJDTjERMA8GA1UECgwIQUJDIGx0ZC4xDzANBgNVBAMMBmNhLWdlbjAe\n" +

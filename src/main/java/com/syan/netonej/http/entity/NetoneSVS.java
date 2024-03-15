@@ -30,7 +30,7 @@ public class NetoneSVS extends NetoneResponse {
      * @throws IOException
      */
     public NetoneSVS(NetoneResponse response) throws NetonejException {
-        super(response.getStatusCode());
+        super(response.getStatusCode(), response.getStatusCodeMessage());
         if(response != null && response.getStatusCode() == 200){
             String result = response.getResult();
             XmlData xmlData = XMLParser.parserCertList(new ByteArrayInputStream(result.getBytes()));

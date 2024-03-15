@@ -40,7 +40,11 @@ public class NetoneCertificate extends NetoneResponse {
      */
     private X509Certificate certificate;
 
-    private String hasPrivkey = "0";
+    private String hasPrivkey = "No";
+
+    public NetoneCertificate(String certBase64String,String hasPrivkey) throws NetonejException {
+        parseCertificate(certBase64String,hasPrivkey);
+    }
 
     /**
      * 根据证书base64编码数据构造NetoneCertificate实例

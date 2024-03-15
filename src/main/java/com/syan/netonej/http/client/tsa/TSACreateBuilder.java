@@ -17,7 +17,6 @@ import java.util.Map;
  * @Description
  */
 public class TSACreateBuilder extends BaseClient<TSACreateBuilder> {
-
     private byte[] data;
     private DataType dataType = DataType.PLAIN;
     private String algo;
@@ -64,9 +63,9 @@ public class TSACreateBuilder extends BaseClient<TSACreateBuilder> {
     @Override
     public NetoneTSA build() throws NetonejException {
         if (dataType == DataType.TIMESTAMP_REQUEST) {
-            return new NetoneTSA(super.build(data));
+            return new NetoneTSA(null,super.build(data));
         } else {
-            return new NetoneTSA(super.build());
+            return new NetoneTSA(null,super.build());
         }
     }
 }

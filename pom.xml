@@ -6,7 +6,7 @@
 
     <groupId>cn.com.syan.netonej</groupId>
     <artifactId>netonej</artifactId>
-    <version>3.0.24</version>
+    <version>3.0.26</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -59,6 +59,12 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <addClasspath>true</addClasspath>-->
+<!--                            <mainClass>com.syan.netonej.Main</mainClass>-->
+<!--                        </manifest>-->
+<!--                    </archive>-->
                 </configuration>
                 <executions>
                     <execution>

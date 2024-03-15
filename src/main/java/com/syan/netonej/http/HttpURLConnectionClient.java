@@ -2,12 +2,11 @@ package com.syan.netonej.http;
 
 import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.exception.NetonejException;
+import com.syan.netonej.http.entity.NetoneResponse;
+
 import javax.net.ssl.*;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -46,27 +45,27 @@ public class HttpURLConnectionClient {
         return this;
     }
 
-    public byte[] post() throws NetonejException{
+    public NetoneResponse post() throws NetonejException{
         this.REQUEST_METHOD = "POST";
        return build();
     }
-    public byte[] postBytes(byte[] bytes) throws NetonejException{
+    public NetoneResponse postBytes(byte[] bytes) throws NetonejException{
         this.REQUEST_METHOD = "POST";
         this.CONTENT_TYPE = "application/octet-stream";
         return build(bytes);
     }
-    public byte[] postJson(String json) throws NetonejException{
+    public NetoneResponse postJson(String json) throws NetonejException{
         this.REQUEST_METHOD = "POST";
         this.CONTENT_TYPE = "application/json; charset=utf-8";
         return build(json.getBytes());
     }
-    public byte[] postString(String string) throws NetonejException{
+    public NetoneResponse postString(String string) throws NetonejException{
         this.REQUEST_METHOD = "POST";
         this.CONTENT_TYPE = "application/text; charset=utf-8";
         return build(string.getBytes());
     }
 
-    public byte[] get() throws NetonejException{
+    public NetoneResponse get() throws NetonejException{
         this.REQUEST_METHOD = "GET";
         return build();
     }
@@ -109,7 +108,7 @@ public class HttpURLConnectionClient {
         return this;
     }
 
-    private byte[] build() throws NetonejException{
+    private NetoneResponse build() throws NetonejException{
         byte[] paramsBytes = null;
         if (params != null && params.size() != 0) {
             try {
@@ -121,7 +120,7 @@ public class HttpURLConnectionClient {
         return build(paramsBytes);
     }
 
-    private byte[] build(byte[] paramsBytes) throws NetonejException{
+    private NetoneResponse build(byte[] paramsBytes) throws NetonejException{
         if(NetonejUtil.isEmpty(url)){
             throw new NetonejException("URL must be set");
         }
@@ -132,7 +131,7 @@ public class HttpURLConnectionClient {
     }
 
 
-    private byte[] httpRequest(byte[] paramsBytes) throws NetonejException{
+    private NetoneResponse httpRequest(byte[] paramsBytes){
         HttpURLConnection httpConn = null;
         InputStream inputStream = null;
         try {
@@ -140,7 +139,7 @@ public class HttpURLConnectionClient {
             httpConn = (HttpURLConnection) urlconnect.openConnection();
             httpConn.setDoOutput(true);   //需要输出
             httpConn.setDoInput(true);   //需要输入
-            httpConn.setUseCaches(false);  //不允许缓存
+            httpConn.setUseCaches(false);  //不缓存
             httpConn.setRequestMethod(REQUEST_METHOD);   //设置POST方式连接
             httpConn.setInstanceFollowRedirects(true);    //自动执行HTTP重定向
             httpConn.setRequestProperty("Content-Type", CONTENT_TYPE);
@@ -167,14 +166,13 @@ public class HttpURLConnectionClient {
             int resultCode = httpConn.getResponseCode();
             if (HttpURLConnection.HTTP_OK == resultCode) {
                 inputStream = httpConn.getInputStream();
-                return inputStream2bytes(inputStream);
+                return new NetoneResponse(resultCode,inputStream2bytes(inputStream));
             } else {
-                throw new NetonejException(resultCode,httpConn.getResponseMessage());
+                return new NetoneResponse(resultCode,httpConn.getResponseMessage());
             }
-        } catch (MalformedURLException e) {
-            throw new NetonejException("无效的URL：" + e.getMessage(), e);
-        } catch (IOException e) {
-            throw new NetonejException("网络请求失败：" + e.getMessage(), e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new NetoneResponse(-1,e.getMessage());
         } finally {
             if(inputStream != null){
                 try {
@@ -186,7 +184,7 @@ public class HttpURLConnectionClient {
         }
     }
 
-    private byte[] httpsRequest(byte[] paramBytes) throws NetonejException{
+    private NetoneResponse httpsRequest(byte[] paramBytes){
         HttpsURLConnection httpConn = null;
         InputStream inputStream = null;
         try {
@@ -225,18 +223,16 @@ public class HttpURLConnectionClient {
                 out.flush();
                 out.close();
             }
-            //获得响应状态
             int resultCode = httpConn.getResponseCode();
             if (HttpURLConnection.HTTP_OK == resultCode) {
                 inputStream = httpConn.getInputStream();
-                return inputStream2bytes(inputStream);
+                return new NetoneResponse(resultCode,inputStream2bytes(inputStream));
             } else {
-                throw new NetonejException(resultCode,httpConn.getResponseMessage());
+                return new NetoneResponse(resultCode,httpConn.getResponseMessage());
             }
-        } catch (MalformedURLException e) {
-            throw new NetonejException("无效的URL：" + e.getMessage(), e);
-        } catch (IOException e) {
-            throw new NetonejException("网络请求失败：" + e.getMessage(), e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new NetoneResponse(-1,e.getMessage());
         } finally {
             if(inputStream != null){
                 try {
@@ -283,7 +279,6 @@ public class HttpURLConnectionClient {
         String params = url.toString();
         return params.getBytes(CHARSET_UTF8);
     }
-
 
     private SSLSocketFactory createSSLSocketFactory() {
         SSLSocketFactory ssfFactory = null;
