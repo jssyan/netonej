@@ -55,8 +55,6 @@ public class TSAClientTest {
                 .build();
         System.out.println("验证响应码:"+netoneTSAVerify.getStatusCode());
 
-        netoneTSAVerify = tsaClient.verifyTimestamp(netoneTSA.getResult(),data);
-        System.out.println(netoneTSAVerify.getStatusCode());
         //时间戳
         System.out.println(netoneTSAVerify.getResult());
         //签名算法
@@ -92,17 +90,10 @@ public class TSAClientTest {
 
         System.out.println("签发成功："+tsaClient.getHost()+":"+tsaClient.getPort());
         System.out.println("签发成功："+netoneTSA.getResult());
-
-//        //验证
-//        NetoneTSA netoneTSAVerify = tsaClient.tsaVerifyBuilder()
-//                .setData(digest)
-//                .setDataType(DataType.DIGEST)
-//                .setBase64Timestamp(netoneTSA.getResult())
-//                .build();
-//        System.out.println(netoneTSAVerify.getStatusCode());
-//
-//        netoneTSAVerify = tsaClient.verifyTimestamp(netoneTSA.getResult(),Base64.toBase64String("123".getBytes()),DataType.PLAIN);
-//        System.out.println(netoneTSAVerify.getStatusCode());
+        //签名证书的DN
+        System.out.println(netoneTSA.getSubject());
+        //原文摘要值
+        System.out.println(netoneTSA.getImprint());
     }
 
     /**

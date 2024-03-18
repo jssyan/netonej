@@ -6,7 +6,7 @@
 
     <groupId>cn.com.syan.netonej</groupId>
     <artifactId>netonej</artifactId>
-    <version>3.0.26</version>
+    <version>3.0.25</version>
     <packaging>jar</packaging>
 
     <properties>

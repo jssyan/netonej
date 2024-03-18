@@ -1,7 +1,7 @@
 /**
- * 文 件 名: EapiClient.java 
+ * 文 件 名: EapiClient.java
  * 版    权:  Jiangsu Syan Technology Co.,Ltd Copyright 2013 All Right Reserved
- * 描    述:  
+ * 描    述:
  * 修 改 人:  liyb
  * 修改时间:  2014-3-20
  */
@@ -72,18 +72,22 @@ public final class EapiClient{
 		return deleteCert(data,IdMagic.valueOf(idmagic.toUpperCase()));
 	}
 
+	@Deprecated
 	public NetoneResponse deleteCert(String data, IdMagic idMagic) throws NetonejException{
 		return deleteCert(data,idMagic,false);
 	}
 
+	@Deprecated
 	public NetoneResponse deleteCert(String data, IdMagic idMagic,boolean revoked) throws NetonejException{
 		return certificateDeleteBuilder().setId(data).setIdMagic(idMagic).setRevoked(revoked).build();
 	}
 
+	@Deprecated
 	public NetoneCertList listCertificates() throws NetonejException{
 		return listCertificates(false);
 	}
 
+	@Deprecated
 	public NetoneCertList listCertificates(boolean revoked) throws NetonejException{
 		return certificateListBuilder().setRevoked(revoked).build();
 	}

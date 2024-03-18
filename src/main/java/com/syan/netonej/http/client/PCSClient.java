@@ -47,10 +47,6 @@ public class PCSClient{
         return new CertificateBuilder().setHost(host).setPort(port);
     }
 
-//    public CMACBuilder cmacBuilder(){
-//        return new CMACBuilder().setHost(host).setPort(port);
-//    }
-
     public EnvelopePacketBuilder envelopePacketBuilder(){
         return new EnvelopePacketBuilder().setHost(host).setPort(port);
     }
@@ -91,33 +87,40 @@ public class PCSClient{
     public NetoneKeyList getPcsIds() throws NetonejException {
         return keyBuilder().build();
     }
+    @Deprecated
     public NetoneKeyList getKids() throws NetonejException {
         return keyBuilder().build();
     }
-
+    @Deprecated
     public NetoneKeyList getKids(int limit) throws NetonejException {
         return keyBuilder().setLimit(limit).build();
     }
+    @Deprecated
     public NetoneKeyList getKids(KeyAlgorithm keyAlgorithm) throws NetonejException {
         return keyBuilder().setKeyAlgorithm(keyAlgorithm).build();
     }
 
+    @Deprecated
     public NetoneKeyList getKids(KeyUseage keyUseage) throws NetonejException {
         return keyBuilder().setKeyUseage(keyUseage).build();
     }
 
+    @Deprecated
     public NetoneKeyList getKids(int limit,KeyAlgorithm keyAlgorithm) throws NetonejException {
         return keyBuilder().setLimit(limit).setKeyAlgorithm(keyAlgorithm).build();
     }
 
+    @Deprecated
     public NetoneKeyList getKids(int limit,KeyUseage keyUseage) throws NetonejException {
         return keyBuilder().setLimit(limit).setKeyUseage(keyUseage).build();
     }
 
+    @Deprecated
     public NetoneKeyList getKids(KeyAlgorithm keyAlgorithm,KeyUseage keyUseage) throws NetonejException {
         return keyBuilder().setKeyAlgorithm(keyAlgorithm).setKeyUseage(keyUseage).build();
     }
 
+    @Deprecated
     public NetoneKeyList getKids(int limit, KeyAlgorithm keyAlgorithm,KeyUseage keyUseage) throws NetonejException {
         return keyBuilder().setLimit(limit).setKeyAlgorithm(keyAlgorithm).setKeyUseage(keyUseage).build();
     }
@@ -127,10 +130,12 @@ public class PCSClient{
         return certificateBuilder().setId(id).setIdmagic(IdMagic.valueOf(idMagic.toUpperCase())).build();
     }
 
+    @Deprecated
     public NetoneCertificate getBase64CertificateById(String id) throws NetonejException {
         return getBase64CertificateById(id,IdMagic.KID.name());
     }
 
+    @Deprecated
     public NetoneCertificate getBase64CertificateById(String id, IdMagic idMagic) throws NetonejException {
         return certificateBuilder().setId(id).setIdmagic(idMagic).build();
     }
@@ -170,6 +175,7 @@ public class PCSClient{
         return builder.build();
     }
 
+    @Deprecated
     public NetonePCS createPKCS1Signature(String id, String pwd, IdMagic idMagic, String data, DataType datatype, DigestAlgorithm algo, String signerId) throws NetonejException {
         return pkcs1Builder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -179,6 +185,7 @@ public class PCSClient{
                 .setUserId(signerId.getBytes()).build();
     }
 
+    @Deprecated
     public NetonePCS createPKCS1Signature(String id, String pwd,IdMagic idMagic, String data, DataType datatype) throws NetonejException {
         return pkcs1Builder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -186,6 +193,7 @@ public class PCSClient{
                 .setDataType(datatype).build();
     }
 
+    @Deprecated
     public NetonePCS createPKCS1Signature(String id, String pwd, String data, DataType datatype, DigestAlgorithm algo) throws NetonejException {
         return pkcs1Builder().setId(id)
                 .setPasswd(pwd)
@@ -194,6 +202,7 @@ public class PCSClient{
                 .setDataType(datatype).build();
     }
 
+    @Deprecated
     public NetonePCS createPKCS1Signature(String id, String pwd, String data, DataType datatype) throws NetonejException {
         return pkcs1Builder().setId(id)
                 .setPasswd(pwd)
@@ -212,6 +221,7 @@ public class PCSClient{
         return new NetoneSignPKCS7(pcs);
     }
 
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data, boolean attach, DigestAlgorithm algo) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -222,6 +232,7 @@ public class PCSClient{
         return new NetoneSignPKCS7(pcs);
     }
 
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data, DigestAlgorithm algo) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -230,7 +241,7 @@ public class PCSClient{
                 .build();
         return new NetoneSignPKCS7(pcs);
     }
-
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data,boolean attach) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -239,7 +250,7 @@ public class PCSClient{
                 .build();
         return new NetoneSignPKCS7(pcs);
     }
-
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -247,6 +258,7 @@ public class PCSClient{
                 .build();
         return new NetoneSignPKCS7(pcs);
     }
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id)
                 .setPasswd(pwd)
@@ -255,6 +267,7 @@ public class PCSClient{
         return new NetoneSignPKCS7(pcs);
     }
 
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data, boolean attach, DigestAlgorithm algo) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id)
                 .setPasswd(pwd)
@@ -265,6 +278,7 @@ public class PCSClient{
         return new NetoneSignPKCS7(pcs);
     }
 
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data, boolean attach) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id)
                 .setPasswd(pwd)
@@ -274,6 +288,7 @@ public class PCSClient{
         return new NetoneSignPKCS7(pcs);
     }
 
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data, boolean attach, boolean fullchain,DigestAlgorithm algo) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id)
                 .setPasswd(pwd)
@@ -285,6 +300,7 @@ public class PCSClient{
         return new NetoneSignPKCS7(pcs);
     }
 
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd,String data, boolean attach, boolean fullchain) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id)
                 .setPasswd(pwd)
@@ -295,6 +311,7 @@ public class PCSClient{
         return new NetoneSignPKCS7(pcs);
     }
 
+    @Deprecated
     public NetoneSignPKCS7 createPKCS7Signature(String id, String pwd, IdMagic idMagic, String data, boolean attach, boolean fullchain,DigestAlgorithm algo) throws NetonejException {
         NetoneResponse pcs = pkcs7Builder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -306,6 +323,7 @@ public class PCSClient{
         return new NetoneSignPKCS7(pcs);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, String idMagic, String data, String base64Certificate) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id)
                 .setPasswd(pwd).setIdmagic(IdMagic.valueOf(idMagic))
@@ -313,6 +331,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, String idMagic, String data, String base64Certificate, String cipher) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id)
                 .setPasswd(pwd).setIdmagic(IdMagic.valueOf(idMagic))
@@ -323,6 +342,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, IdMagic idMagic, String data, String base64Certificate, CipherAlgorithm cipher) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id)
                 .setPasswd(pwd).setIdmagic(idMagic)
@@ -333,6 +353,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, String data, String base64Certificate, CipherAlgorithm cipher) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id)
                 .setPasswd(pwd)
@@ -343,7 +364,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
-
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, String data, CipherAlgorithm cipher) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id)
                 .setPasswd(pwd)
@@ -353,6 +374,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, IdMagic idMagic,String data, CipherAlgorithm cipher) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -362,6 +384,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, String data, String base64Certificate) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id)
                 .setPasswd(pwd)
@@ -371,6 +394,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, IdMagic idMagic,String data, String base64Certificate) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -380,6 +404,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, String data) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id)
                 .setPasswd(pwd)
@@ -388,6 +413,7 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetoneEnvelope envelopePacket(String id, String pwd, IdMagic idMagic,String data) throws NetonejException {
         NetoneResponse res = envelopePacketBuilder().setId(id).setIdmagic(idMagic)
                 .setPasswd(pwd)
@@ -396,99 +422,118 @@ public class PCSClient{
         return new NetoneEnvelope(res);
     }
 
+    @Deprecated
     public NetonePCS envelopeUnpack(String id, String pwd, String idMagic, String envelope) throws NetonejException {
         return envelopeUnpackBuilder().setId(id).setIdmagic(IdMagic.valueOf(idMagic.toUpperCase())).setPasswd(pwd).setBase64Data(envelope).build();
     }
 
+    @Deprecated
     public NetonePCS envelopeUnpack(String id, String pwd, IdMagic idMagic, String envelope) throws NetonejException {
         return envelopeUnpackBuilder().setId(id).setIdmagic(idMagic).setPasswd(pwd)
                 .setBase64Data(envelope).build();
     }
 
+    @Deprecated
     public NetonePCS envelopeUnpack(String id, String pwd, String envelope) throws NetonejException {
         return envelopeUnpackBuilder().setId(id).setPasswd(pwd)
                 .setBase64Data(envelope).build();
     }
 
+    @Deprecated
     public NetonePCS priKeyEncrypt(String id, String pwd, String idMagic, String data) throws NetonejException {
         return privateKeyBuilder().setId(id).setIdmagic(IdMagic.valueOf(idMagic.toUpperCase()))
                 .setBase64Data(data).setPasswd(pwd).setEncrypt().build();
     }
 
+    @Deprecated
     public NetonePCS priKeyEncrypt(String id, String pwd, String data) throws NetonejException {
         return privateKeyBuilder().setId(id)
                 .setBase64Data(data).setPasswd(pwd).setEncrypt().build();
     }
 
+    @Deprecated
     public NetonePCS priKeyEncrypt(String id, String pwd,IdMagic idMagic, String data) throws NetonejException {
         return privateKeyBuilder().setId(id).setIdmagic(idMagic).setEncrypt()
                 .setBase64Data(data).setPasswd(pwd).build();
     }
 
+    @Deprecated
     public NetonePCS priKeyDecrypt(String id, String pwd, String idMagic, String encryptData) throws NetonejException {
         return privateKeyBuilder().setId(id).setIdmagic(IdMagic.valueOf(idMagic.toUpperCase()))
                 .setBase64Data(encryptData).setPasswd(pwd).setDecrypt().build();
     }
 
+    @Deprecated
     public NetonePCS priKeyDecrypt(String id, String pwd, IdMagic idMagic, String encryptData) throws NetonejException {
         return privateKeyBuilder().setId(id).setIdmagic(idMagic)
                 .setBase64Data(encryptData).setPasswd(pwd).setDecrypt().build();
     }
 
+    @Deprecated
     public NetonePCS priKeyDecrypt(String id, String pwd, String encryptData) throws NetonejException {
         return privateKeyBuilder().setId(id)
                 .setBase64Data(encryptData).setPasswd(pwd).setDecrypt().build();
     }
 
+    @Deprecated
     public NetonePCS pubKeyEncrypt(String id, String idMagic, String data) throws NetonejException {
         return publicKeyBuilder().setId(id).setIdmagic(IdMagic.valueOf(idMagic.toUpperCase()))
                 .setBase64Data(data).setEncrypt().build();
     }
 
+    @Deprecated
     public NetonePCS pubKeyEncrypt(String id, IdMagic idMagic, String data) throws NetonejException {
         return publicKeyBuilder().setId(id).setIdmagic(idMagic).setBase64Data(data).setEncrypt().build();
     }
 
+    @Deprecated
     public NetonePCS pubKeyEncrypt(String id, String data) throws NetonejException {
         return publicKeyBuilder().setId(id).setBase64Data(data).setEncrypt().build();
     }
 
+    @Deprecated
     public NetonePCS pubKeyDecrypt(String id, String idMagic, String encryptData) throws NetonejException {
         return publicKeyBuilder().setId(id).setIdmagic(IdMagic.valueOf(idMagic.toUpperCase()))
                 .setBase64Data(encryptData).setDecrypt().build();
     }
 
+    @Deprecated
     public NetonePCS pubKeyDecrypt(String id, IdMagic idMagic, String encryptData) throws NetonejException {
         return publicKeyBuilder().setId(id).setIdmagic(idMagic)
                 .setBase64Data(encryptData).setDecrypt().build();
     }
 
+    @Deprecated
     public NetonePCS pubKeyDecrypt(String id, String encryptData) throws NetonejException {
         return publicKeyBuilder().setId(id)
                 .setBase64Data(encryptData).setDecrypt().build();
     }
 
+    @Deprecated
     public NetonePCS createXMLSignature(String id, String pwd, String idMagic, String database64) throws NetonejException {
-
         return xmlSignBuilder().setId(id).setIdmagic(IdMagic.valueOf(idMagic.toUpperCase())).setPasswd(pwd)
                 .setBase64Data(database64).build();
     }
 
+    @Deprecated
     public NetonePCS createXMLSignature(String id, String pwd, String database64) throws NetonejException {
         return xmlSignBuilder().setId(id).setPasswd(pwd)
                 .setBase64Data(database64).build();
     }
 
+    @Deprecated
     public NetonePCS createXMLSignature(String id, String pwd, String database64,SignMode signMode) throws NetonejException {
         return xmlSignBuilder().setId(id).setPasswd(pwd)
                 .setBase64Data(database64).setSigmode(signMode).build();
     }
 
+    @Deprecated
     public NetonePCS createXMLSignature(String id, String pwd, IdMagic idMagic,String database64) throws NetonejException {
         return xmlSignBuilder().setId(id).setPasswd(pwd).setIdmagic(idMagic)
                 .setBase64Data(database64).build();
     }
 
+    @Deprecated
     public NetonePCS createXMLSignature(String id, String pwd, IdMagic idMagic,String database64,SignMode signMode) throws NetonejException {
         return xmlSignBuilder().setId(id).setPasswd(pwd).setIdmagic(idMagic)
                 .setBase64Data(database64).setSigmode(signMode).build();
@@ -499,18 +544,17 @@ public class PCSClient{
                 .setBase64Data(database64).setSigmode(SignMode.valueOf(sigmode.toUpperCase())).build();
     }
 
+    @Deprecated
     public NetonePCS changePassword(String id, String idMagic, String oldpwd,String newpwd) throws NetonejException {
-
         return pinBuilder().setId(id).setIdmagic(IdMagic.valueOf(idMagic.toUpperCase())).setOldpwd(oldpwd).setNewpwd(newpwd).build();
-
     }
-
+    @Deprecated
     public NetonePCS changePassword(String id, IdMagic idMagic, String oldpwd,String newpwd) throws NetonejException {
         return pinBuilder().setId(id).setIdmagic(idMagic)
                 .setOldpwd(oldpwd).setNewpwd(newpwd).build();
-
     }
 
+    @Deprecated
     public NetonePCS changePassword(String id, String oldpwd,String newpwd) throws NetonejException {
         return pinBuilder().setId(id)
                 .setOldpwd(oldpwd).setNewpwd(newpwd).build();

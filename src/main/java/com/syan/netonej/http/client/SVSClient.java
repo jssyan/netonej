@@ -77,42 +77,52 @@ public class SVSClient {
         return new XMLSignVerifyBuilder().setHost(host).setPort(port);
     }
 
+    @Deprecated
     public NetoneSVS verifyCertificate(String base64Certificate, String signts) throws NetonejException {
         return certificateVerifyBuilder().setCert(base64Certificate).setSignts(signts).build();
     }
 
+    @Deprecated
     public NetoneSVS verifyCertificate(String Base64Certificate) throws NetonejException {
         return verifyCertificate(Base64Certificate,"");
     }
 
+    @Deprecated
     public NetoneSVS verifyCertificate(String id, IdMagic idMagic) throws NetonejException {
         return verifyCertificate(id,idMagic,"");
     }
 
+    @Deprecated
     public NetoneSVS verifyCertificate(String id,IdMagic idMagic,String signts) throws NetonejException {
         return certificateVerifyBuilder().setId(id).setIdMagic(idMagic).setSignts(signts).build();
     }
 
+    @Deprecated
     public NetoneSVS verifyCertificateByDn(String certDn) throws NetonejException {
         return verifyCertificate(certDn,IdMagic.SCN,"");
     }
 
+    @Deprecated
     public NetoneCertList listCertificates() throws NetonejException {
         return certificateListBuilder().build();
     }
 
+    @Deprecated
     public NetoneSVS verifyXML(String data) throws NetonejException {
         return xmlSignVerifyBuilder().setBase64Data(data).build();
     }
 
+    @Deprecated
     public NetoneSVS verifyPKCS7(String p7data) throws NetonejException {
         return verifyPKCS7(p7data,null);
     }
 
+    @Deprecated
     public NetoneSVS verifyPKCS7(String p7data, String p7odat) throws NetonejException {
         return pkcs7VerifyBuilder().setBase64Data(p7odat).setBase64Pkcs7(p7data).build();
     }
 
+    @Deprecated
     public NetoneSVS verifyPKCS7(String p7data, String p7odat, boolean dataB64) throws NetonejException {
         PKCS7VerifyBuilder builder = pkcs7VerifyBuilder().setBase64Pkcs7(p7data);
         if(dataB64){

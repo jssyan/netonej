@@ -1,6 +1,7 @@
 package com.syan.netonej.http.client.svs;
 
 import com.syan.netonej.common.dict.Action;
+import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.base.BaseClient;
 import com.syan.netonej.http.entity.NetoneCertList;
@@ -25,6 +26,7 @@ public class CertificateListBuilder extends BaseClient<CertificateListBuilder> {
 
     @Override
     public NetoneCertList build() throws NetonejException {
+        setResponseformat(ResponseFormat.XML);
         return new NetoneCertList(super.build());
     }
 }
