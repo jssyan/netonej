@@ -26,7 +26,7 @@ import java.util.List;
 public class PCSClientTest {
 
     //设置PCS（私钥密码服务）的服务器IP与端口号
-    private PCSClient pcsClient = new PCSClient("192.168.80.167","9178");
+    private PCSClient pcsClient = new PCSClient("192.168.20.223","9178");
 
     //证书ID
     String sm2kid = "593e2e00fdfefced7428be967d6d5b72";
@@ -37,7 +37,7 @@ public class PCSClientTest {
     String sm2cn = "sm2";
 
     //证书的私钥保护口令
-    String pin = "123456";
+    String pin = "111111";
 
 
     @Test
@@ -210,15 +210,14 @@ public class PCSClientTest {
      */
     @Test
     public void createPKCS7Signature() throws NetonejException {
-        //String data = "hello";
-        String base64Data = "suLK1NStzsQxMjM/";
+        String data = "hello";
         NetonePCS pcs = pcsClient.pkcs7Builder()
                 .setPasswd(pin)//可选，设置私钥保护口令
                 .setId(sm2cn)
                 .setIdmagic(IdMagic.SCN)
-                .setBase64Data(base64Data)
-                .setAlgo(DigestAlgorithm.ECDSASM2)
-                .setAttach(false)//可选，签名结果中是否包含原始数据
+                .setData(data)
+                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)
+                .setAttach(true)//可选，签名结果中是否包含原始数据
                 .setFullchain(false)//可选，签名结果是否嵌入整个证书链
                 .setNoattr(false)//可选，签名结果中是否包含签名时间等属性
                 .build();

@@ -4,6 +4,7 @@ import com.syan.netonej.common.NetoneDigest;
 import com.syan.netonej.common.dict.*;
 import com.syan.netonej.http.client.TSAClient;
 import com.syan.netonej.http.entity.NetoneTSA;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.cms.CMSAlgorithm;
 import org.bouncycastle.tsp.TimeStampRequest;
@@ -80,6 +81,10 @@ public class TSAClientTest {
         tsReqGen.setCertReq(false);
         TimeStampRequest tsReq = tsReqGen.generate(GMObjectIdentifiers.sm3, digest);
 
+        TimeStampRequest ss = new TimeStampRequest(tsReq.getEncoded());
+
+        System.out.println("sss"+ss.getMessageImprintAlgOID());
+
         FileUtil.save(tsReq.getEncoded(),"/Users/momocat/Documents/temp","tsa_req_sm3");
         //申请时间戳
         NetoneTSA netoneTSA = tsaClient.tsaCreateBuilder()
@@ -96,6 +101,19 @@ public class TSAClientTest {
         System.out.println(netoneTSA.getImprint());
     }
 
+    @Test
+    public void testTimestampReq() throws Exception{
+        //原文摘要计算
+        byte[] digest = new NetoneDigest("SM3").digest("123".getBytes());
+        //构造时间戳请求
+        TimeStampRequestGenerator tsReqGen = new TimeStampRequestGenerator();
+        tsReqGen.setCertReq(false);
+        TimeStampRequest tsReq = tsReqGen.generate(CMSAlgorithm.SHA256, digest);
+
+        TimeStampRequest ss = new TimeStampRequest(tsReq.getEncoded());
+
+        System.out.println("sss"+ss.getMessageImprintAlgOID());
+    }
     /**
      * 签发时间戳的其他写法（主要兼容3.0.18以下版本的写法）
      * @throws Exception
