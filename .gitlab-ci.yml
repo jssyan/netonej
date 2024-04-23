@@ -1,0 +1,67 @@
+#脚本中会使用到的镜像，这里因为是Java Maven项目，所以导入maven镜像
+image: maven-jdk8:v1.0
+
+workflow:
+  rules:
+    # 脚本触发条件，只在打tag时运行
+    - if: $CI_COMMIT_TAG
+
+# 定义流水线
+stages:
+  - deploy
+
+deploy-job:
+  stage: deploy
+  script:
+    - |
+      #!/bin/bash
+      OUT_DIR=target
+      PROJECT_NAME=netonej-doc
+      VERSION="$CI_COMMIT_TAG"
+      DEPLOY_URL="$DEPLOY_HOST"
+      PACKAGE=$PROJECT_NAME-$VERSION.tar.gz
+      
+      # 构建开始
+      mvn clean javadoc:javadoc --settings ${MVN_SETTINGS_XML}
+      echo 'The doc of netoenj was built using maven successful !'
+      
+      # 开始打包
+      targetDir=$OUT_DIR/site/apidocs
+      cd $targetDir || exit
+      tar -czf ../$PACKAGE *
+      mv ../$PACKAGE ../../
+      cd ../../ || exit
+      
+      echo 'Packaging successful'
+      
+      # 计算md5sum
+      PACKAGE_MD5=`md5sum $PACKAGE | awk '{ print $1 }'`
+      
+      # 上传安装包
+      echo "sshpass -p ${DEPLOY_SITE_SSH_PASSWD} scp -r -o StrictHostKeyChecking=no $PACKAGE root@${DEPLOY_SITE_IP}:${DEPLOY_PATH}$VERSION"
+      # 创建目录
+      sshpass -p ${DEPLOY_SITE_SSH_PASSWD} ssh -o StrictHostKeyChecking=no -p ${DEPLOY_SITE_SSH_PORT}  root@${DEPLOY_SITE_IP} "mkdir -p ${DEPLOY_PATH}$VERSION/"
+      # 上传文件
+      sshpass -p ${DEPLOY_SITE_SSH_PASSWD} scp -r -o StrictHostKeyChecking=no $PACKAGE root@${DEPLOY_SITE_IP}:${DEPLOY_PATH}$VERSION     
+      echo 'Uploading Success'
+      
+      # 发送飞书机器人
+      # 构建 JSON 请求数据
+      webhookRequest=$(cat <<EOF
+      {
+        "projectName": "$PROJECT_NAME",
+        "version": "$VERSION",
+        "url": "http://${DEPLOY_SITE_IP}/java/cosign/$VERSION/$PACKAGE",
+        "md5":"$PACKAGE_MD5",
+        "commituser":"$GITLAB_USER_NAME"
+      }
+      EOF
+      )
+      echo "webhookRequest $webhookRequest"
+      webhookResponse=$(curl -s -X POST -H "Content-Type: application/json" --data-raw "$webhookRequest" "${WEBHOOK_URL}")
+      echo "webhookResponse $webhookResponse"
+  before_script:
+    - echo "install sshpass&curl"
+    - apt update -qq && apt install -y sshpass -qq && apt install -y curl -qq && apt install -y git -qq && apt-get install -y jq -qq
+  only:
+    - tags   #只在创建tag的时候，执行
