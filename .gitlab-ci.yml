@@ -62,6 +62,7 @@ deploy-job:
       # 通过 token 获取知识库的 document_id
       get_response=$(curl -s -X GET "https://open.feishu.cn/open-apis/wiki/v2/spaces/get_node?obj_type=wiki&token=${FEISHU_RELEASE_DOC_WIKI_TOKEN}" \
       -H "Authorization: Bearer $tenant_access_token")
+      echo "成功获取文档信息：$get_response"
       # 提取 obj_token 的值
       obj_token=$(echo "$get_response" | grep -o '"obj_token":"[^"]*' | sed 's/"obj_token":"//')
       # 通过 document_id 获取所有块信息
