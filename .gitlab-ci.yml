@@ -1,6 +1,10 @@
 #脚本中会使用到的镜像，这里因为是Java Maven项目，所以导入maven镜像
 image: maven-jdk8:v1.0
 
+cache:
+  paths:
+    - ~/.m2/repository     # 缓存 Maven 依赖项
+
 workflow:
   rules:
     # 脚本触发条件，只在打tag时运行
