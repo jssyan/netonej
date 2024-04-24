@@ -48,12 +48,16 @@ deploy-job:
       
       # 获取发布日志
       # 发送 POST 请求获取访问令牌
-      response=$(curl -X POST -H "Content-Type: application/json" -d '{
+      response=$(curl -i -X POST 'https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal' \
+      -H "Content-Type: application/json" \
+      -d '{
         "app_id": "${FEISHU_APP_ID}",
         "app_secret": "${FEISHU_APP_SECRET}"
-      }' https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal)
+      }')
+      echo "成功获取访问令牌："
       # 提取 tenant_access_token 值
       tenant_access_token=$(echo "$response" | sed -n 's/.*"tenant_access_token":"\([^"]*\)".*/\1/p')
+      echo "Tenant Access Token: $tenant_access_token"
       ## 获取发布记录的docment_id
       wiki_token=$(basename "${FEISHU_RELEASE_DOC}")
       # 通过 token 获取知识库的 document_id
