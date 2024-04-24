@@ -59,10 +59,8 @@ deploy-job:
       tenant_access_token=$(echo "$response" | sed -n 's/.*"tenant_access_token":"\([^"]*\)".*/\1/p')
       echo "Tenant Access Token: $tenant_access_token"
       ## 获取发布记录的docment_id
-      wiki_token=$(basename "${FEISHU_RELEASE_DOC}")
-      echo "Tenant Wiki Token: $wiki_token"
       # 通过 token 获取知识库的 document_id
-      get_response=$(curl -s -X GET "https://open.feishu.cn/open-apis/wiki/v2/spaces/get_node?obj_type=wiki&token=${wiki_token}" \
+      get_response=$(curl -s -X GET "https://open.feishu.cn/open-apis/wiki/v2/spaces/get_node?obj_type=wiki&token=${FEISHU_RELEASE_DOC_WIKI_TOKEN}" \
       -H "Authorization: Bearer $tenant_access_token")
       # 提取 obj_token 的值
       obj_token=$(echo "$get_response" | grep -o '"obj_token":"[^"]*' | sed 's/"obj_token":"//')
