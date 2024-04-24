@@ -20,10 +20,10 @@ deploy-job:
     - |
       #!/bin/bash
       OUT_DIR=target
-      PROJECT_NAME=netonej-doc
+      PROJECT_NAME=netonej
       VERSION="$CI_COMMIT_TAG"
       DEPLOY_URL="$DEPLOY_HOST"
-      PACKAGE=$PROJECT_NAME-$VERSION.tar.gz
+      PACKAGE=$PROJECT_NAME-doc-$VERSION.tar.gz
       
       # 构建开始
       mvn clean javadoc:javadoc --settings ${MVN_SETTINGS_XML}
@@ -35,12 +35,9 @@ deploy-job:
       tar -czf ../$PACKAGE *
       mv ../$PACKAGE ../../
       cd ../../ || exit
-      
+    
       echo 'Packaging successful'
-      
-      # 计算md5sum
-      PACKAGE_MD5=`md5sum $PACKAGE | awk '{ print $1 }'`
-      
+            
       # 上传安装包
       echo "sshpass -p ${DEPLOY_SITE_SSH_PASSWD} scp -r -o StrictHostKeyChecking=no $PACKAGE root@${DEPLOY_SITE_IP}:${DEPLOY_PATH}$VERSION"
       # 创建目录
@@ -49,15 +46,45 @@ deploy-job:
       sshpass -p ${DEPLOY_SITE_SSH_PASSWD} scp -r -o StrictHostKeyChecking=no $PACKAGE root@${DEPLOY_SITE_IP}:${DEPLOY_PATH}$VERSION     
       echo 'Uploading Success'
       
+      # 获取发布日志
+      # 发送 POST 请求获取访问令牌
+      response=$(curl -X POST -H "Content-Type: application/json" -d '{
+        "app_id": "'${FEISHU_APP_ID}'",
+        "app_secret": "'${FEISHU_APP_SECRET}'"
+      }' https://open.feishu.cn/open-apis/auth/v3/app_access_token/internal)
+      # 提取 tenant_access_token 值
+      tenant_access_token=$(echo "$response" | sed -n 's/.*"tenant_access_token":"\([^"]*\)".*/\1/p')
+      ## 获取发布记录的docment_id
+      wiki_token=$(basename "${FEISHU_RELEASE_DOC}")
+      # 通过 token 获取知识库的 document_id
+      get_response=$(curl -s -X GET "https://open.feishu.cn/open-apis/wiki/v2/spaces/get_node?obj_type=wiki&token=${wiki_token}" \
+      -H "Authorization: Bearer $tenant_access_token")
+      # 提取 obj_token 的值
+      obj_token=$(echo "$get_response" | grep -o '"obj_token":"[^"]*' | sed 's/"obj_token":"//')
+      # 通过 document_id 获取所有块信息
+      block_response=$(curl -s -X GET "https://open.feishu.cn/open-apis/docx/v1/documents/$obj_token/blocks?document_revision_id=-1&page_size=500" \
+        -H "Authorization: Bearer $tenant_access_token")
+      # 查找 block_type 为 999 的第一个 block，提取 block_id
+      found_block_id=""
+      found_block_id=$(echo "$block_response" | jq -r '.data.items[]? | if has("block_type") and .block_type == 999 then .block_id else empty end' | head -n 1)
+      block_all=$(curl -s -X GET "https://open.feishu.cn/open-apis/docx/v1/documents/$obj_token/blocks/$found_block_id/children?document_revision_id=-1&page_size=500" \
+      -H "Authorization: Bearer $tenant_access_token")
+      ## 使用 jq 工具解析 JSON 数据并提取所需内容
+      output=$(echo $block_all | jq -r '.data.items[] | .ordered.elements | map(.text_run.content) | join("")')
+      echo "$output"
+      output_with_numbers=$(echo "$output" | awk '{print NR".",$0}')
+      CHANGE_LOG="${output_with_numbers//$'\n'/<br\/>}"
+      echo "$CHANGE_LOG"
       # 发送飞书机器人
       # 构建 JSON 请求数据
       webhookRequest=$(cat <<EOF
       {
         "projectName": "$PROJECT_NAME",
         "version": "$VERSION",
-        "url": "http://${DEPLOY_SITE_IP}/java/cosign/$VERSION/$PACKAGE",
-        "md5":"$PACKAGE_MD5",
-        "commituser":"$GITLAB_USER_NAME"
+        "interfaceDocUrl": "http://${DEPLOY_SITE_IP}/java/cosign/$VERSION/$PACKAGE",
+        "downloadUrl": "http://${DEPLOY_SITE_IP}/java/cosign/$VERSION/$PACKAGE", 
+        "commituser":"$GITLAB_USER_NAME",
+        "changeLog":"$CHANGE_LOG"
       }
       EOF
       )
