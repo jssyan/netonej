@@ -28,34 +28,38 @@ import java.util.Set;
 
 /**
  * NetoneCertificate 可获取证书对象、主题项、序列号、DER编码、BASE64编码等等相关信息
- *
- * @author liyb
- * @version 2.0.0
- * @since 2.0.0
  */
 public class NetoneCertificate extends NetoneResponse {
 
-    /**
-     * X509Certificate
-     */
     private X509Certificate certificate;
 
     private String hasPrivkey = "No";
 
+    /**
+     * 构造证书对象
+     * @param certBase64String base64证书内容
+     * @param hasPrivkey 是否有私钥
+     * @throws NetonejException 异常
+     */
     public NetoneCertificate(String certBase64String,String hasPrivkey) throws NetonejException {
         parseCertificate(certBase64String,hasPrivkey);
     }
 
     /**
      * 根据证书base64编码数据构造NetoneCertificate实例
-     * @param certBase64String
-     * @throws CertificateException
-     * @throws IOException
+     * @param certBase64String base64编码的证书
+     * @throws NetonejException 异常
      */
     public NetoneCertificate(String certBase64String) throws NetonejException {
         parseCertificate(certBase64String,"0");
     }
 
+    /**
+     * 解析证书对象
+     * @param certBase64String base64证书内容
+     * @param privkry 是否有私钥
+     * @throws NetonejException 异常
+     */
     public void parseCertificate(String certBase64String,String privkry) throws NetonejException {
         if (NetonejUtil.isEmpty(certBase64String)) {
             throw new NetonejException("证书内容不能为空");
@@ -75,8 +79,7 @@ public class NetoneCertificate extends NetoneResponse {
     /**
      * 根据证书编码数据构造NetoneCertificate实例
      * @param cert 证书编码数据
-     * @throws CertificateException
-     * @throws IOException
+     * @throws NetonejException 异常
      */
     public NetoneCertificate(byte[] cert) throws NetonejException {
         parseCertificate(Base64.toBase64String(cert),"0");
@@ -84,10 +87,8 @@ public class NetoneCertificate extends NetoneResponse {
 
     /**
      * 根据服务返回NetoneResponse信息构造NetoneCertificate实例
-     *
-     * @param response
-     * @throws CertificateException
-     * @throws IOException
+     * @param response response
+     * @throws NetonejException 异常
      */
     public NetoneCertificate(NetoneResponse response) throws NetonejException {
         if(response != null && response.getStatusCode() == 200){
@@ -111,9 +112,7 @@ public class NetoneCertificate extends NetoneResponse {
 
     /**
      * 获取证书主题项
-     *
      * @return 证书主题项, 证书不存在 返回NULL
-     * @throws IOException
      */
     public String getSubject() {
         return certificate.getSubjectDN().toString();
@@ -121,9 +120,7 @@ public class NetoneCertificate extends NetoneResponse {
 
     /**
      * 取得证书签发者
-     *
-     * @return 证书签发者的主题项 ,证书不存在 返回NULL
-     * @throws IOException
+     * @return 证书不存在 返回NULL
      */
     public String getIssuer() {
         return certificate.getIssuerDN().toString();
@@ -134,6 +131,10 @@ public class NetoneCertificate extends NetoneResponse {
      *
      * @return Date类型的日期, 证书不存在 返回NULL
      */
+    /**
+     * 取得证书的有效开始日期（NotBefore）
+     * @return Date类型的日期, 证书不存在 返回NULL
+     */
     public Date getNotBefore() {
         return certificate.getNotBefore();
     }
@@ -141,11 +142,9 @@ public class NetoneCertificate extends NetoneResponse {
     public String getNotBefore(String format) {
         return NetonejUtil.dateFormat(getNotBefore(),format);
     }
-
     /**
      * 取得证书的有效结束日期（NotAfter）
-     *
-     * @return Date类型的日期 ,证书不存在 返回NULL
+     * @return Date类型的日期, 证书不存在 返回NULL
      */
     public Date getNotAfter() {
         return certificate == null ? null : certificate.getNotAfter();
@@ -165,7 +164,6 @@ public class NetoneCertificate extends NetoneResponse {
 
     /**
      * 取得十进制的证书序列号字符串
-     *
      * @return 十进制的序列号字符串, 证书不存在 返回NULL
      */
     public String getDecSerial() {
@@ -202,8 +200,8 @@ public class NetoneCertificate extends NetoneResponse {
 
     /**
      * 获取证书编码数据
-     *
      * @return 证书编码数据
+     * @throws NetonejException 异常
      */
     public byte[] getEncoded() throws NetonejException {
         try {
@@ -215,8 +213,8 @@ public class NetoneCertificate extends NetoneResponse {
 
     /**
      * 获取证书base64编码字符串
-     *
      * @return base64编码字符串
+     * @throws NetonejException 异常
      */
     public String getBase64String() throws NetonejException{
         return Base64.toBase64String(getEncoded());
@@ -231,9 +229,9 @@ public class NetoneCertificate extends NetoneResponse {
     }
 
     /**
-     * 获取证书指纹()SHA1
-     * @return 指定算法的证书指纹
-     * @throws NoSuchAlgorithmException
+     * 获取证书指纹
+     * @return SHA1算法的证书指纹
+     * @throws NetonejException 异常
      */
     public String getFingerprint() throws NetonejException {
         NetoneDigest digest = new NetoneDigest("SHA1");

@@ -13,11 +13,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 16:32
- * @Description 文件保护结构
- */
 public class FileSignBuilder extends BaseClient<FileSignBuilder> {
 
     //签名需要的参数

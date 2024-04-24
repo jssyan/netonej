@@ -11,28 +11,25 @@ import com.syan.netonej.exception.ErrorCode;
 
 /**
  * base状态信息类
- * @author liyb
- * @version 2.0.0
- * @since 2.0.0
  */
 public class NetoneBase {
 	/**
 	 * 状态码值
 	 */
 	private int statusCode;
-	
+
 	/**
 	 * 状态码描述
 	 */
 	private String statusCodeMessage;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public NetoneBase(){};
-	
+
 	/**
-	 * NetoneBase 
+	 * NetoneBase
 	 * @param statusCode 服务返回的状态码
 	 */
 	public NetoneBase(int statusCode){

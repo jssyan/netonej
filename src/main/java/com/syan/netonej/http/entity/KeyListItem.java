@@ -1,10 +1,5 @@
 package com.syan.netonej.http.entity;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 10:49
- * @Description
- */
 public class KeyListItem {
     private String id;
     private String certificate;

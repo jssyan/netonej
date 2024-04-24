@@ -13,11 +13,6 @@ import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022/8/15 14:41
- * @Description
- */
 public class HttpURLConnectionClient {
 
     private final String CHARSET_UTF8 = "UTF-8";

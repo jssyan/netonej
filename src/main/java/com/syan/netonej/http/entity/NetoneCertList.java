@@ -1,7 +1,7 @@
 /**
  * 文 件 名:  NetoneCertList.java
  * 版    权:  Jiangsu Syan Technology Co.,Ltd Copyright 2013 All Right Reserved
- * 描    述: 
+ * 描    述:
  * 修 改 人:  liyb
  * 修改时间:  2013-04-29
  */
@@ -17,11 +17,6 @@ import com.syan.netonej.exception.NetonejException;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
-/**
- * @author liyb
- * @version 2.0.0
- * @since 2.0.0
- */
 public class NetoneCertList extends NetoneResponse {
 
 	/**
@@ -30,7 +25,9 @@ public class NetoneCertList extends NetoneResponse {
 	private List<NetoneCertificate> certList;
 
 	/**
+	 * 构造证书列表
 	 * @param response 服务接口的返回对象
+	 * @throws NetonejException 异常
 	 */
 	public NetoneCertList(NetoneResponse response) throws NetonejException {
 		super(response.getStatusCode());
@@ -46,6 +43,10 @@ public class NetoneCertList extends NetoneResponse {
 		}
 	}
 
+	/**
+	 * 获取证书列表
+	 * @return 证书列表
+	 */
 
 	public List<NetoneCertificate> getCertList() {
 		return certList;

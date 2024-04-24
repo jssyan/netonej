@@ -1,7 +1,7 @@
 /**
  * 文 件 名:  NetonePCS.java
  * 版    权:  Jiangsu Syan Technology Co.,Ltd Copyright 2013 All Right Reserved
- * 描    述: 
+ * 描    述:
  * 修 改 人:  liyb
  * 修改时间:  2013-04-25 Apr 29, 2013
  */
@@ -22,9 +22,6 @@ public class NetonePCS extends NetoneResponse{
 	 */
 	private NetoneCertificate singerCert;
 
-	/**
-	 * @param response
-	 */
 	public NetonePCS(NetoneResponse response) throws NetonejException {
 		super(response.getStatusCode());
 		if(response != null && response.getStatusCode() == 200){

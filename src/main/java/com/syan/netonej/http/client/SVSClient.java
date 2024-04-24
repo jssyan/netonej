@@ -15,13 +15,6 @@ import com.syan.netonej.http.entity.NetoneCertList;
 import com.syan.netonej.http.entity.NetoneSVS;
 import org.bouncycastle.util.encoders.Base64;
 
-/**
- * NetONE SVS API
- *
- * @author gejq
- * @version 2.0.0
- * @since 1.0.0
- */
 public class SVSClient {
 
     protected String host;

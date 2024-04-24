@@ -6,20 +6,15 @@ import org.bouncycastle.util.encoders.Hex;
 
 import java.io.*;
 
-/**
- * @Author mmdet
- * @Date 2023/2/17 13:30
- * @Description
- */
 public class FileSignSequence {
-
     /**
      * 通过文件内容，生成ASN1编码
-     *
-     * @param version
-     * @param data
-     * @param identifier
-     * @param signature
+     * @param version 版本
+     * @param data 内容
+     * @param identifier OID
+     * @param signature 签名
+     * @return DER编码的签名
+     * @throws NetonejException 异常
      */
     public static byte[] getDERSeqObject(Integer version, byte[] data, String identifier, byte[] signature) throws NetonejException{
         ASN1EncodableVector v = new ASN1EncodableVector();
@@ -34,10 +29,14 @@ public class FileSignSequence {
             throw new NetonejException("组织ASN1序列失败",e);
         }
     }
-
-
     /**
      * 通过文件路径生成ASN1编码（大文件下可用此方式）
+     * @param version 版本
+     * @param identifier OID标识符
+     * @param signature 签名
+     * @param fileInPath 文件输入路径
+     * @param fileOutPath 文件输出路径
+     * @throws NetonejException 异常
      */
     public static void getDERSeqObject(Integer version, String identifier, byte[] signature, String fileInPath, String fileOutPath) throws NetonejException {
 

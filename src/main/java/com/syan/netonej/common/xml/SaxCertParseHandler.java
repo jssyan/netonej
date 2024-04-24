@@ -4,11 +4,7 @@ import com.syan.netonej.http.entity.KeyListItem;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-/**
- * @Author mmdet
- * @Date 2022-05-06 09:36
- * @Description
- */
+
 public class SaxCertParseHandler extends DefaultHandler {
 
     private KeyListItem keyListItem;

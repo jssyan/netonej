@@ -13,11 +13,6 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 16:11
- * @Description
- */
 public class EnvelopeUnpackBuilder extends BaseClient<EnvelopeUnpackBuilder> {
 
     private String id;
@@ -25,7 +20,7 @@ public class EnvelopeUnpackBuilder extends BaseClient<EnvelopeUnpackBuilder> {
     private String passwd;
     private String data;
     private String digestAlgo;
-    
+
 
     public EnvelopeUnpackBuilder setId(String id) {
         this.id = id;

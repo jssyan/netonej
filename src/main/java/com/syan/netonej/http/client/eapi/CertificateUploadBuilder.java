@@ -8,11 +8,6 @@ import com.syan.netonej.http.client.base.BaseClient;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 16:05
- * @Description
- */
 public class CertificateUploadBuilder extends BaseClient<CertificateUploadBuilder> {
 
     private String cert;

@@ -1,10 +1,6 @@
 package com.syan.netonej.exception;
 
-/**
- * @Author mmdet
- * @Date 2021-06-09 10:50
- * @Description
- */
+
 public enum ErrorCode {
     UNDEFINED_ERROR(-1,"未知的错误"),
     SUCCESS(200,"成功"),

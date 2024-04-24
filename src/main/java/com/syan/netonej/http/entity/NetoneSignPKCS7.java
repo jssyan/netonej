@@ -3,7 +3,7 @@
  * 版    权:  Jiangsu Syan Technology Co.,Ltd Copyright 2013 All Right Reserved
  * 描    述: PKCS#7签名对象
  * 修 改 人:  liyb
- * 修改时间:  2013-04-28 
+ * 修改时间:  2013-04-28
  */
 package com.syan.netonej.http.entity;
 
@@ -21,10 +21,6 @@ import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 
 /**Netone PKCS#7签名对象
- * 
- * @author liyb
- * @version 2.0.0
- * @since 2.0.0
  */
 public class NetoneSignPKCS7  extends NetoneResponse{
 
@@ -34,23 +30,23 @@ public class NetoneSignPKCS7  extends NetoneResponse{
 	 * PKCS#7签名对象
 	 */
 	private CMSSignedData signedData;
-	
+
 	/**
 	 * 签名证书
 	 */
 	private List<NetoneCertificate> signedCertificates=new ArrayList<NetoneCertificate>();
-	
-	
+
+
 	/**
 	 * 证书链
 	 */
 	private List<NetoneCertificate>  certList=new ArrayList<NetoneCertificate>() ;
-	
+
 	/**
 	 * 原文
 	 */
 	private String textdata;
-	
+
 	/**
 	 *  获取签名原文
 	 * @return 原文
@@ -87,11 +83,10 @@ public class NetoneSignPKCS7  extends NetoneResponse{
 //		}
 //	}
 
-	/** 构造PKCS#7返回对象
+	/**
+	 * 构造PKCS#7返回对象
 	 * @param response  调用post服务返回对象
-	 * @throws CMSException
-	 * @throws IOException
-	 * @throws CertificateException
+	 * @throws NetonejException 异常
 	 */
 	public NetoneSignPKCS7(NetoneResponse response) throws NetonejException {
 		super(response.getStatusCode());
@@ -119,7 +114,7 @@ public class NetoneSignPKCS7  extends NetoneResponse{
 
 	/**
 	 * 获取签名者证书
-	 * @return  {@link com.syan.netonej.http.entity.NetoneCertificate} 签名者证书
+	 * @return 签名者证书
 	 */
 	public List<NetoneCertificate> getSignedCertificate() {
 		return signedCertificates;

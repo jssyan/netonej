@@ -12,11 +12,6 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 16:06
- * @Description
- */
 public class EnvelopePacketBuilder extends BaseClient<EnvelopePacketBuilder> {
     private String id;
     private IdMagic idmagic;

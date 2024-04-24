@@ -16,18 +16,16 @@ import com.syan.netonej.exception.NetonejException;
 
 /**
  * 获取PCS 密钥库中所有密钥id列表
- * @author liyb
- * @version 2.0.0
- * @since 2.0.0
  */
 public class NetoneKeyList extends NetoneResponse {
 	/**
 	 * 密钥id列表
 	 */
 	private List<KeyListItem> keys;
-
 	/**
+	 *
 	 * @param response 服务接口的返回对象
+	 * @throws NetonejException 异常
 	 */
 	public NetoneKeyList(NetoneResponse response) throws NetonejException {
 		super(response.getStatusCode());

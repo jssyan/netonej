@@ -13,10 +13,6 @@ import com.syan.netonej.exception.ErrorCode;
 
 /**
  * 请求的返回对象
- *
- * @author liyb
- * @version 2.0.0
- * @since 2.0.0
  */
 public class NetoneResponse {
 

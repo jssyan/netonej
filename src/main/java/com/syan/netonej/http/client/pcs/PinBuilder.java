@@ -10,17 +10,13 @@ import com.syan.netonej.http.entity.NetonePCS;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 16:37
- * @Description
- */
+
 public class PinBuilder extends BaseClient<PinBuilder> {
     private String id;
     private IdMagic idmagic = IdMagic.KID;
     private String oldpwd;
     private String newpwd;
-    
+
     public PinBuilder setId(String id) {
         this.id = id;
         return this;

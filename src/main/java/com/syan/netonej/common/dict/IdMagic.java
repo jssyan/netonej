@@ -1,10 +1,5 @@
 package com.syan.netonej.common.dict;
 
-/**
- * @Author mmdet
- * @Date 2021-08-13 14:24
- * @Description 所有使用密钥ID地方, 都可以使用idmagic参数, idmagic可以用来指明id参数的数据来源
- */
 public enum IdMagic {
     KID,        //密钥ID(大小写无关). 这是缺省参数, 如果idmagic没有设置, 或者设置成空, 将使用该参数
     SNHEX,      //ID为证书序列号的16进制表示, (大小写无关)

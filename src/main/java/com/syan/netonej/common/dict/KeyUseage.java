@@ -1,10 +1,6 @@
 package com.syan.netonej.common.dict;
 
-/**
- * @Author mmdet
- * @Date 2021-08-13 16:12
- * @Description
- */
+
 public enum  KeyUseage {
 
     SIGN(1),

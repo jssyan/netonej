@@ -27,19 +27,10 @@ import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.util.encoders.Base64;
 
-
-/**
- * NetONEJ API 工具类
- *
- * @author gejq
- * @version 2.0.0
- * @since 1.0.0
- */
 public class NetonejUtil {
 
     /**
      * 将字符串变为十六进制的数字字符串
-     *
      * @param bytes 原文byte数组
      * @return 十六进制数字字符串
      */
@@ -56,7 +47,6 @@ public class NetonejUtil {
 
     /**
      * 将字符串变为十六进制的数字字符串
-     *
      * @param data 原文字符串
      * @return 十六进制数字字符串
      */
@@ -66,7 +56,6 @@ public class NetonejUtil {
 
     /**
      * 将十六进制的数字字符串还原为字符串
-     *
      * @param hex_string 十六进制数字字符串
      * @return 原文字符串
      */

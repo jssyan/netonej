@@ -11,11 +11,7 @@ import com.syan.netonej.http.entity.NetoneResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 11:21
- * @Description
- */
+
 public class KeyBuilder extends BaseClient<KeyBuilder> {
     private Integer limit;
     private KeyAlgorithm keyAlgorithm;

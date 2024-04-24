@@ -3,11 +3,7 @@ package com.syan.netonej.common.xml;
 import com.syan.netonej.common.NetoneCertificate;
 import java.util.List;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 14:51
- * @Description
- */
+
 public class XmlData {
 
     private String data;

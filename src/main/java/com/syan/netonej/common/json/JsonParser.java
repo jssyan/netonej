@@ -7,11 +7,7 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 09:29
- * @Description
- */
+
 public class JsonParser {
 
     public static List<NetoneCertificate> parserCertList(String js) throws NetonejException {

@@ -9,11 +9,6 @@ import java.security.NoSuchProviderException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-04-26 14:05
- * @Description
- */
 public class DigestAlgorithms {
     //摘要算法名称
     private static final Map<String, String> digestNames = new HashMap();

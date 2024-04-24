@@ -9,11 +9,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 09:36
- * @Description
- */
+
 public class SaxCertListHandler extends DefaultHandler {
 
     private List<NetoneCertificate> certificates = new ArrayList<NetoneCertificate>();

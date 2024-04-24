@@ -11,11 +11,7 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 17:08
- * @Description
- */
+
 public class TSACreateBuilder extends BaseClient<TSACreateBuilder> {
     private byte[] data;
     private DataType dataType = DataType.PLAIN;

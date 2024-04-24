@@ -7,11 +7,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 09:36
- * @Description
- */
+
 public class SaxHandler extends DefaultHandler {
 
     private List<KeyListItem> keys = new ArrayList<KeyListItem>();

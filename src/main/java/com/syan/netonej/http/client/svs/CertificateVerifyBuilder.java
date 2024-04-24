@@ -9,11 +9,7 @@ import com.syan.netonej.http.entity.NetoneSVS;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 15:54
- * @Description
- */
+
 public class CertificateVerifyBuilder extends BaseClient<CertificateVerifyBuilder> {
     private String id;
     private IdMagic idmagic = IdMagic.KID;

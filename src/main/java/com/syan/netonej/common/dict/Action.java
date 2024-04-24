@@ -1,10 +1,6 @@
 package com.syan.netonej.common.dict;
 
-/**
- * @Author mmdet
- * @Date 2021-08-13 14:37
- * @Description
- */
+
 public class Action {
 
     /**

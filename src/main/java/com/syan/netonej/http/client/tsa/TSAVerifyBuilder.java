@@ -12,11 +12,6 @@ import org.bouncycastle.util.encoders.Hex;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-07 11:43
- * @Description
- */
 public class TSAVerifyBuilder extends BaseClient<TSAVerifyBuilder> {
 
     private String timestamp;

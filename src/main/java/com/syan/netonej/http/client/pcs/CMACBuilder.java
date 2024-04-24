@@ -8,11 +8,6 @@ import com.syan.netonej.http.client.base.BaseClient;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 16:47
- * @Description
- */
 public class CMACBuilder extends BaseClient<CMACBuilder> {
     private String id;
     private IdMagic idmagic= IdMagic.KID;
@@ -20,7 +15,7 @@ public class CMACBuilder extends BaseClient<CMACBuilder> {
     private String factor;//密钥派生因子(BASE64编码）
     private String cipher;//密钥派生算法（比如： sm4, aes128, aes256)等
     private String pubk;//如果设置此项，传入base64格式的客户端的公钥/证书，则服务会用此公钥加密返回密钥派生密钥
-    
+
     public CMACBuilder setId(String id) {
         this.id = id;
         return this;

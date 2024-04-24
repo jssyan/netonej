@@ -10,12 +10,6 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 16:16
- * @Description
- */
-
 public class PrivateKeyBuilder extends BaseClient<PrivateKeyBuilder> {
     private String id;
     private IdMagic idmagic= IdMagic.KID;

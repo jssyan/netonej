@@ -44,7 +44,7 @@ public class NetoneTSA extends NetoneResponse {
 
     /**
      * 由于TSA接口返回的是二进制数据，所以这里getResult的返回值要返回base64编码的，而不是父类getResult的new string形式
-     * @return
+     * @return 时间戳
      */
     @Override
     public String getResult() {
@@ -52,9 +52,10 @@ public class NetoneTSA extends NetoneResponse {
     }
 
     /**
-     * @param response
-     * @throws TSPException
-     * @throws IOException
+     *
+     * @param originResult 原文
+     * @param response 返回信息
+     * @throws NetonejException 异常
      */
     public NetoneTSA(byte[] originResult,NetoneResponse response) throws NetonejException {
         super(response.getStatusCode(), response.getBytesResult(),response.getStatusCodeMessage());

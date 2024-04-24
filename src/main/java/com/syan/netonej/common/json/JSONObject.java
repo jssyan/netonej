@@ -1,29 +1,5 @@
 package com.syan.netonej.common.json;
 
-/*
-Copyright (c) 2002 JSON.org
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-The Software shall be used for Good, not Evil.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Field;
@@ -35,57 +11,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
-/**
- * A JSONObject is an unordered collection of name/value pairs. Its
- * external form is a string wrapped in curly braces with colons between the
- * names and values, and commas between the values and names. The internal form
- * is an object having <code>get</code> and <code>opt</code> methods for
- * accessing the values by name, and <code>put</code> methods for adding or
- * replacing values by name. The values can be any of these types:
- * <code>Boolean</code>, <code>JSONArray</code>, <code>JSONObject</code>,
- * <code>Number</code>, <code>String</code>, or the <code>JSONObject.NULL</code>
- * object. A JSONObject constructor can be used to convert an external form
- * JSON text into an internal form whose values can be retrieved with the
- * <code>get</code> and <code>opt</code> methods, or to convert values into a
- * JSON text using the <code>put</code> and <code>toString</code> methods.
- * A <code>get</code> method returns a value if one can be found, and throws an
- * exception if one cannot be found. An <code>opt</code> method returns a
- * default value instead of throwing an exception, and so is useful for
- * obtaining optional values.
- * <p>
- * The generic <code>get()</code> and <code>opt()</code> methods return an
- * object, which you can cast or query for type. There are also typed
- * <code>get</code> and <code>opt</code> methods that do type checking and type
- * coercion for you.
- * <p>
- * The <code>put</code> methods adds values to an object. For example, <pre>
- *     myString = new JSONObject().put("JSON", "Hello, World!").toString();</pre>
- * produces the string <code>{"JSON": "Hello, World"}</code>.
- * <p>
- * The texts produced by the <code>toString</code> methods strictly conform to
- * the JSON syntax rules.
- * The constructors are more forgiving in the texts they will accept:
- * <ul>
- * <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may appear just
- *     before the closing brace.</li>
- * <li>Strings may be quoted with <code>'</code>&nbsp;<small>(single
- *     quote)</small>.</li>
- * <li>Strings do not need to be quoted at all if they do not begin with a quote
- *     or single quote, and if they do not contain leading or trailing spaces,
- *     and if they do not contain any of these characters:
- *     <code>{ } [ ] / \ : , = ; #</code> and if they do not look like numbers
- *     and if they are not the reserved words <code>true</code>,
- *     <code>false</code>, or <code>null</code>.</li>
- * <li>Keys can be followed by <code>=</code> or <code>=></code> as well as
- *     by <code>:</code>.</li>
- * <li>Values can be followed by <code>;</code> <small>(semicolon)</small> as
- *     well as by <code>,</code> <small>(comma)</small>.</li>
- * <li>Numbers may have the <code>0-</code> <small>(octal)</small> or
- *     <code>0x-</code> <small>(hex)</small> prefix.</li>
- * </ul>
- * @author JSON.org
- * @version 2009-03-06
- */
 public class JSONObject {
 
     /**
@@ -240,7 +165,7 @@ public class JSONObject {
     /**
      * Construct a JSONObject from a Map.
      *
-     * Note: Use this constructor when the map contains <key,bean>.
+     * Note: Use this constructor when the map contains key,bean.
      *
      * @param map - A map with Key-Bean data.
      * @param includeSuperClass - Tell whether to include the super class properties.
@@ -631,10 +556,9 @@ public class JSONObject {
                 ((Number)o).longValue() : (long)getDouble(key);
     }
 
-
     /**
      * Get an array of field names from a JSONObject.
-     *
+     * @param jo jsonobject
      * @return An array of field names, or null if there are no names.
      */
     public static String[] getNames(JSONObject jo) {
@@ -652,10 +576,9 @@ public class JSONObject {
         return names;
     }
 
-
     /**
-     * Get an array of field names from an Object.
-     *
+     * Get an array of field names from a JSONObject.
+     * @param object object
      * @return An array of field names, or null if there are no names.
      */
     public static String[] getNames(Object object) {
@@ -820,7 +743,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value A Collection value.
      * @return      this.
-     * @throws JSONException
+     * @throws JSONException 异常
      */
     public JSONObject put(String key, Collection value) throws JSONException {
         put(key, new JSONArray(value));
@@ -1046,7 +969,7 @@ public class JSONObject {
      * @param key   A key string.
      * @param value A Map value.
      * @return      this.
-     * @throws JSONException
+     * @throws JSONException 异常
      */
     public JSONObject put(String key, Map value) throws JSONException {
         put(key, new JSONObject(value));
@@ -1083,8 +1006,8 @@ public class JSONObject {
      * Put a key/value pair in the JSONObject, but only if the key and the
      * value are both non-null, and only if there is not already a member
      * with that name.
-     * @param key
-     * @param value
+     * @param key key
+     * @param value value
      * @return his.
      * @throws JSONException if the key is a duplicate
      */
@@ -1117,14 +1040,6 @@ public class JSONObject {
     }
 
 
-    /**
-     * Produce a string in double quotes with backslash sequences in all the
-     * right places. A backslash will be inserted within </, allowing JSON
-     * text to be delivered in HTML. In JSON text, a string cannot contain a
-     * control character or an unescaped quote or backslash.
-     * @param string A String
-     * @return  A String correctly formatted for insertion in a JSON text.
-     */
     public static String quote(String string) {
         if (string == null || string.length() == 0) {
             return "\"\"";
@@ -1533,9 +1448,9 @@ public class JSONObject {
       * For compactness, no whitespace is added.
       * <p>
       * Warning: This method assumes that the data structure is acyclical.
-      *
+      * @param writer writer
       * @return The writer.
-      * @throws JSONException
+      * @throws JSONException 异常
       */
      public Writer write(Writer writer) throws JSONException {
         try {

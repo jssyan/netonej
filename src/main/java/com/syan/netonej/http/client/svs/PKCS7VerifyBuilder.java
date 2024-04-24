@@ -8,11 +8,6 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 16:35
- * @Description
- */
 public class PKCS7VerifyBuilder extends BaseClient<PKCS7VerifyBuilder> {
 
     private String data;

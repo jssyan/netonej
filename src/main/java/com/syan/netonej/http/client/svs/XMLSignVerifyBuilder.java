@@ -11,11 +11,6 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 16:56
- * @Description
- */
 public class XMLSignVerifyBuilder extends BaseClient<XMLSignVerifyBuilder> {
     private String data;
     public XMLSignVerifyBuilder setData(byte[] data) {

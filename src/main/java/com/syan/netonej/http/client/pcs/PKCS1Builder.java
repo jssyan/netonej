@@ -12,11 +12,6 @@ import org.bouncycastle.util.encoders.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 15:39
- * @Description
- */
 public class PKCS1Builder extends BaseClient<PKCS1Builder> {
     private String id;
     private IdMagic idmagic= IdMagic.KID;

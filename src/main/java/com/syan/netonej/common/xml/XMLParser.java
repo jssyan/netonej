@@ -7,11 +7,6 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.InputStream;
 import java.util.List;
 
-/**
- * @Author mmdet
- * @Date 2022-05-06 09:29
- * @Description
- */
 public class XMLParser {
 
     public static List<KeyListItem> parserKeyList(InputStream in) throws NetonejException {

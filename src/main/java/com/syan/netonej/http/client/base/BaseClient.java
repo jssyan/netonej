@@ -9,11 +9,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @Author mmdet
- * @Date 2022-05-05 11:03
- * @Description 泛型 R 主要用于属性设置方法后，返回对应的子类型，以便于实现链式调用
- */
 public abstract class BaseClient<R extends BaseClient> implements Serializable {
     private static final long serialVersionUID = -7174118653689916251L;
 

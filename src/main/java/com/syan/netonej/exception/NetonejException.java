@@ -9,9 +9,6 @@ package com.syan.netonej.exception;
 
 /**
 * NetONEJ  API 全局的异常类
-* @author  liyb
-* @version  2.0.0
-* @since  1.0.0
  */
 public class NetonejException extends Exception {
 
@@ -27,18 +24,10 @@ public class NetonejException extends Exception {
 		this.code = code;
 	}
 
-	/**
-	 * @param message
-	 */
 	public NetonejException(String message){
 		super(message);
 	}
-	
 
-	/**
-	 * @param message
-	 * @param cause
-	 */
 	public NetonejException(int code,String message, Throwable cause){
 		super(message,cause);
 		this.code = code;
@@ -47,6 +36,6 @@ public class NetonejException extends Exception {
 	public NetonejException(String message, Throwable cause){
 		super(message,cause);
 	}
-	
+
 
 }

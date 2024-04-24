@@ -24,10 +24,8 @@ public class NetoneSVS extends NetoneResponse {
 
     /**
      * 根据返回结果构造SVS对象
-     *
-     * @param response
-     * @throws CertificateException
-     * @throws IOException
+     * @param response 返回结果
+     * @throws NetonejException 异常
      */
     public NetoneSVS(NetoneResponse response) throws NetonejException {
         super(response.getStatusCode(), response.getStatusCodeMessage());

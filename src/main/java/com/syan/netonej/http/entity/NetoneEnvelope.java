@@ -34,9 +34,6 @@ import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 /**
  * 数字信封封包
- * @author  liyb
- * @version  2.0.0
- * @since  2.0.0
  */
 public class NetoneEnvelope {
 	private static Map<String, String> oidMap =new HashMap<String, String>();
@@ -51,25 +48,25 @@ public class NetoneEnvelope {
 	/**
 	 * 版本号
 	 */
-	private ASN1Integer version;   
+	private ASN1Integer version;
     /**
      * 接收人信息
      */
-    private KeyTransRecipientInfo recipientInfo;   
+    private KeyTransRecipientInfo recipientInfo;
     /**
      * 摘要算法
      */
-    private AlgorithmIdentifier digestAlgorithm;   
+    private AlgorithmIdentifier digestAlgorithm;
     /**
      * 加密数据
      */
-    private EncryptedContentInfo encryptedContentInfo;   
-    
+    private EncryptedContentInfo encryptedContentInfo;
+
     /**
      * 签名者信息
      */
     private SignerInfo signerInfo;
-    
+
     /**
      * 接收人序列号
      */
@@ -86,12 +83,12 @@ public class NetoneEnvelope {
      * 签名者序列号
      */
     private String signerSerialNumber ;
-    
+
     /**
      * 签名者主题
      */
     private String signerSubject ;
-    
+
 
 	/**
 	 * @return 摘要算法
@@ -108,14 +105,9 @@ public class NetoneEnvelope {
 	}
 
 
-	/**
-	 * @param response 
-	 * @throws CertificateException
-	 * @throws IOException
-	 */
 	public NetoneEnvelope(NetoneResponse response)throws NetonejException
     {   //super(response);
-    	
+
 //    	ASN1Sequence seq=ASN1Sequence.getInstance(Base64.getDecoder().decode(response.getResult()));
 //		ContentInfo ci=ContentInfo.getInstance(seq);
 //		Enumeration  enumeration=null;
@@ -199,11 +191,12 @@ public class NetoneEnvelope {
 //            return;
 //        } while(true);
 //	}
-	}   
-     
+	}
 
-	/** 签名者证书
-	 *
+
+	/**
+	 * 签名者证书
+	 * @return 证书对象
 	 */
 	public NetoneCertificate getSignerCertificate() {
 		return signerCertificate;
@@ -242,5 +235,5 @@ public class NetoneEnvelope {
 	public String getSignerSubject() {
 		return signerSubject;
 	}
-	
+
 }
