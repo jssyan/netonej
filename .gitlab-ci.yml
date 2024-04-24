@@ -54,7 +54,7 @@ deploy-job:
         "app_id": "${FEISHU_APP_ID}",
         "app_secret": "${FEISHU_APP_SECRET}"
       }')
-      echo "成功获取访问令牌："
+      echo "成功获取访问令牌：$response"
       # 提取 tenant_access_token 值
       tenant_access_token=$(echo "$response" | sed -n 's/.*"tenant_access_token":"\([^"]*\)".*/\1/p')
       echo "Tenant Access Token: $tenant_access_token"
