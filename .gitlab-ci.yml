@@ -96,7 +96,7 @@ deploy-job:
         "version": "$VERSION",
         "interfaceDocUrl": "http://${DEPLOY_SITE_IP}/java/cosign/$VERSION/$PACKAGE",
         "downloadUrl": "http://${DEPLOY_SITE_IP}/java/cosign/$VERSION/$PACKAGE", 
-        "commituser":"$GITLAB_USER_NAME",
+        "commitUser":"$GITLAB_USER_NAME",
         "changeLog":"$CHANGE_LOG"
       }
       EOF
