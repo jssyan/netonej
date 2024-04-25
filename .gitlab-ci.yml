@@ -68,7 +68,7 @@ deploy-job:
       # 输出提取到的 obj_token 值
       echo "成功提取到 obj_token 值: $obj_token"
       # 通过 document_id 获取所有块信息
-      block_response=$(curl -s -X GET "https://open.feishu.cn/open-apis/docx/v1/documents/$obj_token/blocks?document_revision_id=-1&page_size=500" \
+      block_response=$(curl -s -X GET "https://open.feishu.cn/open-apis/docx/v1/documents/$obj_token/blocks?document_revision_id=-1&page_size=50" \
         -H "Authorization: Bearer $tenant_access_token")
       echo "成功获取文档块信息：$block_response"
       # 查找 block_type 为 999 的第一个 block，提取 block_id
