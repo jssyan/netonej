@@ -83,7 +83,7 @@ deploy-job:
       block_all=$(curl -s -X GET "https://open.feishu.cn/open-apis/docx/v1/documents/$obj_token/blocks/$found_block_id/children?document_revision_id=-1&page_size=500" \
       -H "Authorization: Bearer $tenant_access_token")
       ## 使用 jq 工具解析 JSON 数据并提取所需内容
-      output=$(echo $block_all | jq -r '.data.items[] | .ordered.elements | map(.text_run.content) | join("")')
+      output=$(echo $block_all | jq -r '.data.items[] | .ordered.elements | map(.text_run.content,.url) | join("")')
       echo "$output"
       output_with_numbers=$(echo "$output" | awk '{print NR".",$0}')
       CHANGE_LOG="${output_with_numbers//$'\n'/<br\/>}"
