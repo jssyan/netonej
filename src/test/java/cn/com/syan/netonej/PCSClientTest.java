@@ -272,7 +272,7 @@ public class PCSClientTest {
                 .setId(sm2kid)
                 .setPasswd(pin)
                 .setData(data)
-                .setCipherAlgo(CipherAlgorithm.SM4ECB)//可选，设置对称密钥算法
+                .setCipherAlgo(CipherAlgorithm.SM4CBC)//可选，设置对称密钥算法
                 .setPeer(sm2kid)//可选，设置加密证书
                 .setPeerMagic(IdMagic.KID)//可选，指定加密证书的类型
                 .build();
