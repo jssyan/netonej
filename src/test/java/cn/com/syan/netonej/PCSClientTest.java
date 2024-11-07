@@ -317,29 +317,6 @@ public class PCSClientTest {
         System.out.println("解密结果："+new String(org.bouncycastle.util.encoders.Base64.decode(pcs.getResult())));
     }
 
-    /**
-     * 对称加解密
-     */
-    @Test
-    public void symEncrypt() throws NetonejException {
-        String data = "0200000000000000041001010000000000000000000000000000000002SN";
-        NetonePCS pcs = pcsClient.symmetricEncryptBuilder()
-                .setApplication("abck2")
-                .setCipher("SM4-CBC")
-                .setData(data)
-                .setIv("0000000000000000")
-                .build();
-        System.out.println("加密结果："+pcs.getResult());
-        NetonePCS pcsD = pcsClient.symmetricDecryptBuilder()
-                .setApplication("abck2")
-                .setCipher("SM4-CBC")
-                .setData(data)
-                .setIv("0000000000000000")
-                .build();
-        System.out.println("解密结果："+new String(pcsD.getResult()));
-    }
-
-
     @Test
     public void testChangepin() throws NetonejException {
         NetonePCS response = pcsClient.pinBuilder()
