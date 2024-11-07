@@ -79,13 +79,6 @@ public class PCSClient{
         return new PublicKeyBuilder().setHost(host).setPort(port);
     }
 
-    public SymmetricEncryptBuilder symmetricEncryptBuilder(){
-        return new SymmetricEncryptBuilder().setHost(host).setPort(port);
-    }
-    public SymmetricDecryptBuilder symmetricDecryptBuilder(){
-        return new SymmetricDecryptBuilder().setHost(host).setPort(port);
-    }
-
     public XmlSignBuilder xmlSignBuilder(){
         return new XmlSignBuilder().setHost(host).setPort(port);
     }
