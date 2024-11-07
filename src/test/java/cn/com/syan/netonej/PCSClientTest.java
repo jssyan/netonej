@@ -10,11 +10,13 @@ import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.PCSClient;
 import com.syan.netonej.http.entity.*;
 import org.bouncycastle.asn1.*;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 import org.bouncycastle.util.encoders.Hex;
 import org.junit.Test;
 
 import java.io.File;
+import java.security.Security;
 import java.util.List;
 
 /**
@@ -26,18 +28,21 @@ import java.util.List;
 public class PCSClientTest {
 
     //设置PCS（私钥密码服务）的服务器IP与端口号
-    private PCSClient pcsClient = new PCSClient("192.168.20.223","9178");
+    private PCSClient pcsClient = new PCSClient("192.168.10.89","9178");
 
     //证书ID
-    String sm2kid = "593e2e00fdfefced7428be967d6d5b72";
+    String sm2kid = "748cd89c206f0561ad6f8b5ee8b7a737";
 
-    String rsaKid = "03ac7fd59857b8f850826b7f95f9c188";
+    String rsaKid = "19e4ee5c5153e19f4bd6ff6349269254";
 
     //证书的CN项
-    String sm2cn = "sm2";
+    String sm2cn = "spark_通讯证书";
+
+    //证书的CN项
+    String rsacn = "testssl";
 
     //证书的私钥保护口令
-    String pin = "111111";
+    String pin = "Syan@9108";
 
 
     @Test
@@ -87,6 +92,23 @@ public class PCSClientTest {
         System.out.println(list.size());
     }
 
+    /**
+     * 获取可用的PCS中的kid
+     * @throws NetonejException
+     */
+    @Test
+    public void testGenrand() throws NetonejException {
+
+        NetonePCS response =
+                pcsClient.randomBuilder()
+                        .setLength(32)
+                        .build();
+        //结果
+        System.out.println(response.getStatusCode());
+        //错误描述
+        System.out.println(response.getResult());
+    }
+
 
     public String getCN(String subject){
         if(!NetonejUtil.isEmpty(subject)){
@@ -120,23 +142,19 @@ public class PCSClientTest {
     }
 
     /**
-     * p1签名
-     * @throws NetonejException
+     * 签名
      */
     @Test
     public void createPKCS1Signature() throws NetonejException {
-        byte[] data = "123".getBytes();
+        byte[] data = "0200000000000000041001010000000000000000000000000000000002SN".getBytes();
         NetonePCS pcs = pcsClient.pkcs1Builder()
+                .setApplication("abck2")
                 .setPasswd(pin)//可选，设置私钥保护口令
                 .setId(sm2kid) //设置id参数，这里设置的证书cn项
-                //.setIdmagic(IdMagic.SNHEX)//指定id的数据类型
                 .setData(data)//签名原文
-                .setDataType(DataType.PLAIN)//可选，默认为原文签名
-                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选,指定签名摘要算法
-                //.setUserId("userid".getBytes())//可选，SM2签发者ID
                 .build();
-        System.out.println(pcs.getResult());
-        //System.out.println(pcs.getSingerCert().getSubject());
+        System.out.println("响应码："+pcs.getStatusCode());
+        System.out.println("RAW签名结果 Base64:"+pcs.getResult());
     }
 
     @Test
@@ -210,19 +228,20 @@ public class PCSClientTest {
      */
     @Test
     public void createPKCS7Signature() throws NetonejException {
-        String data = "hello";
+        byte[] data = "0200000000000000041001010000000000000000000000000000000002SN".getBytes();
         NetonePCS pcs = pcsClient.pkcs7Builder()
+                .setApplication("abck2")
                 .setPasswd(pin)//可选，设置私钥保护口令
-                .setId(sm2cn)
-                .setIdmagic(IdMagic.SCN)
+                .setId(sm2kid)
+                .setIdmagic(IdMagic.KID)
                 .setData(data)
                 .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)
-                .setAttach(true)//可选，签名结果中是否包含原始数据
+                .setAttach(false)//可选，签名结果中是否包含原始数据
                 .setFullchain(false)//可选，签名结果是否嵌入整个证书链
                 .setNoattr(false)//可选，签名结果中是否包含签名时间等属性
                 .build();
-        System.out.println(pcs.getResult());
-
+        System.out.println("响应码："+pcs.getStatusCode());
+        System.out.println("Detach签名结果 Base64:"+pcs.getResult());
     }
 
     /**
@@ -231,19 +250,34 @@ public class PCSClientTest {
      */
     @Test
     public void createEnvelopePacket() throws Exception {
-        String data = "123456";
+        byte[] data = "02".getBytes();
         NetonePCS pcs = pcsClient.envelopePacketBuilder()
                 .setId(sm2kid)
                 .setPasswd(pin)
                 .setData(data)
-                .setCipherAlgo(CipherAlgorithm.DES)//可选，设置对称密钥算法
+                .setCipherAlgo(CipherAlgorithm.SM4CBC)//可选，设置对称密钥算法
+                .build();
+        System.out.println("响应码："+pcs.getStatusCode());
+        System.out.println("信封结果 Base64:"+pcs.getResult());
+    }
+    /**
+     * 数字信封  -- 封包（带签名）
+     * @throws NetonejException
+     */
+    @Test
+    public void createEnvelopePacketAndSign() throws Exception {
+        byte[] data = "02".getBytes();
+        System.out.println(data.length);
+        NetonePCS pcs = pcsClient.envelopePacketBuilder()
+                .setId(sm2kid)
+                .setPasswd(pin)
+                .setData(data)
+                .setCipherAlgo(CipherAlgorithm.SM4ECB)//可选，设置对称密钥算法
                 .setPeer(sm2kid)//可选，设置加密证书
                 .setPeerMagic(IdMagic.KID)//可选，指定加密证书的类型
-                .setDigestAlgo("ecdsa-sm2-with-sm3")//可选
                 .build();
-        System.out.println(pcs.getStatusCode());
-        System.out.println("Base64:"+pcs.getResult());
-        System.out.println("PEM:"+NetonejUtil.base64StringtoPem(pcs.getResult()));
+        System.out.println("响应码："+pcs.getStatusCode());
+        System.out.println("信封结果 Base64:"+pcs.getResult());
     }
 
     /**
@@ -252,7 +286,7 @@ public class PCSClientTest {
      */
     @Test
     public void createEnvelopeUnPacket() throws Exception {
-        String data = "MIIDswYKKoEcz1UGAQQCBKCCA6MwggOfAgEBMYHcMIHZAgEAMD8wLjELMAkGA1UEBhMCQ04xETAPBgNVBAoeCFFIW4l50WKAMQwwCgYDVQQDEwNzbTICDQC9ErluFqJv4/DOafkwDQYJKoEcz1UBgi0DBQAEgYMwgYACID0X0xw3SH8Niv1tWZz/jBppYO3c4V/wV1upxEhOvZgyAiA2VD2QHQRoU3r1hP664PJY9JYklNqQgA1M+ijD1SrFNAQgAAIwpnwFp2WwLarLQHUCWuHovLhSY6EHhaftemrduqAEGO2ti2dOBiVeETYHQuY2mOo4+Hqs60rGWTEOMAwGCCqBHM9VAYMRBQAwPQYKKoEcz1UGAQQCATAdBglghkgBZQMEARYEECGc0j7SLBB3HkaOPUGWfX2AEJ7ZRlge3GLGZOT3uP7i7higggG8MIIBuDCCAV6gAwIBAgINAL0SuW4Wom/j8M5p+TAKBggqgRzPVQGDdTAuMQswCQYDVQQGEwJDTjERMA8GA1UECh4IUUhbiXnRYoAxDDAKBgNVBAMTA3NtMjAiGA8yMDIwMDgwNzAwMDAwMFoYDzIwMzAwODA1MDAwMDAwWjAuMQswCQYDVQQGEwJDTjERMA8GA1UECh4IUUhbiXnRYoAxDDAKBgNVBAMTA3NtMjBZMBMGByqGSM49AgEGCCqBHM9VAYItA0IABCDd/1wVqreFFn/Fhw2f3fMuYnzEB3r7RCfTnuIXcEH9YuEUgf3NZil/Wf+KHkYHid0r8MIqTxfC9u63k/Ss9PSjXTBbMAwGA1UdEwQFMAMBAf8wHQYDVR0OBBYEFMA0kmswVj5KCWI3kywDuKVC+GJeMB8GA1UdIwQYMBaAFMA0kmswVj5KCWI3kywDuKVC+GJeMAsGA1UdDwQEAwIBhjAKBggqgRzPVQGDdQNIADBFAiEAhc8Cf8dkDfLDgNKG9S7+0DV1qun+BSxy1q/vku5gi9gCIEK9K5kET/KGLEE7G01UF3EGQerVWLEj1WCeKekF/g25MYGrMIGoAgEBMD8wLjELMAkGA1UEBhMCQ04xETAPBgNVBAoeCFFIW4l50WKAMQwwCgYDVQQDEwNzbTICDQC9ErluFqJv4/DOafkwDAYIKoEcz1UBgxEFADAMBggqgRzPVQGDdQUAMEYCIQCGtisADMeyIVDor1MNWJjS8OQgZyb1h0OvlZvvDChLAgIhAPF5Br4XHjs6hwx6i+4BDnWF9VcTS7Cjs1dWCEvSS2DH";
+        String data = "MIIFGgYKKoEcz1UGAQQCBKCCBQowggUGAgEBMYHEMIHBAgEAMDEwIDELMAkGA1UEBhMCQ04xETAPBgNVBAMMCHNtMl9yb290Ag0AkK1xCLXFaCiIW7nRMA0GCSqBHM9VAYItAwUABHoweAIgSqCp1o+VLWNRAckKPwWRebuvsvICSJuNMqg84tFNbOICIHhulXC9ZaKds4OyuwJZyJb63P1Im74nPz02q/l/5ByTBCAkyUyOdc1Qv3tWvqdO0MVBGnBpxCRdJG8BLRsAFNCYMgQQUjFDbbtw2GbA4LxdkInKVTEOMAwGCCqBHM9VAYMRBQAwKwYKKoEcz1UGAQQCATALBgkqgRzPVQFoAQOAECDvHOULMmpBi8BIPZPz1CSgggNaMIIDVjCCAvygAwIBAgINAJCtcQi1xWgoiFu50TAKBggqgRzPVQGDdTAgMQswCQYDVQQGEwJDTjERMA8GA1UEAwwIc20yX3Jvb3QwHhcNMjExMjA3MjIxNjQ1WhcNMzkxMjA3MTYwMDAwWjBlMQ8wDQYDVQQIDAbnoJTlj5ExEjAQBgNVBAcMCeWNl+S6rOW4gjENMAsGA1UECgwEc3lhbjESMBAGA1UECwwJ56CU5Y+R6YOoMRswGQYDVQQDDBJzcGFya1/pgJrorq/or4HkuaYwWTATBgcqhkjOPQIBBggqgRzPVQGCLQNCAATbf6mIrEzgpIv1RiRVMl7cRNbzTYay9AknqdEjNflw7WQ2Nz8yAQvireaHFVX6mogKwXvfwqceoF/9Woil9ypoo4IB1DCCAdAwCQYDVR0TBAIwADAdBgNVHQ4EFgQUk2lZgdL1LctBlyyLk6YJzTanbuowDgYDVR0PAQH/BAQDAgD/MIGbBgNVHSUBAf8EgZAwgY0GCCsGAQUFBwMBBggrBgEFBQcDAgYIKwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCAYKKwYBBAGCNwIBFQYKKwYBBAGCNwIBFgYKKwYBBAGCNwoDAQYKKwYBBAGCNwoDAwYKKwYBBAGCNwoDBAYJYIZIAYb4QgQBBggrBgEFBQcDCQYIKwYBBQUHAwowLgYDVR0fBCcwJTAjoCGgH4YdaHR0cHM6Ly9haWEuc3lhbi5jb20uY24vY3JsL2EwYgYIKwYBBQUHAQEEVjBUMCQGCCsGAQUFBzABhhhodHRwczovL29jc3Auc3lhbi5jb20uY24wLAYIKwYBBQUHMAKGIGh0dHBzOi8vYWlhLnN5YW4uY29tLmNuL2lzc3Vlci9hMB8GA1UdIwQYMBaAFE62EA55ojyyltMkTdh/2Ac4lpUEMEEGA1UdIAQ6MDgwNgYIKoEchvAAZAEwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly9jcHMuc3lhbi5jb20uY24vY3BzMTAKBggqgRzPVQGDdQNIADBFAiEAmKlOSDGvzcD/Z19/5zIItoTtaUa02I8+lJoaz4SSGdoCIExCV6F474ctRWqFt3sEHC9pi1QJuglYSmSdXgMvVTYmMYGeMIGbAgEBMDEwIDELMAkGA1UEBhMCQ04xETAPBgNVBAMMCHNtMl9yb290Ag0AkK1xCLXFaCiIW7nRMAwGCCqBHM9VAYMRBQAwDQYJKoEcz1UBgi0BBQAERjBEAiAdhYQRl7hhn/rjS+PLjisP5evOlTdcdgJBIPlPYrMSqAIgTscVYJiX6eXQL7Fc/BHdKnr7TxZ8SvyLnX6vEvmky1E=";
         NetonePCS pcs = pcsClient.envelopeUnpackBuilder()
                 .setId(sm2kid)
                 .setPasswd(pin)
@@ -267,42 +301,42 @@ public class PCSClientTest {
      */
     @Test
     public void priKeyEncrypt() throws NetonejException {
-
-        String data = "123456";
-
-//        //私钥加密,ECC算法不支持私钥加密
-//        NetonePCS pcs = pcsClient.privateKeyBuilder()
-//                .setId(sm2kid)
-//                .setPasswd(pin)
-//                .setData(data)
-//                .setEncrypt()//加密
-//                .build();
-//        System.out.println(pcs.getResult());
-//        //公钥解密,ECC算法不支持公钥解密
-//        pcs = pcsClient.publicKeyBuilder()
-//                .setId(sm2kid)
-//                .setBase64Data(pcs.getResult())
-//                .setDecrypt()
-//                .build();
-//        System.out.println(pcs.getResult());
-//
-        //公钥加密
+        String data = "0200000000000000041001010000000000000000000000000000000002SN";
         NetonePCS pcs = pcsClient.publicKeyBuilder()
+                .setApplication("abck2")
                 .setId(sm2kid)
                 .setData(data)
-                .setEncrypt()
-                .build();
-        System.out.println(pcs.getResult());
-//
-        //私钥解密
+                .setEncrypt().build();
+        System.out.println("加密结果："+pcs.getResult());
         pcs = pcsClient.privateKeyBuilder()
+                .setApplication("abck2")
                 .setId(sm2kid)
                 .setPasswd(pin)
                 .setBase64Data(pcs.getResult())
-                .setDecrypt()//解密
-                .build();
-        System.out.println(new String(org.bouncycastle.util.encoders.Base64.decode(pcs.getResult())));
+                .setDecrypt().build();
+        System.out.println("解密结果："+new String(org.bouncycastle.util.encoders.Base64.decode(pcs.getResult())));
+    }
 
+    /**
+     * 对称加解密
+     */
+    @Test
+    public void symEncrypt() throws NetonejException {
+        String data = "0200000000000000041001010000000000000000000000000000000002SN";
+        NetonePCS pcs = pcsClient.symmetricEncryptBuilder()
+                .setApplication("abck2")
+                .setCipher("SM4-CBC")
+                .setData(data)
+                .setIv("0000000000000000")
+                .build();
+        System.out.println("加密结果："+pcs.getResult());
+        NetonePCS pcsD = pcsClient.symmetricDecryptBuilder()
+                .setApplication("abck2")
+                .setCipher("SM4-CBC")
+                .setData(data)
+                .setIv("0000000000000000")
+                .build();
+        System.out.println("解密结果："+new String(pcsD.getResult()));
     }
 
 

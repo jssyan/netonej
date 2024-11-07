@@ -63,6 +63,10 @@ public class PCSClient{
         return new PKCS1Builder().setHost(host).setPort(port);
     }
 
+    public RandomBuilder randomBuilder(){
+        return new RandomBuilder().setHost(host).setPort(port);
+    }
+
     public PKCS7Builder pkcs7Builder(){
         return new PKCS7Builder().setHost(host).setPort(port);
     }
@@ -73,6 +77,13 @@ public class PCSClient{
 
     public PublicKeyBuilder publicKeyBuilder(){
         return new PublicKeyBuilder().setHost(host).setPort(port);
+    }
+
+    public SymmetricEncryptBuilder symmetricEncryptBuilder(){
+        return new SymmetricEncryptBuilder().setHost(host).setPort(port);
+    }
+    public SymmetricDecryptBuilder symmetricDecryptBuilder(){
+        return new SymmetricDecryptBuilder().setHost(host).setPort(port);
     }
 
     public XmlSignBuilder xmlSignBuilder(){

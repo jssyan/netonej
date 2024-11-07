@@ -58,6 +58,11 @@ public class Action {
      */
     public final static String PCS_ACTION_CMACKDF = "cmac.svr";
 
+    /**
+     * PCS - Action 随机数
+     */
+    public final static String PCS_ACTION_RANDON = "genrand.svr";
+
 
 
 

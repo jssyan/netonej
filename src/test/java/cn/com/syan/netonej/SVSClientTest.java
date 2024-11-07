@@ -16,9 +16,9 @@ import org.junit.Test;
 public class SVSClientTest {
 
 
-    private SVSClient svsClient = new SVSClient("192.168.20.223","9188");
+    private SVSClient svsClient = new SVSClient("192.168.10.89","9188");
 
-    String kid = "4517532d2ce6ce9a94c131b685c40c72";
+    String kid = "spark_通讯证书";
 
     String cn = "pcs_sm2";
 
@@ -54,22 +54,22 @@ public class SVSClientTest {
 
 
     /**
-     * 验证p1签名
+     * 验证签名
      * @throws NetonejException
      */
     @Test
     public void verifyPKCS1() throws NetonejException {
-        String data = "123";
-        String pkcs1 = "MEUCIBx0ZTlQLS3tzfVxJARTA773pGQDq+pvLWNcwLUJqKwnAiEAtVdWtxfuGsFXvEPeNexcjkJy6b97cO+k/trx/4SrkdI=";
+        String data = "0200000000000000041001010000000000000000000000000000000002SN";
+        String pkcs1 = "MEQCIC0VDS1o2eJu9y5EUSW66h1U9xVnLgfWHkleTmWa6JRpAiBw6/d3ust" +
+                "crd7Vjy2ZmT33w3fh7D1d9lHz6RvBUH7DKQ==";
         NetoneSVS svs = svsClient.pkcs1VerifyBuilder()
-                //.setCert("MIICQDCCAeOgAwIBAgIGANAZOXKeMAwGCCqBHM9VAYN1BQAwQzELMAkGA1UEBhMCY24xEDAOBgNVBAoMB2luZm9zZWMxDzANBgNVBAsMBnN5c3RlbTERMA8GA1UEAwwIY2E2Ml9zbTIwHhcNMjExMDI3MDEzNzA3WhcNMjIxMDI3MDEzNzA3WjBBMQswCQYDVQQGEwJDTjEPMA0GA1UECgwGSFhCQU5LMQ8wDQYDVQQLDAZIWEJBTksxEDAOBgNVBAMMB0hYQlRlc3QwWTATBgcqhkjOPQIBBggqgRzPVQGCLQNCAAQWlm3OamvHpodq4cRRusRpwYXHIIrMXzqvyu+7HbjrSh9LNsyPkNEkAVLGxC6GELD/rd2S5BnYxbwzPEDObifLo4HCMIG/MB8GA1UdIwQYMBaAFNB8xx7P/5V38v9ciERtpJNOUA+aMAkGA1UdEwQCMAAwYgYDVR0fBFswWTBXoFWgU6RRME8xDzANBgNVBAMMBmNybDY5NzEMMAoGA1UECwwDY3JsMQ8wDQYDVQQLDAZzeXN0ZW0xEDAOBgNVBAoMB2luZm9zZWMxCzAJBgNVBAYTAmNuMA4GA1UdDwEB/wQEAwIGwDAdBgNVHQ4EFgQUH0olTrKCneLVDzY9SApQQe8W21IwDAYIKoEcz1UBg3UFAANJADBGAiEA/kNOo7Wy0vw2OMqU7kYjr4PDD5dp2FwCKaJaSxv16kUCIQDkiN8NGYzUpu/k/bHzmuZg/DA8EU/ctdYKlmHR3InXvQ==") //使用证书验证
-                .setId("BD12B96E16A26FE3F0CE69F9").setIdmagic(IdMagic.SNHEX)//可选，使用id形式
+                .setId(kid)
+                .setIdmagic(IdMagic.SCN)
+                .setApplication("abck2")
                 .setBase64Signature(pkcs1)//base64格式的签名
                 .setData(data)//原文
-                .setAlgo(DigestAlgorithm.ECDSASM2)//可选，签名摘要算法
                 .build();
-        System.out.println(svs.getStatusCode());
-        System.out.println(svs.getCertificate().getSubject());
+        System.out.println(svs.getStatusCode() == 200?"验证通过":"验证失败");
     }
 
     /**

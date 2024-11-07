@@ -74,25 +74,21 @@ public class TSAClientTest {
      */
     @Test
     public void test() throws Exception{
-        //原文摘要计算
+        //对原文摘要计算
         byte[] digest = new NetoneDigest("SM3").digest("123".getBytes());
         //构造时间戳请求
         TimeStampRequestGenerator tsReqGen = new TimeStampRequestGenerator();
         tsReqGen.setCertReq(false);
         TimeStampRequest tsReq = tsReqGen.generate(GMObjectIdentifiers.sm3, digest);
-
-        TimeStampRequest ss = new TimeStampRequest(tsReq.getEncoded());
-
-        System.out.println("sss"+ss.getMessageImprintAlgOID());
-
-        FileUtil.save(tsReq.getEncoded(),"/Users/momocat/Documents/temp","tsa_req_sm3");
+       // TimeStampRequest ss = new TimeStampRequest(tsReq.getEncoded());
+        //System.out.println("sss"+ss.getMessageImprintAlgOID());
+        System.out.println(Base64.toBase64String(tsReq.getEncoded()));
+//        FileUtil.save(tsReq.getEncoded(),"/Users/momocat/Documents/temp","tsa_req_sm3");
         //申请时间戳
         NetoneTSA netoneTSA = tsaClient.tsaCreateBuilder()
                 .setData(tsReq.getEncoded())
                 .setDataType(DataType.TIMESTAMP_REQUEST) //数据类型设置为时间戳请求类型
                 .build();
-
-
         System.out.println("签发成功："+tsaClient.getHost()+":"+tsaClient.getPort());
         System.out.println("签发成功："+netoneTSA.getResult());
         //签名证书的DN
