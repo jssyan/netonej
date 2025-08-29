@@ -20,6 +20,14 @@ public class TSAClient {
 
     protected String port = "9198";
 
+    protected CCGWClient ccgwClient;
+
+    public TSAClient(CCGWClient ccgwClient) {
+        this.ccgwClient = ccgwClient;
+        this.host = ccgwClient.getHost();
+        this.port = ccgwClient.getPort();
+    }
+
     public TSAClient(String host) {
         this.host = host;
     }
@@ -45,11 +53,11 @@ public class TSAClient {
     }
 
     public TSACreateBuilder tsaCreateBuilder(){
-        return new TSACreateBuilder().setHost(host).setPort(port);
+        return new TSACreateBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public TSAVerifyBuilder tsaVerifyBuilder(){
-        return new TSAVerifyBuilder().setHost(host).setPort(port);
+        return new TSAVerifyBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     @Deprecated

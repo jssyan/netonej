@@ -21,6 +21,14 @@ public class SVSClient {
 
     protected String port = "9188";
 
+    protected CCGWClient ccgwClient;
+
+    public SVSClient(CCGWClient ccgwClient) {
+        this.ccgwClient = ccgwClient;
+        this.host = ccgwClient.getHost();
+        this.port = ccgwClient.getPort();
+    }
+
     public SVSClient(String host) {
         this.host = host;
     }
@@ -47,27 +55,27 @@ public class SVSClient {
     }
 
     public CertificateListBuilder certificateListBuilder(){
-        return new CertificateListBuilder().setHost(host).setPort(port);
+        return new CertificateListBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public StampVerifyBuilder stampVerifyBuilder(){
-        return new StampVerifyBuilder().setHost(host).setPort(port);
+        return new StampVerifyBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public CertificateVerifyBuilder certificateVerifyBuilder(){
-        return new CertificateVerifyBuilder().setHost(host).setPort(port);
+        return new CertificateVerifyBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public PKCS1VerifyBuilder pkcs1VerifyBuilder(){
-        return new PKCS1VerifyBuilder().setHost(host).setPort(port);
+        return new PKCS1VerifyBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public PKCS7VerifyBuilder pkcs7VerifyBuilder(){
-        return new PKCS7VerifyBuilder().setHost(host).setPort(port);
+        return new PKCS7VerifyBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public XMLSignVerifyBuilder xmlSignVerifyBuilder(){
-        return new XMLSignVerifyBuilder().setHost(host).setPort(port);
+        return new XMLSignVerifyBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     @Deprecated

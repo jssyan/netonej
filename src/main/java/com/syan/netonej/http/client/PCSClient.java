@@ -14,6 +14,14 @@ public class PCSClient{
 
     protected String port = "9178";
 
+    protected CCGWClient ccgwClient;
+
+    public PCSClient(CCGWClient ccgwClient) {
+        this.ccgwClient = ccgwClient;
+        this.host = ccgwClient.getHost();
+        this.port = ccgwClient.getPort();
+    }
+
     public PCSClient(String host) {
         this.host = host;
     }
@@ -40,51 +48,51 @@ public class PCSClient{
     }
 
     public KeyBuilder keyBuilder(){
-        return new KeyBuilder().setHost(host).setPort(port);
+        return new KeyBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public CertificateBuilder certificateBuilder(){
-        return new CertificateBuilder().setHost(host).setPort(port);
+        return new CertificateBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public EnvelopePacketBuilder envelopePacketBuilder(){
-        return new EnvelopePacketBuilder().setHost(host).setPort(port);
+        return new EnvelopePacketBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public EnvelopeUnpackBuilder envelopeUnpackBuilder(){
-        return new EnvelopeUnpackBuilder().setHost(host).setPort(port);
+        return new EnvelopeUnpackBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public PinBuilder pinBuilder(){
-        return new PinBuilder().setHost(host).setPort(port);
+        return new PinBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public PKCS1Builder pkcs1Builder(){
-        return new PKCS1Builder().setHost(host).setPort(port);
+        return new PKCS1Builder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public RandomBuilder randomBuilder(){
-        return new RandomBuilder().setHost(host).setPort(port);
+        return new RandomBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public PKCS7Builder pkcs7Builder(){
-        return new PKCS7Builder().setHost(host).setPort(port);
+        return new PKCS7Builder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public PrivateKeyBuilder privateKeyBuilder(){
-        return new PrivateKeyBuilder().setHost(host).setPort(port);
+        return new PrivateKeyBuilder().setHost(host).setPort(port).setCcgwClient( ccgwClient );
     }
 
     public PublicKeyBuilder publicKeyBuilder(){
-        return new PublicKeyBuilder().setHost(host).setPort(port);
+        return new PublicKeyBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public XmlSignBuilder xmlSignBuilder(){
-        return new XmlSignBuilder().setHost(host).setPort(port);
+        return new XmlSignBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     public FileSignBuilder fileSignBuilder(){
-        return new FileSignBuilder().setHost(host).setPort(port);
+        return new FileSignBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
     @Deprecated

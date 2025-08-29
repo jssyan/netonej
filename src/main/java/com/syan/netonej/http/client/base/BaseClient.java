@@ -4,10 +4,15 @@ import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.HttpURLConnectionClient;
+import com.syan.netonej.http.client.CCGWClient;
 import com.syan.netonej.http.entity.NetoneResponse;
+import org.bouncycastle.crypto.digests.SM3Digest;
+import org.bouncycastle.crypto.macs.HMac;
+import org.bouncycastle.crypto.params.KeyParameter;
+import org.bouncycastle.util.encoders.Hex;
+
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public abstract class BaseClient<R extends BaseClient> implements Serializable {
     private static final long serialVersionUID = -7174118653689916251L;
@@ -25,6 +30,14 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
     protected String application;
 
     protected String responseformat = "0";
+
+    protected CCGWClient ccgwClient;
+
+
+    public R setCcgwClient(CCGWClient ccgwClient) {
+        this.ccgwClient = ccgwClient;
+        return (R)this;
+    }
 
     public BaseClient() { }
 
@@ -84,6 +97,13 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         if(childParams != null && childParams.size() > 0){
             params.putAll(childParams);
         }
+        if(ccgwClient != null ){
+            params.put("appId",ccgwClient.getAppId());
+            String data = getSignatureString(params);
+            String sign = hmacSM3(ccgwClient.getAppSecret().getBytes(), data.toString().getBytes());
+            params.put("sign",sign);
+        }
+
         NetoneResponse response = HttpURLConnectionClient.builder().url(url).param(params).post();
         if(responseformat.equals("1")){
             response.setFormat(ResponseFormat.XML);
@@ -109,7 +129,60 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         if(!temp.startsWith("http://") && !temp.startsWith("https://")){
             temp = "http://"+host+":"+port;
         }
-        return temp + "/" + buildUrlPath();
+        if(ccgwClient!= null){
+            return temp+"/ccgw/api/v1/"+ccgwClient.getModuleName()+"/"+buildUrlPath();
+        }else {
+            return temp + "/" + buildUrlPath();
+        }
     }
 
+
+    /**
+     * 将参数按key值排序
+     */
+    private String getSignatureString(Map<String, String> paramMap) {
+        Map<String, Object> sortedParams = new TreeMap<String,Object>();
+        sortedParams = sortMapByKey(paramMap);
+        StringBuffer content = new StringBuffer();
+        List<String> keys = new ArrayList<String>(sortedParams.keySet());
+        Collections.sort(keys);
+        for (int i = 0; i < keys.size(); i++) {
+            String key = keys.get(i);
+            Object value = sortedParams.get(key);
+            if (!NetonejUtil.isEmpty(key)&& value!=null && !key.equals("sign")) {
+                content.append(key).append(value);
+            }
+        }
+        return content.toString();
+    }
+
+    /**
+     * 使用 Map按key进行排序
+     * @param map
+     * @return
+     */
+    private Map<String, Object> sortMapByKey(Map<String, String> map) {
+        if (map == null || map.isEmpty()) {
+            return null;
+        }
+        Map<String, Object> sortMap = new TreeMap<String, Object>(
+                new Comparator<String>() {
+                    @Override
+                    public int compare(String o1, String o2) {
+                        return o1.compareTo(o2);
+                    }
+                });
+        sortMap.putAll(map);
+        return sortMap;
+    }
+
+
+    private String hmacSM3(byte[] key,byte[] data){
+        HMac hMac = new HMac(new SM3Digest());
+        hMac.init(new KeyParameter(key));
+        hMac.update(data,0,data.length);
+        byte[] out = new byte[hMac.getMacSize()];
+        hMac.doFinal(out,0);
+        return Hex.toHexString(out);
+    }
 }
