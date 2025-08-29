@@ -120,6 +120,8 @@ public class NetoneSignPKCS7  extends NetoneResponse{
 		return signedCertificates;
 	}
 
-
-
+	@Override
+	public String getResult() {
+		return signature;
+	}
 }

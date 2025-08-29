@@ -30,46 +30,14 @@ public class PCSClientTest {
     //设置PCS（私钥密码服务）的服务器IP与端口号
     private PCSClient pcsClient = new PCSClient("192.168.10.89","9178");
 
-    //证书ID
+    //KID
     String sm2kid = "748cd89c206f0561ad6f8b5ee8b7a737";
-
-    String rsaKid = "19e4ee5c5153e19f4bd6ff6349269254";
 
     //证书的CN项
     String sm2cn = "spark_通讯证书";
 
-    //证书的CN项
-    String rsacn = "testssl";
-
     //证书的私钥保护口令
     String pin = "Syan@9108";
-
-
-    @Test
-    public void testFileSign_filePath() throws Exception{
-
-        String in = "/Users/kisscat/Documents/spark-ebox-syan-1.0.5.apk";
-        String out = "/Users/kisscat/Documents/spark-ebox-syan-1.0.5.iapk";
-        pcsClient.fileSignBuilder().setId(sm2kid).setIdmagic(IdMagic.KID).setPasswd(pin)
-                .setAlgo("SM3").build(in,out);
-    }
-
-    /**
-     * 文件保护结构
-     * @throws Exception
-     */
-    @Test
-    public void testFileSign_fileData() throws Exception{
-        //byte[] data= "123".getBytes();
-
-        byte[] data = FileUtil.read("/Users/kisscat/Documents/spark-ebox-syan-1.0.5.apk");
-
-        NetoneResponse response = pcsClient.fileSignBuilder().setId(sm2kid).setIdmagic(IdMagic.KID).setPasswd(pin)
-                .setAlgo("SM3").build(data);
-
-        System.out.println(response.getStatusCode());
-        System.out.println(Base64.toBase64String(response.getBytesResult()));
-    }
 
     /**
      * 获取可用的PCS中的kid
@@ -93,14 +61,13 @@ public class PCSClientTest {
     }
 
     /**
-     * 获取可用的PCS中的kid
+     * 创建随机数
      * @throws NetonejException
      */
     @Test
     public void testGenrand() throws NetonejException {
 
-        NetonePCS response =
-                pcsClient.randomBuilder()
+        NetonePCS response = pcsClient.randomBuilder()
                         .setLength(32)
                         .build();
         //结果
@@ -109,23 +76,8 @@ public class PCSClientTest {
         System.out.println(response.getResult());
     }
 
-
-    public String getCN(String subject){
-        if(!NetonejUtil.isEmpty(subject)){
-            String[] scns = subject.split(",");
-            for (String ob :scns){
-                String[] cns = ob.split("=");
-                if(cns[0].equals("CN")){
-                    return cns[1];
-                }
-            }
-        }
-        return "";
-    }
-
-
     /**
-     * 获取证书
+     * 根据KID获取证书
      * @throws NetonejException
      */
     @Test
@@ -142,7 +94,7 @@ public class PCSClientTest {
     }
 
     /**
-     * 签名
+     * P1签名
      */
     @Test
     public void createPKCS1Signature() throws NetonejException {
@@ -155,41 +107,6 @@ public class PCSClientTest {
                 .build();
         System.out.println("响应码："+pcs.getStatusCode());
         System.out.println("RAW签名结果 Base64:"+pcs.getResult());
-    }
-
-    @Test
-    public void createPKCS1SignatureMore() throws NetonejException {
-
-        for(int i= 0;i<1000;i++){
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    byte[] data = "123".getBytes();
-                    try {
-                        NetonePCS pcs = pcsClient.pkcs1Builder()
-                                .setPasswd(pin)//可选，设置私钥保护口令
-                                .setId(sm2kid) //设置id参数，这里设置的证书cn项
-                                //.setIdmagic(IdMagic.SNHEX)//指定id的数据类型
-                                .setData(data)//签名原文
-                                .setDataType(DataType.PLAIN)//可选，默认为原文签名
-                                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选,指定签名摘要算法
-                                //.setUserId("userid".getBytes())//可选，SM2签发者ID
-                                .build();
-                        System.out.println(pcs.getStatusCode());
-                        System.out.println(pcs.getResult());
-                    } catch (NetonejException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-            }).start();
-
-        }
-
-        try {
-            Thread.sleep(500000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**
@@ -212,6 +129,10 @@ public class PCSClientTest {
         System.out.println(new String(Base64.decode(pcs.getResult())));
     }
 
+    /**
+     * 摘要计算
+     * @throws NetonejException
+     */
     @Test
     public void digestTest() throws NetonejException{
         String data = "<data>123456</data>";
@@ -230,12 +151,10 @@ public class PCSClientTest {
     public void createPKCS7Signature() throws NetonejException {
         byte[] data = "0200000000000000041001010000000000000000000000000000000002SN".getBytes();
         NetonePCS pcs = pcsClient.pkcs7Builder()
-                .setApplication("abck2")
                 .setPasswd(pin)//可选，设置私钥保护口令
                 .setId(sm2kid)
                 .setIdmagic(IdMagic.KID)
                 .setData(data)
-                .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)
                 .setAttach(false)//可选，签名结果中是否包含原始数据
                 .setFullchain(false)//可选，签名结果是否嵌入整个证书链
                 .setNoattr(false)//可选，签名结果中是否包含签名时间等属性
@@ -317,6 +236,10 @@ public class PCSClientTest {
         System.out.println("解密结果："+new String(org.bouncycastle.util.encoders.Base64.decode(pcs.getResult())));
     }
 
+    /**
+     * 修改PIN口令
+     * @throws NetonejException
+     */
     @Test
     public void testChangepin() throws NetonejException {
         NetonePCS response = pcsClient.pinBuilder()
