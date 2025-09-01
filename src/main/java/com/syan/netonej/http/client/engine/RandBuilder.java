@@ -4,7 +4,7 @@ package com.syan.netonej.http.client.engine;
 import com.syan.netonej.common.dict.EngineAction;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.base.BaseClient;
-import com.syan.netonej.http.entity.ccgw.RandomResponse;
+import com.syan.netonej.http.entity.engine.RandomResponse;
 
 import java.util.HashMap;
 import java.util.Map;

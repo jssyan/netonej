@@ -1,4 +1,4 @@
-package com.syan.netonej.http.entity.ccgw;
+package com.syan.netonej.http.entity.engine;
 
 import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.common.json.JSONException;
@@ -11,17 +11,17 @@ import com.syan.netonej.http.entity.NetoneResponse;
  * @Date: 2025/9/1 14:28
  * @Description:
  */
-public class HmacResponse extends NetoneResponse{
+public class VerifyResponse extends NetoneResponse{
 
-    public HmacResponse(NetoneResponse response) throws NetonejException {
+    public VerifyResponse(NetoneResponse response) throws NetonejException {
         super(response.getStatusCode());
         if(response != null && response.getStatusCode() == 200){
             String result = response.getResult();
             if(response.getFormat() == ResponseFormat.TEXT){
                 try {
                     //result示例值：
-                    //{"transId":"b113d48f4cce4c24ab3935d223a864c0","mac":"jQGO/ZzrnGj892j8M1thIfnlAkxdTQJPSjOP7UfKjvc=","iv":null}
-                    setResult(new JSONObject(result).getString("mac"));
+                    //{"transId":"ae12d694f0e34369b0798523cceb1718","kid":"1","result":true}
+                    setResult(new JSONObject(result).getString("result"));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }

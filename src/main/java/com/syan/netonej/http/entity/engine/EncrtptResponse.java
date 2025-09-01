@@ -1,4 +1,4 @@
-package com.syan.netonej.http.entity.ccgw;
+package com.syan.netonej.http.entity.engine;
 
 import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.common.json.JSONException;
@@ -11,10 +11,10 @@ import com.syan.netonej.http.entity.NetoneResponse;
  * @Date: 2025/9/1 14:40
  * @Description:
  */
-public class DecrtptResponse extends NetoneResponse {
+public class EncrtptResponse extends NetoneResponse {
     private Integer kid;
 
-    private String plaintext;
+    private String ciphertext;
 
     //对称加密算法类型：SM1,SM4,AES
     private String algorithm;
@@ -28,22 +28,22 @@ public class DecrtptResponse extends NetoneResponse {
     // 初始化向量（Initialization Vector），用于某些加密模式（如CBC）中增强安全性，确保相同明文加密后产生不同的密文
     private String iv;
 
-    public DecrtptResponse(NetoneResponse response) throws NetonejException {
+    public EncrtptResponse(NetoneResponse response) throws NetonejException {
         super(response.getStatusCode());
         if(response != null && response.getStatusCode() == 200){
             String result = response.getResult();
             if(response.getFormat() == ResponseFormat.TEXT){
                 try {
                     //result示例值：
-                    ////{"transId":"7337bd22da714799be99664959885a16","kid":"1","algorithm":"SM4","algorithmMode":"CBC","paddingMode":"PKCS5Padding","iv":"d03c064e35c34f51","plaintext":"PWM3Yz02YGBmMTthMWMwNw=="}
+                    //{"transId":"5f4c921e41ff4e09a50be3b1a220f796","kid":"1","algorithm":"SM4","algorithmMode":"CBC","paddingMode":"PKCS5Padding","iv":"86644c70a7a44052","ciphertext":"Nemn1n1P0T/rTSZGAAC32NUquTgfgYWFSIXombHBdKM="}
                     JSONObject json = new JSONObject(result);
                     this.setKid(json.getInt("kid"));
                     this.setAlgorithm(json.getString("algorithm"));
                     this.setAlgorithmMode(json.getString("algorithmMode"));
                     this.setPaddingMode(json.getString("paddingMode"));
                     this.setIv(json.optString("iv", null)); // 使用optString避免JSONException;
-                    this.setPlaintext(json.getString("plaintext"));
-                    setResult(json.getString("plaintext"));
+                    this.setCiphertext(json.getString("ciphertext"));
+                    setResult(json.getString("ciphertext"));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
@@ -59,12 +59,12 @@ public class DecrtptResponse extends NetoneResponse {
         this.kid = kid;
     }
 
-    public String getPlaintext() {
-        return plaintext;
+    public String getCiphertext() {
+        return ciphertext;
     }
 
-    public void setPlaintext(String plaintext) {
-        this.plaintext = plaintext;
+    public void setCiphertext(String ciphertext) {
+        this.ciphertext = ciphertext;
     }
 
     public String getAlgorithm() {

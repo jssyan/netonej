@@ -4,11 +4,8 @@ package cn.com.syan.netonej.ccgw;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.CcgwClient;
 import com.syan.netonej.http.client.EngineClient;
-import com.syan.netonej.http.entity.NetonePCS;
-import com.syan.netonej.http.entity.ccgw.*;
+import com.syan.netonej.http.entity.engine.*;
 import org.junit.Test;
-
-import java.util.List;
 
 /**
  * @Author: xuyaoyao
