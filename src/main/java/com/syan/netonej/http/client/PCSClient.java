@@ -7,6 +7,7 @@ import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.pcs.*;
 import com.syan.netonej.http.entity.*;
 import org.bouncycastle.util.encoders.Base64;
+import com.syan.netonej.http.client.CcgwClient;
 
 public class PCSClient{
 
@@ -14,9 +15,9 @@ public class PCSClient{
 
     protected String port = "9178";
 
-    protected CCGWClient ccgwClient;
+    protected CcgwClient ccgwClient;
 
-    public PCSClient(CCGWClient ccgwClient) {
+    public PCSClient(CcgwClient ccgwClient) {
         this.ccgwClient = ccgwClient;
         this.host = ccgwClient.getHost();
         this.port = ccgwClient.getPort();

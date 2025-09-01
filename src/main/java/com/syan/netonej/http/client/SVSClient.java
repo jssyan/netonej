@@ -21,9 +21,9 @@ public class SVSClient {
 
     protected String port = "9188";
 
-    protected CCGWClient ccgwClient;
+    protected CcgwClient ccgwClient;
 
-    public SVSClient(CCGWClient ccgwClient) {
+    public SVSClient(CcgwClient ccgwClient) {
         this.ccgwClient = ccgwClient;
         this.host = ccgwClient.getHost();
         this.port = ccgwClient.getPort();

@@ -6,7 +6,7 @@ import com.syan.netonej.common.NetoneDigest;
 import com.syan.netonej.common.dict.*;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.PCSClient;
-import com.syan.netonej.http.client.CCGWClient;
+import com.syan.netonej.http.client.CcgwClient;
 import com.syan.netonej.http.entity.KeyListItem;
 import com.syan.netonej.http.entity.NetoneKeyList;
 
@@ -21,9 +21,9 @@ import java.util.List;
  * @Date: 2025/8/29 13:24
  * @Description:
  */
-public class CCGWClientTest {
+public class CcgwClientTest {
 
-    private CCGWClient client = new CCGWClient("http://192.168.10.89","8028","bbb622eea8faf4a9"," 936b55c4e8c94cdbb00e1aadc4887b8d");
+    private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","bbb622eea8faf4a9"," 936b55c4e8c94cdbb00e1aadc4887b8d");
     PCSClient pcsClient = client.PCSClient();
 
     //KID

@@ -20,9 +20,9 @@ public class TSAClient {
 
     protected String port = "9198";
 
-    protected CCGWClient ccgwClient;
+    protected CcgwClient ccgwClient;
 
-    public TSAClient(CCGWClient ccgwClient) {
+    public TSAClient(CcgwClient ccgwClient) {
         this.ccgwClient = ccgwClient;
         this.host = ccgwClient.getHost();
         this.port = ccgwClient.getPort();

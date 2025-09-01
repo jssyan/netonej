@@ -4,7 +4,7 @@ import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.HttpURLConnectionClient;
-import com.syan.netonej.http.client.CCGWClient;
+import com.syan.netonej.http.client.CcgwClient;
 import com.syan.netonej.http.entity.NetoneResponse;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
@@ -31,10 +31,10 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
 
     protected String responseformat = "0";
 
-    protected CCGWClient ccgwClient;
+    protected CcgwClient ccgwClient;
 
 
-    public R setCcgwClient(CCGWClient ccgwClient) {
+    public R setCcgwClient(CcgwClient ccgwClient) {
         this.ccgwClient = ccgwClient;
         return (R)this;
     }

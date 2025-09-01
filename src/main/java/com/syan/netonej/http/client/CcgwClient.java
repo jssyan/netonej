@@ -11,7 +11,7 @@ import com.syan.netonej.common.dict.ModuleName;
 
 import javax.net.ssl.SSLContext;
 
-public class CCGWClient {
+public class CcgwClient {
     private String host;
     private String port = "8028";
     private String appId;
@@ -21,14 +21,14 @@ public class CCGWClient {
     private String moduleName;
 
     // 构造函数
-    public CCGWClient(String host, String port, String appId, String appSecret) {
+    public CcgwClient(String host, String port, String appId, String appSecret) {
         this.host = host;
         this.port = port;
         this.appId = appId;
         this.appSecret = appSecret;
     }
 
-    public CCGWClient(String host, String port, String appId, String appSecret, SSLContext sslContext) {
+    public CcgwClient(String host, String port, String appId, String appSecret, SSLContext sslContext) {
         this.host = host;
         this.port = port;
         this.appId = appId;
