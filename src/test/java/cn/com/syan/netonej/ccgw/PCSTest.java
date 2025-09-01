@@ -1,4 +1,4 @@
-package cn.com.syan.netonej;
+package cn.com.syan.netonej.ccgw;
 
 
 import com.syan.netonej.common.NetoneCertificate;
@@ -21,7 +21,7 @@ import java.util.List;
  * @Date: 2025/8/29 13:24
  * @Description:
  */
-public class CcgwClientTest {
+public class PCSTest {
 
     private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","bbb622eea8faf4a9"," 936b55c4e8c94cdbb00e1aadc4887b8d");
     PCSClient pcsClient = client.PCSClient();

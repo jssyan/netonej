@@ -63,10 +63,16 @@ public class CcgwClient {
         return new SVSClient(this);
     }
 
-    // 创建SVSClient的方法
+    // 创建TSAClient的方法
     public TSAClient TSAClient(){
         this.moduleName= ModuleName.TSA_MODULE;
         return new TSAClient(this);
+    }
+
+    // 创建EngineClient的方法
+    public EngineClient EngineClient(){
+        this.moduleName= ModuleName.ENGINE_MODULE;
+        return new EngineClient(this);
     }
 
 }
