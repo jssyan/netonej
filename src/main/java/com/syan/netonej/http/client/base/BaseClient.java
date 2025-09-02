@@ -104,7 +104,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
             params.put("sign",sign);
         }
 
-        NetoneResponse response = HttpURLConnectionClient.builder().url(url).param(params).post();
+        NetoneResponse response = HttpURLConnectionClient.builder().url(url).sslContext(ccgwClient.getSslContext()).param(params).post();
         if(responseformat.equals("1")){
             response.setFormat(ResponseFormat.XML);
         }else{

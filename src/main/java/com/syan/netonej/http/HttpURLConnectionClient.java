@@ -31,12 +31,19 @@ public class HttpURLConnectionClient {
 
     private final Map<String,String> params = new HashMap<String, String>();
 
+    private SSLContext sslContext;
+
     public static HttpURLConnectionClient builder(){
         return new HttpURLConnectionClient();
     }
 
     public HttpURLConnectionClient url(String url) {
         this.url = url;
+        return this;
+    }
+
+    public HttpURLConnectionClient sslContext(SSLContext sslContext) {
+        this.sslContext = sslContext;
         return this;
     }
 
@@ -203,7 +210,11 @@ public class HttpURLConnectionClient {
             httpConn.setConnectTimeout(connectTimeout);
             httpConn.setReadTimeout(readTimeout);
 
-            httpConn.setSSLSocketFactory(createSSLSocketFactory());
+            if (sslContext != null) {
+                httpConn.setSSLSocketFactory(sslContext.getSocketFactory());
+            }else {
+                httpConn.setSSLSocketFactory(createSSLSocketFactory());
+            }
             httpConn.setHostnameVerifier(new HostnameVerifier() {
                 @Override
                 public boolean verify(String s, SSLSession sslSession) {
