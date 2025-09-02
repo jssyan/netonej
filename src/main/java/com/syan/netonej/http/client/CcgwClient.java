@@ -75,4 +75,10 @@ public class CcgwClient {
         return new EngineClient(this);
     }
 
+    // 创建CAClient的方法
+    public CAClient CAClient(){
+        this.moduleName= ModuleName.CA_MODULE;
+        return new CAClient(this);
+    }
+
 }
