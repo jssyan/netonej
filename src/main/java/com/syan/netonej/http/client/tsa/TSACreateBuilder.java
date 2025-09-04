@@ -40,6 +40,11 @@ public class TSACreateBuilder extends BaseClient<TSACreateBuilder> {
     @Override
     protected Map<String, String> buildParams() throws NetonejException {
         Map<String, String> params = new HashMap<String, String>();
+        if(ccgwClient!=null) {
+            if(dataType == DataType.TIMESTAMP_REQUEST){
+                params.put("timestampRequest", Base64.toBase64String(data));
+            }
+        }
         if (DataType.PLAIN == dataType) {
             params.put("data", Base64.toBase64String(data));
         } else {
@@ -59,7 +64,11 @@ public class TSACreateBuilder extends BaseClient<TSACreateBuilder> {
     @Override
     public NetoneTSA build() throws NetonejException {
         if (dataType == DataType.TIMESTAMP_REQUEST) {
-            return new NetoneTSA(null,super.build(data));
+            if(ccgwClient==null){
+                return new NetoneTSA(null,super.build(data));
+            }else {
+                return new NetoneTSA(null,super.build());
+            }
         } else {
             return new NetoneTSA(null,super.build());
         }
