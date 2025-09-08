@@ -5,6 +5,8 @@ import com.syan.netonej.common.dict.Action;
 import com.syan.netonej.common.dict.IdMagic;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.base.BaseClient;
+import com.syan.netonej.http.entity.NetonePCS;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +51,7 @@ public class CMACBuilder extends BaseClient<CMACBuilder> {
     @Override
     protected Map<String, String> buildParams() throws NetonejException {
         Map<String, String> params = new HashMap<String, String>();
-        if (!NetonejUtil.isEmpty(id)) {
+        if (NetonejUtil.isEmpty(id)) {
             throw new NetonejException("id not be empty");
         }
         params.put("id", id);
@@ -73,5 +75,10 @@ public class CMACBuilder extends BaseClient<CMACBuilder> {
     @Override
     protected String buildUrlPath() {
         return Action.PCS_ACTION_CMACKDF;
+    }
+
+    @Override
+    public NetonePCS build() throws NetonejException {
+        return new NetonePCS(super.build());
     }
 }

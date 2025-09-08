@@ -13,7 +13,7 @@ import org.junit.Test;
  * @Description:
  */
 public class EngineTest {
-    private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","bbb622eea8faf4a9"," 936b55c4e8c94cdbb00e1aadc4887b8d");
+    private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","8c6a80e9a38615b0","c6ff6bda5ecc48bf8b7fdcf14b0a9e11");
     EngineClient engineClient=client.EngineClient();
 
     //明文

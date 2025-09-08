@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class PCSTest {
 
-    private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","bbb622eea8faf4a9","936b55c4e8c94cdbb00e1aadc4887b8d");
+    private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","8c6a80e9a38615b0","c6ff6bda5ecc48bf8b7fdcf14b0a9e11");
     PCSClient pcsClient = client.PCSClient();
 
     //KID
@@ -245,6 +245,24 @@ public class PCSTest {
         //1: 旧口令验证不通过
         //2: 密钥库操作失败
         //3: 更新新口令失败
+        System.out.println(response.getResult());
+    }
+
+    /**
+     * cmac
+     * @throws NetonejException
+     */
+    @Test
+    public void testCmac() throws NetonejException {
+        byte[] factorBytes = "your_derivation_factor".getBytes();
+        NetonePCS response = pcsClient.cmacBuilder()
+                .setId(sm2kid)
+                .setIdmagic(IdMagic.KID)
+                .setPasswd("123456")
+                .setFactor(Base64.toBase64String(factorBytes))//密钥派生因子(BASE64编码）
+                .setCipher("sm4")//密钥派生算法（比如： sm4, aes128, aes256)等
+               .build();
+        System.out.println(response.getStatusCode());
         System.out.println(response.getResult());
     }
 }

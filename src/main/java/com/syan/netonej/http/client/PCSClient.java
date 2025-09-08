@@ -96,6 +96,10 @@ public class PCSClient{
         return new FileSignBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
+    public CMACBuilder cmacBuilder(){
+        return new CMACBuilder().setHost(host).setPort(port).setCcgwClient( ccgwClient );
+    }
+
     @Deprecated
     public NetoneKeyList getPcsIds() throws NetonejException {
         return keyBuilder().build();
