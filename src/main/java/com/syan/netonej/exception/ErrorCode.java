@@ -8,6 +8,7 @@ public enum ErrorCode {
     NOT_HAVA_ACCESS_OR_KEY_ERROR(403,"无权访问或密钥错误"),
     PCS_THE_KEY_NOT_FOUND(404,"选择的密钥不存在"),
     SERVER_500_ERROR(500,"服务端异常错误"),
+    CCGW_SERVER_ERROR(502,"密码服务平台异常错误"),
     X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT(802,"找不到该证书的签发者（CA）证书"),
     X509_V_ERR_UNABLE_TO_GET_CRL(803,"找不到和该证书相关的CRL"),
     X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE(804,"无法解开证书里的签名"),
