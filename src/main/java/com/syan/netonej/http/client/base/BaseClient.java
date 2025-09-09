@@ -97,14 +97,16 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         if(childParams != null && childParams.size() > 0){
             params.putAll(childParams);
         }
+
+        Map<String, String> headers = new HashMap<String, String>();
         if(ccgwClient != null ){
-            params.put("appId",ccgwClient.getAppId());
+            headers.put("AppId",ccgwClient.getAppId());
             String data = getSignatureString(params);
             String sign = hmacSM3(ccgwClient.getAppSecret().getBytes(), data.toString().getBytes());
-            params.put("sign",sign);
+            headers.put("Sign",sign);
         }
 
-        NetoneResponse response = HttpURLConnectionClient.builder().url(url).sslContext(ccgwClient != null ? ccgwClient.getSslContext() : null).param(params).post();
+        NetoneResponse response = HttpURLConnectionClient.builder().url(url).sslContext(ccgwClient != null ? ccgwClient.getSslContext() : null).param(params).header(headers).post();
         if(responseformat.equals("1")){
             response.setFormat(ResponseFormat.XML);
         }else{
@@ -149,7 +151,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
         for (int i = 0; i < keys.size(); i++) {
             String key = keys.get(i);
             Object value = sortedParams.get(key);
-            if (!NetonejUtil.isEmpty(key)&& value!=null && !key.equals("sign")) {
+            if (!NetonejUtil.isEmpty(key)&& value!=null) {
                 content.append(key).append(value);
             }
         }
