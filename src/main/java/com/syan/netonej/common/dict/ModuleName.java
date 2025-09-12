@@ -13,4 +13,6 @@ public class ModuleName {
 
     public final static String CA_MODULE = "ca";
 
+    public final static String COSIGN_MODULE = "cosign";
+
 }

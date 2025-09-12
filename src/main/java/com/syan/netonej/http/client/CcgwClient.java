@@ -81,4 +81,10 @@ public class CcgwClient {
         return new CAClient(this);
     }
 
+    // 创建CAClient的方法
+    public CosignClient CosignClient(){
+        this.moduleName= ModuleName.COSIGN_MODULE;
+        return new CosignClient(this);
+    }
+
 }
