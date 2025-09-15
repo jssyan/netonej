@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class CATest {
 
-    private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","8c6a80e9a38615b0","c6ff6bda5ecc48bf8b7fdcf14b0a9e11");
+    private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","88b4702c32e81c2d","efc1a098d31f4ea58653ac4d369f6da5");
     CAClient caClient = client.CAClient();
 
     String cn="xuyy";
@@ -49,7 +49,7 @@ public class CATest {
 
     private Extension[] extension;
 
-    private String certType="0";
+    private String certType="1";
 
     String csr="MIICvjCCAaYCAQAwLjELMAkGA1UEBhMCQ04xETAPBgNVBAoMCEFCQyBsdGQuMQwwCgYDVQQDDAN4eXkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDU1JZZLlaIFkC0cBX6hIvOffFl0uPVN2fcwDPpuaySQ49jcdbsOLaW+DZAMX5DbKEpASoA0ZmS04tRP8Jj/o7oRF0Vcb5ngdIJ0kfD+Vo/vW1c7C7mFvKrV4KsHyhZJx7eLRWzIWIdQzRWLXz465wxryYcroEsRNVXG6VD2JoV7BHbz02NZnS21VIeHWArAEu8W9acSeY6XUxuquJ7kVh2m7xlaHIJWN3OtQ+J1StSRITF+j60hxbrWgX88//Ic5hnB6gVKW49kEFkRr+1/UNrtfuRs8pwLB80rfXgPvYV9TXK0OTIUzk5Oo9jRzdt/KTOVcf7F/BSJadhVdkAs62BAgMBAAGgSzBJBgkqhkiG9w0BCQ4xPDA6MAkGA1UdEwQCMAAwHQYDVR0OBBYEFLDpyMIeM+tfjKtduUF7SVKPYjp+MA4GA1UdDwEB/wQEAwID+DANBgkqhkiG9w0BAQsFAAOCAQEADkHcbRoNN+lcQIRRLmYfQvOX3uv8dkEn+nhI3YbLcZKUBBB8IuLiuByQl6YDy5PF3/Jr70C5Uq0giLg6uzf1M3AavL1d00HlkEpiovqgUFLNYbfmsvYxR1U0XVVYuUMhWDqPJe6gnpoQvq41sClPXTKJauvEIcuulh/qqkKNz1zmN9X+oBCj9Vy6nDUfXAnzVqwAJVLJDaPf24Ln6ooaK6iB6KiTkZmjgXdFIxOq9QT5y/mHX+A4hwETu2wrtBjEMToOtM+WfkCQitoc583/29QcLMu2hZkvXtrNbZ5u+2fW0XcPDHHKEjlKMpPakJheitI2wlT6ORkbBuiWYX8xow==";
 
@@ -73,7 +73,7 @@ public class CATest {
                 caClient.issueBuilder()
                         //必填
                         .setCn(cn)
-                        .setCsr(csr)
+                        .setCsr(csr) //证书签发请求
                         //选填
                         .setO(o) //证书 O 项,证书所属组织
                         .setOu(ou) //证书 OU 项,证书所属组织单元
@@ -106,7 +106,7 @@ public class CATest {
                         //必填
                         .setSerial(serial.toString())
                         .setCn(cn+"2")
-                        .setCsr(csr)
+                        .setCsr(csr) //证书签发请求
                         //选填
                         .setO(o+"2") //证书 O 项,证书所属组织
                         .setOu(ou+"2") //证书 OU 项,证书所属组织单元

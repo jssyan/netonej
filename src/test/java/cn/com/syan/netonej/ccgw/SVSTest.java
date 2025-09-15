@@ -72,6 +72,8 @@ public class SVSTest {
                 .setData(data)//原文
                 .build();
         System.out.println(svs.getStatusCode() == 200?"验证通过":"验证失败");
+        System.out.println(svs.getStatusCodeMessage());
+        System.out.println(svs.getResult());
     }
 
     /**
@@ -89,6 +91,7 @@ public class SVSTest {
             System.out.println(new String(Base64.decode(svs.getResult())));
             System.out.println(svs.getCertificate().getSubject());
         }else{
+            System.out.println(svs.getStatusCode());
             System.out.println(svs.getStatusCodeMessage());
         }
         //签名不带原文的情况，需要设置原文数据
@@ -102,6 +105,7 @@ public class SVSTest {
             System.out.println(new String(Base64.decode(svs.getResult())));
             System.out.println(svs.getCertificate().getSubject());
         }else{
+            System.out.println(svs.getStatusCode());
             System.out.println(svs.getStatusCodeMessage());
         }
 

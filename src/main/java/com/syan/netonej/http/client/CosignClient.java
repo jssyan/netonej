@@ -6,10 +6,7 @@
  */
 package com.syan.netonej.http.client;
 
-import com.syan.netonej.http.client.cosign.DecryptionBuilder;
-import com.syan.netonej.http.client.cosign.GenKeyBuilder;
-import com.syan.netonej.http.client.cosign.GenRandBuilder;
-import com.syan.netonej.http.client.cosign.SignatureBuilder;
+import com.syan.netonej.http.client.cosign.*;
 
 public class CosignClient {
     protected String host;
@@ -62,6 +59,22 @@ public class CosignClient {
 
     public DecryptionBuilder decryptionBuilder(){
         return new DecryptionBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
+    }
+
+    public IssueCertBuilder issueCertBuilder(){
+        return new IssueCertBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
+    }
+
+    public ReIssueCertBuilder reIssueCertBuilder(){
+        return new ReIssueCertBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
+    }
+
+    public DelayCertBuilder delayCertBuilder(){
+        return new DelayCertBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
+    }
+
+    public RevokeCertBuilder revokeCertBuilder(){
+        return new RevokeCertBuilder().setHost(host).setPort(port).setCcgwClient(ccgwClient);
     }
 
 
