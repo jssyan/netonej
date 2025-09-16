@@ -28,6 +28,9 @@ public class EncrtptResponse extends NetoneResponse {
     // 初始化向量（Initialization Vector），用于某些加密模式（如CBC）中增强安全性，确保相同明文加密后产生不同的密文
     private String iv;
 
+    //GCM 模式加密生成的校验码 tag，和密文一起返回（Base64 编码）
+    private String authData;
+
     public EncrtptResponse(NetoneResponse response) throws NetonejException {
         super(response.getStatusCode());
         if(response != null && response.getStatusCode() == 200){
@@ -43,6 +46,7 @@ public class EncrtptResponse extends NetoneResponse {
                     this.setPaddingMode(json.getString("paddingMode"));
                     this.setIv(json.optString("iv", null)); // 使用optString避免JSONException;
                     this.setCiphertext(json.getString("ciphertext"));
+                    this.setAuthData(json.optString("authData", null));
                     setResult(json.getString("ciphertext"));
                 } catch (JSONException e) {
                     throw new RuntimeException(e);
@@ -65,6 +69,14 @@ public class EncrtptResponse extends NetoneResponse {
 
     public void setCiphertext(String ciphertext) {
         this.ciphertext = ciphertext;
+    }
+
+    public void setAuthData(String authData) {
+        this.authData = authData;
+    }
+
+    public String getAuthData() {
+        return authData;
     }
 
     public String getAlgorithm() {
