@@ -27,6 +27,31 @@ public class DecryptBuilder extends BaseClient<DecryptBuilder> {
     // 初始化向量（Initialization Vector），用于某些加密模式（如CBC）中增强安全性，确保相同明文加密后产生不同的密文
     private String iv;
 
+    //GCM 模式额外的认证参数，（Base64 编码）
+    private String aad;
+
+    //GCM 模式生成校验码的长度，默认16字节
+    private Integer tlen;
+
+    //GCM 模式必填，加密生成的校验码 tag（Base64 编码）
+    private String authData;
+
+    public DecryptBuilder setAad(String aad) {
+        this.aad = aad;
+        return this;
+    }
+
+
+    public DecryptBuilder setTlen(Integer tlen) {
+        this.tlen = tlen;
+        return this;
+    }
+
+    public DecryptBuilder setAuthData(String authData) {
+        this.authData = authData;
+        return this;
+    }
+
     public DecryptBuilder setKeyId(Integer keyId) {
         this.keyId = keyId;
         return this;
@@ -88,7 +113,17 @@ public class DecryptBuilder extends BaseClient<DecryptBuilder> {
         if (iv != null) {
             params.put("iv", iv);
         }
+        if (aad != null) {
+            params.put("aad", aad);
+        }
 
+        if (tlen != null) {
+            params.put("tlen", String.valueOf(tlen));
+        }
+
+        if (authData != null) {
+            params.put("authData", authData);
+        }
         return params;
     }
 

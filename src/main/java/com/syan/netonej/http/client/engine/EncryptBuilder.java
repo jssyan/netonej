@@ -18,7 +18,7 @@ public class EncryptBuilder extends BaseClient<EncryptBuilder> {
     //对称加密算法类型：SM1,SM4,AES
     private String algorithm;
 
-    //加密模式：CBC,ECB,OFB,CFB
+    //加密模式：CBC,ECB,OFB,CFB,GCM
     private String algorithmMode;
 
     //填充模式：PKCS5Padding,NoPadding
@@ -26,6 +26,12 @@ public class EncryptBuilder extends BaseClient<EncryptBuilder> {
 
     // 初始化向量（Initialization Vector），用于某些加密模式（如CBC）中增强安全性，确保相同明文加密后产生不同的密文
     private String iv;
+
+    //GCM 模式额外的认证参数，（Base64 编码）
+    private String aad;
+
+    //GCM 模式生成校验码的长度，默认16字节
+    private Integer tlen;
 
     public EncryptBuilder setKeyId(Integer keyId) {
         this.keyId = keyId;
@@ -57,6 +63,19 @@ public class EncryptBuilder extends BaseClient<EncryptBuilder> {
         return this;
     }
 
+    public EncryptBuilder setAad(String aad) {
+        this.aad = aad;
+        return this;
+    }
+
+
+    public EncryptBuilder setTlen(Integer tlen) {
+        this.tlen = tlen;
+        return this;
+    }
+
+
+
     @Override
     protected Map<String, String> buildParams() throws NetonejException{
         Map<String, String> params = new HashMap<String, String>();
@@ -87,6 +106,14 @@ public class EncryptBuilder extends BaseClient<EncryptBuilder> {
 
         if (iv != null) {
             params.put("iv", iv);
+        }
+
+        if (aad != null) {
+            params.put("aad", aad);
+        }
+
+        if (tlen != null) {
+            params.put("tlen", String.valueOf(tlen));
         }
 
         return params;
