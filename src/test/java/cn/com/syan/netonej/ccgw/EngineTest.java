@@ -13,7 +13,7 @@ import org.junit.Test;
  * @Description:
  */
 public class EngineTest {
-    private CcgwClient client = new CcgwClient("http://192.168.10.89","8028","88b4702c32e81c2d","efc1a098d31f4ea58653ac4d369f6da5");
+    private CcgwClient client = new CcgwClient("http://221.226.107.246","39120","88b4702c32e81c2d","efc1a098d31f4ea58653ac4d369f6da5");
     EngineClient engineClient=client.EngineClient();
 
     //明文
@@ -37,7 +37,7 @@ public class EngineTest {
     public void testGenrand() throws NetonejException {
 
         RandomResponse response = engineClient.randBuilder()
-                .setLength(32) //随机数长度
+                .setLength(16) //随机数长度
                 .build();
         //状态码
         System.out.println(response.getStatusCode());
@@ -58,14 +58,17 @@ public class EngineTest {
                 .setPlaintext(plaintext) //明文
                 //选填
                 .setAlgorithm("SM4") //对称加密算法类型：SM1,SM4,AES
-                .setAlgorithmMode("ECB") //加密模式：CBC,ECB,OFB,CFB
-                .setPaddingMode("PKCS5Padding") //填充模式：PKCS5Padding,NoPadding
-                .setIv("777f7477417943b6") //初始化向量
+                .setAlgorithmMode("GCM") //加密模式：CBC,ECB,OFB,CFB，GCM
+                .setPaddingMode("NoPadding") //填充模式：PKCS5Padding,NoPadding
+                .setIv("PE2Ki26NHpy8OGjxWroIjw==") //初始化向量
+                .setAad("PE2Ki26NHpy8OGjxWroIjw==")
                 .build();
         //状态码
         System.out.println(response.getStatusCode());
         //结果
         System.out.println(response.getResult());
+        //GCM模式下额外返回AuthData
+        System.out.println(response.getAuthData());
     }
 
     /**
@@ -120,7 +123,7 @@ public class EngineTest {
                 .setKeyId(1)
                 .setPlaintext(plaintext)
                 //选填
-                .setIv("a5ab73f5028dc95a")
+                .setIv("EaFFobrHivbpOCpCAcPiQ50JBAv072F5Z5GbSd3iCr0=")
                 .build();
         //状态码
         System.out.println(response.getStatusCode());
