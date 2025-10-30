@@ -145,6 +145,9 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
     private String getSignatureString(Map<String, String> paramMap) {
         Map<String, Object> sortedParams = new TreeMap<String,Object>();
         sortedParams = sortMapByKey(paramMap);
+        if(sortedParams == null){
+            return "";
+        }
         StringBuffer content = new StringBuffer();
         List<String> keys = new ArrayList<String>(sortedParams.keySet());
         Collections.sort(keys);
