@@ -86,7 +86,9 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
     public NetoneResponse build() throws NetonejException{
         String url = buildFullUrl();
         Map<String, String> params = new HashMap<String, String>();
-        params.put("responseformat", responseformat);
+        if(responseformat != null && !url.contains("listc.svr")){
+            params.put("responseformat", responseformat);
+        }
         if (!NetonejUtil.isEmpty(greenpass) && greenpass.equals("0")) {
             params.put("greenpass", greenpass);
         }

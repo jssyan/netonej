@@ -38,6 +38,7 @@ public class TSATest {
         NetoneTSA netoneTSA = tsaClient.tsaCreateBuilder()
                 .setAlgo(DigestAlgorithm.ECDSASM2WITHSM3)//可选。设置摘要算法
                 .setData(Base64.decode(data))//设置签署原文
+                .setDataType(DataType.PLAIN)
                 .build();
         System.out.println(netoneTSA.getStatusCode());
         //时间戳签名

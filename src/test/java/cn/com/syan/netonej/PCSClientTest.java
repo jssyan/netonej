@@ -31,7 +31,7 @@ public class PCSClientTest {
     private PCSClient pcsClient = new PCSClient("192.168.10.89","9178");
 
     //KID
-    String sm2kid = "748cd89c206f0561ad6f8b5ee8b7a737";
+    String sm2kid = "c633fa077422e9f20ccbfe697b20695e";
 
     //证书的CN项
     String sm2cn = "spark_通讯证书";
@@ -97,6 +97,19 @@ public class PCSClientTest {
      * P1签名
      */
     @Test
+    public void createPKCS1SignatureByCID() throws NetonejException {
+        byte[] data = "SN".getBytes();
+        NetonePCS pcs = pcsClient.pkcs1Builder()
+                .setPasswd(pin)//可选，设置私钥保护口令
+                .setId("1") //设置id参数，这里设置的证书cn项
+                .setIdmagic(IdMagic.CID)
+                .setData(data)//签名原文
+                .build();
+        System.out.println("响应码："+pcs.getStatusCode());
+        System.out.println("RAW签名结果 Base64:"+pcs.getResult());
+    }
+
+    @Test
     public void createPKCS1Signature() throws NetonejException {
         byte[] data = "0200000000000000041001010000000000000000000000000000000002SN".getBytes();
         NetonePCS pcs = pcsClient.pkcs1Builder()
@@ -104,6 +117,7 @@ public class PCSClientTest {
                 .setPasswd(pin)//可选，设置私钥保护口令
                 .setId(sm2kid) //设置id参数，这里设置的证书cn项
                 .setData(data)//签名原文
+                .setAlgo(DigestAlgorithm.SM3)
                 .build();
         System.out.println("响应码："+pcs.getStatusCode());
         System.out.println("RAW签名结果 Base64:"+pcs.getResult());
@@ -149,18 +163,18 @@ public class PCSClientTest {
      */
     @Test
     public void createPKCS7Signature() throws NetonejException {
-        byte[] data = "0200000000000000041001010000000000000000000000000000000002SN".getBytes();
+        byte[] data = "000000000002SN".getBytes();
         NetonePCS pcs = pcsClient.pkcs7Builder()
-                .setPasswd(pin)//可选，设置私钥保护口令
-                .setId(sm2kid)
+                .setPasswd("Syan@9108")//可选，设置私钥保护口令
+                .setId("8047398788918a8a21c49b151bafc7ca")
                 .setIdmagic(IdMagic.KID)
                 .setData(data)
-                .setAttach(false)//可选，签名结果中是否包含原始数据
+                .setAttach(true)//可选，签名结果中是否包含原始数据
                 .setFullchain(false)//可选，签名结果是否嵌入整个证书链
                 .setNoattr(false)//可选，签名结果中是否包含签名时间等属性
                 .build();
         System.out.println("响应码："+pcs.getStatusCode());
-        System.out.println("Detach签名结果 Base64:"+pcs.getResult());
+        System.out.println("Detach签名结果 Base64:\n"+pcs.getResult());
     }
 
     /**
@@ -186,14 +200,15 @@ public class PCSClientTest {
     @Test
     public void createEnvelopePacketAndSign() throws Exception {
         byte[] data = "02".getBytes();
+        String crt = "MIICJzCCAcygAwIBAgIGAY9/Z3b+MAwGCCqBHM9VAYN1BQAwSzELMAkGA1UEBhMCQ04xDjAMBgNVBAoTBUdNU1NMMRAwDgYDVQQLEwdQS0kvU00yMRowGAYDVQQDExFNaWRkbGVDQSBmb3IgVGVzdDAiGA8yMDI0MDUxNTE2MDAwMFoYDzIwMjUwNTE1MTYwMDAwWjBXMQswCQYDVQQGEwJDTjETMBEGA1UECAwKdGlhbmppbnNoaTEQMA4GA1UEBwwHaGViZWlxdTEMMAoGA1UECgwDY3QyMRMwEQYDVQQDDApzeWFuX3NtMl8xMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAE06iAgLh+gAfJGlrmHzhos24bs07HPxmpNCS8WRKuyHMOeCb4i0g9t9vS3fkeYaYodDyR5SE0prnuYcmj2qLtIKOBiTCBhjAbBgNVHSMEFDASgBD5f1W0J5QzYqZWym/MXRr/MBkGA1UdDgQSBBBnJQgrZE8kPBgx7JafDdhHMDEGCCsGAQUFBwEBBCUwIzAhBggrBgEFBQcwAYYVaHR0cHM6Ly9vY3NwLmdtc3NsLmNuMAkGA1UdEwQCMAAwDgYDVR0PAQH/BAQDAgDAMAwGCCqBHM9VAYN1BQADRwAwRAIgL6rXLyDMEhgpqMfMU+y/gViUrFaD8iimLT4tJqMkg4QCIF7O2hcEq7V8IOlVtHfXylGrAiQftHjg2+mKqzptgM08";
         System.out.println(data.length);
         NetonePCS pcs = pcsClient.envelopePacketBuilder()
                 .setId(sm2kid)
                 .setPasswd(pin)
                 .setData(data)
                 .setCipherAlgo(CipherAlgorithm.SM4CBC)//可选，设置对称密钥算法
-                .setPeer(sm2kid)//可选，设置加密证书
-                .setPeerMagic(IdMagic.KID)//可选，指定加密证书的类型
+                .setPeer(crt)//可选，设置加密证书
+                //.setPeerMagic(IdMagic.KID)//可选，指定加密证书的类型
                 .build();
         System.out.println("响应码："+pcs.getStatusCode());
         System.out.println("信封结果 Base64:"+pcs.getResult());
@@ -205,9 +220,10 @@ public class PCSClientTest {
      */
     @Test
     public void createEnvelopeUnPacket() throws Exception {
-        String data = "MIIFGgYKKoEcz1UGAQQCBKCCBQowggUGAgEBMYHEMIHBAgEAMDEwIDELMAkGA1UEBhMCQ04xETAPBgNVBAMMCHNtMl9yb290Ag0AkK1xCLXFaCiIW7nRMA0GCSqBHM9VAYItAwUABHoweAIgSqCp1o+VLWNRAckKPwWRebuvsvICSJuNMqg84tFNbOICIHhulXC9ZaKds4OyuwJZyJb63P1Im74nPz02q/l/5ByTBCAkyUyOdc1Qv3tWvqdO0MVBGnBpxCRdJG8BLRsAFNCYMgQQUjFDbbtw2GbA4LxdkInKVTEOMAwGCCqBHM9VAYMRBQAwKwYKKoEcz1UGAQQCATALBgkqgRzPVQFoAQOAECDvHOULMmpBi8BIPZPz1CSgggNaMIIDVjCCAvygAwIBAgINAJCtcQi1xWgoiFu50TAKBggqgRzPVQGDdTAgMQswCQYDVQQGEwJDTjERMA8GA1UEAwwIc20yX3Jvb3QwHhcNMjExMjA3MjIxNjQ1WhcNMzkxMjA3MTYwMDAwWjBlMQ8wDQYDVQQIDAbnoJTlj5ExEjAQBgNVBAcMCeWNl+S6rOW4gjENMAsGA1UECgwEc3lhbjESMBAGA1UECwwJ56CU5Y+R6YOoMRswGQYDVQQDDBJzcGFya1/pgJrorq/or4HkuaYwWTATBgcqhkjOPQIBBggqgRzPVQGCLQNCAATbf6mIrEzgpIv1RiRVMl7cRNbzTYay9AknqdEjNflw7WQ2Nz8yAQvireaHFVX6mogKwXvfwqceoF/9Woil9ypoo4IB1DCCAdAwCQYDVR0TBAIwADAdBgNVHQ4EFgQUk2lZgdL1LctBlyyLk6YJzTanbuowDgYDVR0PAQH/BAQDAgD/MIGbBgNVHSUBAf8EgZAwgY0GCCsGAQUFBwMBBggrBgEFBQcDAgYIKwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCAYKKwYBBAGCNwIBFQYKKwYBBAGCNwIBFgYKKwYBBAGCNwoDAQYKKwYBBAGCNwoDAwYKKwYBBAGCNwoDBAYJYIZIAYb4QgQBBggrBgEFBQcDCQYIKwYBBQUHAwowLgYDVR0fBCcwJTAjoCGgH4YdaHR0cHM6Ly9haWEuc3lhbi5jb20uY24vY3JsL2EwYgYIKwYBBQUHAQEEVjBUMCQGCCsGAQUFBzABhhhodHRwczovL29jc3Auc3lhbi5jb20uY24wLAYIKwYBBQUHMAKGIGh0dHBzOi8vYWlhLnN5YW4uY29tLmNuL2lzc3Vlci9hMB8GA1UdIwQYMBaAFE62EA55ojyyltMkTdh/2Ac4lpUEMEEGA1UdIAQ6MDgwNgYIKoEchvAAZAEwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly9jcHMuc3lhbi5jb20uY24vY3BzMTAKBggqgRzPVQGDdQNIADBFAiEAmKlOSDGvzcD/Z19/5zIItoTtaUa02I8+lJoaz4SSGdoCIExCV6F474ctRWqFt3sEHC9pi1QJuglYSmSdXgMvVTYmMYGeMIGbAgEBMDEwIDELMAkGA1UEBhMCQ04xETAPBgNVBAMMCHNtMl9yb290Ag0AkK1xCLXFaCiIW7nRMAwGCCqBHM9VAYMRBQAwDQYJKoEcz1UBgi0BBQAERjBEAiAdhYQRl7hhn/rjS+PLjisP5evOlTdcdgJBIPlPYrMSqAIgTscVYJiX6eXQL7Fc/BHdKnr7TxZ8SvyLnX6vEvmky1E=";
+        //String data = "MIIFGgYKKoEcz1UGAQQCBKCCBQowggUGAgEBMYHEMIHBAgEAMDEwIDELMAkGA1UEBhMCQ04xETAPBgNVBAMMCHNtMl9yb290Ag0AkK1xCLXFaCiIW7nRMA0GCSqBHM9VAYItAwUABHoweAIgSqCp1o+VLWNRAckKPwWRebuvsvICSJuNMqg84tFNbOICIHhulXC9ZaKds4OyuwJZyJb63P1Im74nPz02q/l/5ByTBCAkyUyOdc1Qv3tWvqdO0MVBGnBpxCRdJG8BLRsAFNCYMgQQUjFDbbtw2GbA4LxdkInKVTEOMAwGCCqBHM9VAYMRBQAwKwYKKoEcz1UGAQQCATALBgkqgRzPVQFoAQOAECDvHOULMmpBi8BIPZPz1CSgggNaMIIDVjCCAvygAwIBAgINAJCtcQi1xWgoiFu50TAKBggqgRzPVQGDdTAgMQswCQYDVQQGEwJDTjERMA8GA1UEAwwIc20yX3Jvb3QwHhcNMjExMjA3MjIxNjQ1WhcNMzkxMjA3MTYwMDAwWjBlMQ8wDQYDVQQIDAbnoJTlj5ExEjAQBgNVBAcMCeWNl+S6rOW4gjENMAsGA1UECgwEc3lhbjESMBAGA1UECwwJ56CU5Y+R6YOoMRswGQYDVQQDDBJzcGFya1/pgJrorq/or4HkuaYwWTATBgcqhkjOPQIBBggqgRzPVQGCLQNCAATbf6mIrEzgpIv1RiRVMl7cRNbzTYay9AknqdEjNflw7WQ2Nz8yAQvireaHFVX6mogKwXvfwqceoF/9Woil9ypoo4IB1DCCAdAwCQYDVR0TBAIwADAdBgNVHQ4EFgQUk2lZgdL1LctBlyyLk6YJzTanbuowDgYDVR0PAQH/BAQDAgD/MIGbBgNVHSUBAf8EgZAwgY0GCCsGAQUFBwMBBggrBgEFBQcDAgYIKwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCAYKKwYBBAGCNwIBFQYKKwYBBAGCNwIBFgYKKwYBBAGCNwoDAQYKKwYBBAGCNwoDAwYKKwYBBAGCNwoDBAYJYIZIAYb4QgQBBggrBgEFBQcDCQYIKwYBBQUHAwowLgYDVR0fBCcwJTAjoCGgH4YdaHR0cHM6Ly9haWEuc3lhbi5jb20uY24vY3JsL2EwYgYIKwYBBQUHAQEEVjBUMCQGCCsGAQUFBzABhhhodHRwczovL29jc3Auc3lhbi5jb20uY24wLAYIKwYBBQUHMAKGIGh0dHBzOi8vYWlhLnN5YW4uY29tLmNuL2lzc3Vlci9hMB8GA1UdIwQYMBaAFE62EA55ojyyltMkTdh/2Ac4lpUEMEEGA1UdIAQ6MDgwNgYIKoEchvAAZAEwKjAoBggrBgEFBQcCARYcaHR0cHM6Ly9jcHMuc3lhbi5jb20uY24vY3BzMTAKBggqgRzPVQGDdQNIADBFAiEAmKlOSDGvzcD/Z19/5zIItoTtaUa02I8+lJoaz4SSGdoCIExCV6F474ctRWqFt3sEHC9pi1QJuglYSmSdXgMvVTYmMYGeMIGbAgEBMDEwIDELMAkGA1UEBhMCQ04xETAPBgNVBAMMCHNtMl9yb290Ag0AkK1xCLXFaCiIW7nRMAwGCCqBHM9VAYMRBQAwDQYJKoEcz1UBgi0BBQAERjBEAiAdhYQRl7hhn/rjS+PLjisP5evOlTdcdgJBIPlPYrMSqAIgTscVYJiX6eXQL7Fc/BHdKnr7TxZ8SvyLnX6vEvmky1E=";
+        String data = "MIIBFAYKKoEcz1UGAQQCA6CCAQQwggEAAgEBMYG8MIG5AgEAMCowGjELMAkGA1UEBhMCQ04xCzAJBgNVBAMMAjMzAgwUnT/1UCfO1U53zucwCwYJKoEcz1UBgi0DBHsweQIhAJyeYpFFuH0xAX+I7TVru/6S0b+5c1WK0s7/LNzXWpDYAiAGvE9NPJ2ainxDIHlsz+a01Ve1i/QuJbPQ34+4zq8zNAQgA7UDQOCjfL6gAoMTy1LjW82CdwtLgPXbvKWs3tC1cVoEEPHpf1gAuSLnY6iqVUbwnTgwPAYKKoEcz1UGAQQCATAcBggqgRzPVQFoAgQQfLJ2NTW9TxM9+TEXuGEzMIAQgV0dy5g3P5e6KfgpxYR0pg==";
         NetonePCS pcs = pcsClient.envelopeUnpackBuilder()
-                .setId(sm2kid)
+                .setId("9845c5a9a7abc07a9f5c13597ab190ce")
                 .setPasswd(pin)
                 .setBase64Data(data)//设置待解包的数据
                 .build();
