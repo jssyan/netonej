@@ -27,10 +27,10 @@ deploy-job:
       
       # 构建开始
       mvn clean javadoc:javadoc --settings ${MVN_SETTINGS_XML}
-      echo 'The doc of netoenj was built using maven successful !'
+      echo 'The documentation for netoenj was successfully built using Maven !'
       
       # 开始打包
-      targetDir=$OUT_DIR/site/apidocs
+      targetDir=$OUT_DIR/reports/apidocs
       cd $targetDir || exit
       tar -czf ../$PACKAGE *
       mv ../$PACKAGE ../../
