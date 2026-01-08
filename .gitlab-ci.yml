@@ -1,5 +1,5 @@
 #脚本中会使用到的镜像，这里因为是Java Maven项目，所以导入maven镜像
-image: maven-jdk8:v1.0
+image: maven-jdk8:v3.0
 
 cache:
   paths:
