@@ -72,14 +72,14 @@ deploy-job:
         -H "Authorization: Bearer $tenant_access_token")
       # 查找 block_type 为 999 的第一个 block，提取 block_id
       found_block_id=""
-      found_block_id=$(echo "$block_response" | jq -r '.data.items[]? | if has("block_type") and .block_type == 999 then .block_id else empty end' | head -n 1)
+      found_block_id=$(echo "$block_response" | jq -r '.data.items[]? | if has("block_type") and .block_type == 49 then .block_id else empty end' | head -n 1)
       # 输出结果
       if [[ -n "${found_block_id}" ]]; then
-        echo "匹配到的第一个 block_type 为 '999' 的 block_id 为：${found_block_id}"
+        echo "匹配到的第一个 block_type 为 '49' 的 block_id 为：${found_block_id}"
       else
-        echo "未找到 block_type 为 '999' 的 block_id。"
+        echo "未找到 block_type 为 '49' 的 block_id。"
       fi
-      block_all=$(curl -s -X GET "https://open.feishu.cn/open-apis/docx/v1/documents/$obj_token/blocks/$found_block_id/children?document_revision_id=-1&page_size=50" \
+      block_all=$(curl -s -X GET "https://open.feishu.cn/open-apis/docx/v1/documents/$obj_token/blocks/$found_block_id/children?document_revision_id=-1&page_size=500" \
       -H "Authorization: Bearer $tenant_access_token")
       ## 使用 jq 工具解析 JSON 数据并提取所需内容
       output=$(echo $block_all | jq -r '.data.items[] | .ordered.elements | map(.text_run.content) | join("")')
