@@ -6,11 +6,7 @@ import com.syan.netonej.common.json.JSONObject;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.entity.NetoneResponse;
 
-/**
- * @Author: xuyaoyao
- * @Date: 2025/9/12 10:34
- * @Description:
- */
+
 public class SignatureResponse extends NetoneResponse {
     private String appid;
 

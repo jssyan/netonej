@@ -1,11 +1,7 @@
 package com.syan.netonej.http.client.ca;
 
 
-/**
- * @Author: xuyaoyao
- * @Date: 2025/2/21 16:03
- * @Description:
- */
+
 public class Extension {
 
     private String name;
