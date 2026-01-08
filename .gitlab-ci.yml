@@ -39,11 +39,11 @@ deploy-job:
       echo 'Packaging successful'
             
       # 上传安装包
-      echo "sshpass -p ${DEPLOY_SITE_SSH_PASSWD} scp -r -o StrictHostKeyChecking=no $PACKAGE root@${DEPLOY_SITE_IP}:${DEPLOY_PATH}$VERSION"
+      echo "sshpass -p ${DEPLOY_SITE_SSH_PASSWD} scp -r -o StrictHostKeyChecking=no $PACKAGE root@${DEPLOY_SITE_IP}:${DEPLOY_PATH}/$VERSION"
       # 创建目录
-      sshpass -p ${DEPLOY_SITE_SSH_PASSWD} ssh -o StrictHostKeyChecking=no -p ${DEPLOY_SITE_SSH_PORT}  root@${DEPLOY_SITE_IP} "mkdir -p ${DEPLOY_PATH}$VERSION/"
+      sshpass -p ${DEPLOY_SITE_SSH_PASSWD} ssh -o StrictHostKeyChecking=no -p ${DEPLOY_SITE_SSH_PORT}  root@${DEPLOY_SITE_IP} "mkdir -p ${DEPLOY_PATH}/$VERSION/"
       # 上传文件
-      sshpass -p ${DEPLOY_SITE_SSH_PASSWD} scp -r -o StrictHostKeyChecking=no $PACKAGE root@${DEPLOY_SITE_IP}:${DEPLOY_PATH}$VERSION     
+      sshpass -p ${DEPLOY_SITE_SSH_PASSWD} scp -r -o StrictHostKeyChecking=no $PACKAGE root@${DEPLOY_SITE_IP}:${DEPLOY_PATH}/$VERSION     
       echo 'Uploading Success'
       
       # 获取发布日志
@@ -94,7 +94,7 @@ deploy-job:
         "projectName": "$PROJECT_NAME",
         "version": "$VERSION",
         "interfaceDocUrl": "http://${DEPLOY_SITE_IP}/java/$PROJECT_NAME/$VERSION/$PACKAGE",
-        "downloadUrl": "http://${DEPLOY_SITE_IP}/java/$PROJECT_NAME/$VERSION/$PACKAGE", 
+        "downloadUrl": "http://${DEPLOY_SITE_IP}/docs/$PROJECT_NAME/$VERSION/$PACKAGE", 
         "commitUser":"$GITLAB_USER_NAME",
         "changeLog":"$CHANGE_LOG"
       }
