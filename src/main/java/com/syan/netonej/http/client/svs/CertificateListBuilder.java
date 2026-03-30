@@ -22,7 +22,7 @@ public class CertificateListBuilder extends BaseClient<CertificateListBuilder> {
 
     @Override
     public NetoneCertList build() throws NetonejException {
-        setResponseformat(ResponseFormat.XML);
+        setResponseformat("");
         return new NetoneCertList(super.build());
     }
 }

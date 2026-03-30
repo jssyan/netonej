@@ -53,6 +53,7 @@ public class PKCS7VerifyBuilder extends BaseClient<PKCS7VerifyBuilder> {
 
     @Override
     public NetoneSVS build() throws NetonejException {
+        setResponseformat("");
         return new NetoneSVS(super.build());
     }
 }

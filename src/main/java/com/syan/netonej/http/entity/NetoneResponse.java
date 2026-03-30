@@ -10,6 +10,8 @@ package com.syan.netonej.http.entity;
 import com.syan.netonej.common.NetonejUtil;
 import com.syan.netonej.common.dict.ResponseFormat;
 import com.syan.netonej.exception.ErrorCode;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * 请求的返回对象
@@ -96,4 +98,24 @@ public class NetoneResponse {
         }
         return emsg;
     }
+
+
+    // 工具方法：获取XML标签文本
+    protected String getTextContent(Element parent, String tag) {
+        NodeList list = parent.getElementsByTagName(tag);
+        if (list.getLength() > 0) {
+            return list.item(0).getTextContent().trim();
+        }
+        return "";
+    }
+
+    // 安全获取 单个 节点
+    protected Element getSingleElement(Element parent, String tag) {
+        NodeList list = parent.getElementsByTagName(tag);
+        if (list.getLength() > 0) {
+            return (Element) list.item(0);
+        }
+        return null;
+    }
+
 }

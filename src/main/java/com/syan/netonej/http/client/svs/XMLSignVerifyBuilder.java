@@ -35,6 +35,7 @@ public class XMLSignVerifyBuilder extends BaseClient<XMLSignVerifyBuilder> {
 
     @Override
     public NetoneSVS build() throws NetonejException {
+        setResponseformat("");
         return new NetoneSVS(super.build());
     }
 }

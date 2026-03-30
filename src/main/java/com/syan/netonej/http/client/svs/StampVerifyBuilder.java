@@ -46,6 +46,7 @@ public class StampVerifyBuilder extends BaseClient<StampVerifyBuilder> {
 
     @Override
     public NetoneSVS build() throws NetonejException {
+        setResponseformat("");
         return new NetoneSVS(super.build());
     }
 }

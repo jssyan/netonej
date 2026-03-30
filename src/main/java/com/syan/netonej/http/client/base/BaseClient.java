@@ -29,7 +29,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
      */
     protected String application;
 
-    protected String responseformat = "0";
+    protected String responseformat = "1";
 
     protected CcgwClient ccgwClient;
 
@@ -86,7 +86,7 @@ public abstract class BaseClient<R extends BaseClient> implements Serializable {
     public NetoneResponse build() throws NetonejException{
         String url = buildFullUrl();
         Map<String, String> params = new HashMap<String, String>();
-        if(responseformat != null && !url.contains("listc.svr")){
+        if(responseformat != null && !responseformat.equals("")) {
             params.put("responseformat", responseformat);
         }
         if (!NetonejUtil.isEmpty(greenpass) && greenpass.equals("0")) {

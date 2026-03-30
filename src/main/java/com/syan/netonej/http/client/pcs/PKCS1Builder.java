@@ -1,10 +1,7 @@
 package com.syan.netonej.http.client.pcs;
 
 import com.syan.netonej.common.NetonejUtil;
-import com.syan.netonej.common.dict.Action;
-import com.syan.netonej.common.dict.DataType;
-import com.syan.netonej.common.dict.DigestAlgorithm;
-import com.syan.netonej.common.dict.IdMagic;
+import com.syan.netonej.common.dict.*;
 import com.syan.netonej.exception.NetonejException;
 import com.syan.netonej.http.client.base.BaseClient;
 import com.syan.netonej.http.entity.NetonePCS;

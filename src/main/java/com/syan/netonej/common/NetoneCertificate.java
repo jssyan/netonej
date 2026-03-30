@@ -7,19 +7,19 @@
  */
 package com.syan.netonej.common;
 
-import com.syan.netonej.common.dict.ResponseFormat;
-import com.syan.netonej.common.xml.XMLParser;
 import com.syan.netonej.exception.NetonejException;
-import com.syan.netonej.http.entity.KeyListItem;
 import com.syan.netonej.http.entity.NetoneResponse;
 import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory;
 import org.bouncycastle.util.encoders.Base64;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
@@ -93,15 +93,36 @@ public class NetoneCertificate extends NetoneResponse {
     public NetoneCertificate(NetoneResponse response) throws NetonejException {
         if(response != null && response.getStatusCode() == 200){
             String result = response.getResult();
-            if(response.getFormat() == ResponseFormat.TEXT){
-                parseCertificate(result,"0");
+            xmlParse(result);
+        }else{
+            this.setStatusCode(response.getStatusCode());
+        }
+    }
+
+    private void xmlParse(String xml) throws NetonejException {
+        // 1. 创建DOM解析器
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            // 2. 解析XML（从字符串解析，也可以换成文件）
+            Document doc = builder.parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
+            doc.getDocumentElement().normalize();
+
+            // 3. 获取根节点 <svs>
+            Element root = doc.getDocumentElement();
+
+            Element data = getSingleElement(root, "data");
+
+            if(data != null){
+                String id = getTextContent(data, "id");
+                String crt = getTextContent(data, "certificate");
+                String privk = getTextContent(data, "privk");
+                this.parseCertificate(crt,privk);
             }else{
-                KeyListItem item = XMLParser.parserCert(new ByteArrayInputStream(result.getBytes()));
-                if(item == null){
-                    throw new NetonejException("证书解析失败");
-                }
-                parseCertificate(item.getCertificate(),item.getPrivk());
+                throw new Exception("证书不存在");
             }
+        } catch (Exception e) {
+            throw new NetonejException("xml内容解析失败",e);
         }
     }
 

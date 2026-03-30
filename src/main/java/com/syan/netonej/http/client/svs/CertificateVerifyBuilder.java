@@ -60,6 +60,7 @@ public class CertificateVerifyBuilder extends BaseClient<CertificateVerifyBuilde
 
     @Override
     public NetoneSVS build() throws NetonejException {
+        setResponseformat("");
         return new NetoneSVS(super.build());
     }
 }
