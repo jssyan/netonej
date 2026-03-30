@@ -10,9 +10,6 @@ package com.syan.netonej.http.entity;
 
 import com.syan.netonej.common.NetoneCertificate;
 import com.syan.netonej.common.NetonejUtil;
-import com.syan.netonej.common.dict.ResponseFormat;
-import com.syan.netonej.common.xml.XMLParser;
-import com.syan.netonej.common.xml.XmlData;
 import com.syan.netonej.exception.NetonejException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
