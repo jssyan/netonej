@@ -166,7 +166,7 @@ public class PCSClientTest {
         byte[] data = "000000000002SN".getBytes();
         NetonePCS pcs = pcsClient.pkcs7Builder()
                 .setPasswd("Syan@9108")//可选，设置私钥保护口令
-                .setId("8047398788918a8a21c49b151bafc7ca")
+                .setId("c633fa077422e9f20ccbfe697b20695e")
                 .setIdmagic(IdMagic.KID)
                 .setData(data)
                 .setAttach(true)//可选，签名结果中是否包含原始数据

@@ -12,7 +12,10 @@ import com.syan.netonej.common.xml.XMLParser;
 import com.syan.netonej.common.xml.XmlData;
 import com.syan.netonej.exception.NetonejException;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.cert.CertificateException;
 
 
@@ -32,7 +35,9 @@ public class NetoneSVS extends NetoneResponse {
         if(response != null && response.getStatusCode() == 200){
             String result = response.getResult();
             XmlData xmlData = XMLParser.parserCertList(new ByteArrayInputStream(result.getBytes()));
-            certificate = xmlData.getCertificates().get(0);
+            if(xmlData != null && xmlData.getCertificates() != null&& xmlData.getCertificates().size() > 0){
+                certificate = xmlData.getCertificates().get(0);
+            }
             if(xmlData.getData() != null){
                 setResult(xmlData.getData());
             }
